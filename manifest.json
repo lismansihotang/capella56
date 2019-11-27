@@ -1,0 +1,36 @@
+{
+  "short_name": "CapellaERP",
+  "name": "Capella ERP Indonesia",
+  "theme_color": "#317EFB",
+  "background_color": "blue",
+  "display": "fullscreen",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "images/launcher-icon-4848.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "images/launcher-icon-9696.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "images/launcher-icon-128128.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "images/launcher-icon-192192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "images/launcher-icon-512512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ""
+}

@@ -1,0 +1,1183 @@
+.icon-admin {
+	background: url(../images/icons/admin.png) no-repeat center center; background-size: contain;;
+}
+
+.icon-common {
+	background: url(../images/icons/common.png) no-repeat center center; background-size: contain;
+}
+
+.icon-accounting {
+	background: url(../images/icons/accounting.png) no-repeat center center; background-size: contain;
+}
+
+.icon-hr {
+	background: url(../images/icons/hr.png) no-repeat center center; background-size: contain;
+}
+
+.icon-copy {
+	background: url(../images/icons/copy.png) no-repeat center center; background-size: contain;
+}
+
+.icon-purchasing {
+	background: url(../images/icons/purchasing.png) no-repeat center center; background-size: contain;
+}
+
+.icon-inventory {
+	background: url(../images/icons/inventory.png) no-repeat center center; background-size: contain;
+}
+
+.icon-order {
+	background: url(../images/icons/ordermanagement.png) no-repeat center center; background-size: contain;
+}
+
+.icon-production {
+	background: url(../images/icons/production.png) no-repeat center center; background-size: contain;
+}
+
+.icon-blank {
+	background: url(../images/icons/blank.gif) no-repeat center center; background-size: contain;
+}
+
+.icon-add {
+	background: url(../images/icons/edit_add.png) no-repeat center center; background-size: contain;
+}
+
+.icon-edit {
+	background: url(../images/icons/pencil.png) no-repeat center center; background-size: contain;
+}
+
+.icon-clear {
+	background: url(../images/icons/clear.png) no-repeat center center; background-size: contain;
+}
+
+.icon-remove {
+	background: url(../images/icons/edit_remove.png) no-repeat center center; background-size: contain;
+}
+
+.icon-save {
+	background: url(../images/icons/filesave.png) no-repeat center center; background-size: contain;
+}
+
+.icon-cut {
+	background: url(../images/icons/cut.png) no-repeat center center; background-size: contain;
+}
+
+.icon-ok {
+	background: url(../images/icons/ok.png) no-repeat center center; background-size: contain;
+}
+
+.icon-blog {
+	background: url(../images/icons/blog.png) no-repeat center center; background-size: contain;
+}
+
+.icon-no {
+	background: url(../images/icons/no.png) no-repeat center center; background-size: contain;
+}
+
+.icon-cancel {
+	background: url(../images/icons/cancel.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reload {
+	background: url(../images/icons/reload.png) no-repeat center center; background-size: contain;
+}
+
+.icon-search {
+	background: url(../images/icons/search.png) no-repeat center center; background-size: contain;
+}
+
+.icon-print {
+	background: url(../images/icons/print.png) no-repeat center center; background-size: contain;
+}
+
+.icon-help {
+	background: url(../images/icons/help.png) no-repeat center center; background-size: contain;
+}
+
+.icon-undo {
+	background: url(../images/icons/undo.png) no-repeat center center; background-size: contain;
+}
+
+.icon-redo {
+	background: url(../images/icons/redo.png) no-repeat center center; background-size: contain;
+}
+
+.icon-back {
+	background: url(../images/icons/back.png) no-repeat center center; background-size: contain;
+}
+
+.icon-sum {
+	background: url(../images/icons/sum.png) no-repeat center center; background-size: contain;
+}
+
+.icon-tip {
+	background: url(../images/icons/tip.png) no-repeat center center; background-size: contain;
+}
+
+.icon-cheque {
+	background: url(../images/icons/cheque.png) no-repeat center center; background-size: contain;
+}
+
+.icon-filter {
+	background: url(../images/icons/filter.png) no-repeat center center; background-size: contain;
+}
+
+.icon-man {
+	background: url(../images/icons/man.png) no-repeat center center; background-size: contain;
+}
+
+.icon-lock {
+	background: url(../images/icons/lock.png) no-repeat center center; background-size: contain;
+}
+
+.icon-more {
+	background: url(../images/icons/more.png) no-repeat center center; background-size: contain;
+}
+
+.icon-purge {
+	background: url(../images/icons/purge.png) no-repeat center center; background-size: contain;
+}
+
+.icon-upload {
+	background: url(../images/icons/upload.png) no-repeat center center; background-size: contain;
+}
+
+.icon-download {
+	background: url(../images/icons/download.png) no-repeat center center; background-size: contain;
+}
+
+.icon-xls {
+	background: url(../images/icons/xlsdown.png) no-repeat center center; background-size: contain;
+}
+
+.icon-pdf {
+	background: url(../images/icons/pdf.png) no-repeat center center; background-size: contain;
+}
+
+.icon-home {
+	background: url(../images/icons/home.png) no-repeat center center; background-size: contain;
+}
+
+.icon-mini-add {
+	background: url(../images/icons/mini_add.png) no-repeat center center; background-size: contain;
+}
+
+.icon-mini-edit {
+	background: url(../images/icons/mini_edit.png) no-repeat center center; background-size: contain;
+}
+
+.icon-mini-refresh {
+	background: url(../images/icons/mini_refresh.png) no-repeat center center; background-size: contain;
+}
+
+.icon-large-picture {
+	background: url(../images/icons/large_picture.png) no-repeat center center; background-size: contain;
+}
+
+.icon-large-clipart {
+	background: url(../images/icons/large_clipart.png) no-repeat center center; background-size: contain;
+}
+
+.icon-large-shapes {
+	background: url(../images/icons/large_shapes.png) no-repeat center center; background-size: contain;
+}
+
+.icon-large-smartart {
+	background: url(../images/icons/large_smartart.png) no-repeat center center; background-size: contain;
+}
+
+.icon-large-chart {
+	background: url(../images/icons/large_chart.png) no-repeat center center; background-size: contain;
+}
+
+.icon-language {
+	background: url(../images/icons/language.png) no-repeat center center; background-size: contain;
+}
+
+.icon-country {
+	background: url(../images/icons/country.png) no-repeat center center; background-size: contain;
+}
+
+.icon-province {
+	background: url(../images/icons/province.png) no-repeat center center; background-size: contain;
+}
+
+.icon-city {
+	background: url(../images/icons/city.png) no-repeat center center; background-size: contain;
+}
+
+.icon-company {
+	background: url(../images/icons/company.png) no-repeat center center; background-size: contain;
+}
+
+.icon-useraccess {
+	background: url(../images/icons/useraccess.png) no-repeat center center; background-size: contain;
+}
+
+.icon-menuaccess {
+	background: url(../images/icons/menuaccess.png) no-repeat center center; background-size: contain;
+}
+
+.icon-menuauth {
+	background: url(../images/icons/menuauth.png) no-repeat center center; background-size: contain;
+}
+
+.icon-groupaccess {
+	background: url(../images/icons/groupaccess.png) no-repeat center center; background-size: contain;
+}
+
+.icon-groupmenuauth {
+	background: url(../images/icons/groupmenuauth.png) no-repeat center center; background-size: contain;
+}
+
+.icon-groupmenu {
+	background: url(../images/icons/groupmenu.png) no-repeat center center; background-size: contain;
+}
+
+.icon-userfav {
+	background: url(../images/icons/userfav.png) no-repeat center center; background-size: contain;
+}
+
+.icon-translog {
+	background: url(../images/icons/translog.png) no-repeat center center; background-size: contain;
+}
+
+.icon-translock {
+	background: url(../images/icons/translock.png) no-repeat center center; background-size: contain;
+}
+
+.icon-snro {
+	background: url(../images/icons/snro.png) no-repeat center center; background-size: contain;
+}
+
+.icon-snrodet {
+	background: url(../images/icons/snrodet.png) no-repeat center center; background-size: contain;
+}
+
+.icon-workflow {
+	background: url(../images/icons/workflow.png) no-repeat center center; background-size: contain;
+}
+
+.icon-wfstatus {
+	background: url(../images/icons/wfstatus.png) no-repeat center center; background-size: contain;
+}
+
+.icon-parameter {
+	background: url(../images/icons/parameter.png) no-repeat center center; background-size: contain;
+}
+
+.icon-catalogsys {
+	background: url(../images/icons/catalogsys.png) no-repeat center center; background-size: contain;
+}
+
+.icon-phpmyadmin {
+	background: url(../images/icons/phpmyadmin.png) no-repeat center center; background-size: contain;
+}
+
+.icon-currency {
+	background: url(../images/icons/currency.png) no-repeat center center; background-size: contain;
+}
+
+.icon-theme {
+	background: url(../images/icons/theme.png) no-repeat center center; background-size: contain;
+}
+
+.icon-wfgroup {
+	background: url(../images/icons/wfgroup.png) no-repeat center center; background-size: contain;
+}
+
+.icon-modules {
+	background: url(../images/icons/modules.png) no-repeat center center; background-size: contain;
+}
+
+.icon-usergroup {
+	background: url(../images/icons/usergroup.png) no-repeat center center; background-size: contain;
+}
+
+.icon-addresstype {
+	background: url(../images/icons/addresstype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-contacttype {
+	background: url(../images/icons/contacttype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-identitytype {
+	background: url(../images/icons/identitytype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-romawi {
+	background: url(../images/icons/romawi.png) no-repeat center center; background-size: contain;
+}
+
+.icon-plant {
+	background: url(../images/icons/plant.png) no-repeat center center; background-size: contain;
+}
+
+.icon-sloc {
+	background: url(../images/icons/sloc.png) no-repeat center center; background-size: contain;
+}
+
+.icon-unitofmeasure {
+	background: url(../images/icons/unitofmeasure.png) no-repeat center center; background-size: contain;
+}
+
+.icon-addressbook {
+	background: url(../images/icons/addressbook.png) no-repeat center center; background-size: contain;
+}
+
+.icon-supplier {
+	background: url(../images/icons/supplier.png) no-repeat center center; background-size: contain;
+}
+
+.icon-customer {
+	background: url(../images/icons/customer.png) no-repeat center center; background-size: contain;
+}
+
+.icon-materialtype {
+	background: url(../images/icons/materialtype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-materialgroup {
+	background: url(../images/icons/materialgroup.png) no-repeat center center; background-size: contain;
+}
+
+.icon-materialstatus {
+	background: url(../images/icons/materialstatus.png) no-repeat center center; background-size: contain;
+}
+
+.icon-ownership {
+	background: url(../images/icons/ownership.png) no-repeat center center; background-size: contain;
+}
+
+.icon-product {
+	background: url(../images/icons/product.png) no-repeat center center; background-size: contain;
+}
+
+.icon-productplant {
+	background: url(../images/icons/productplant.png) no-repeat center center; background-size: contain;
+}
+
+.icon-accounttype {
+	background: url(../images/icons/accounttype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-account {
+	background: url(../images/icons/account.png) no-repeat center center; background-size: contain;
+}
+
+.icon-paymentmethod {
+	background: url(../images/icons/paymentmethod.png) no-repeat center center; background-size: contain;
+}
+
+.icon-tax {
+	background: url(../images/icons/tax.png) no-repeat center center; background-size: contain;
+}
+
+.icon-accperiod {
+	background: url(../images/icons/accperiod.png) no-repeat center center; background-size: contain;
+}
+
+.icon-genjournal {
+	background: url(../images/icons/genjournal.png) no-repeat center center; background-size: contain;
+}
+
+.icon-invoiceap {
+	background: url(../images/icons/invoiceap.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repinvap {
+	background: url(../images/icons/invoiceap.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repinvapumum {
+	background: url(../images/icons/invoiceap.png) no-repeat center center; background-size: contain;
+}
+
+.icon-invoiceapumum {
+	background: url(../images/icons/invoiceap.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repreqpay {
+	background: url(../images/icons/reqpay.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reprealpay {
+	background: url(../images/icons/reprealpay.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repapaging {
+	background: url(../images/icons/repapaging.png) no-repeat center center; background-size: contain;
+}
+
+.icon-invoicear {
+	background: url(../images/icons/invoicear.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repinvar {
+	background: url(../images/icons/invoicear.png) no-repeat center center; background-size: contain;
+}
+
+.icon-invoicearumum {
+	background: url(../images/icons/invoicear.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repinvarumum {
+	background: url(../images/icons/invoicear.png) no-repeat center center; background-size: contain;
+}
+
+.icon-fakturpajak {
+	background: url(../images/icons/fakturpajak.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reparaging {
+	background: url(../images/icons/reparaging.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repsooutstanding {
+	background: url(../images/icons/repsooutstanding.png) no-repeat center center; background-size: contain;
+}
+
+.icon-cashbank {
+	background: url(../images/icons/cashbank.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repcb {
+	background: url(../images/icons/cashbank.png) no-repeat center center; background-size: contain;
+}
+
+.icon-cashbankin {
+	background: url(../images/icons/cashbankin.png) no-repeat center center; background-size: contain;
+}
+
+.icon-pib {
+	background: url(../images/icons/pib.png) no-repeat center center; background-size: contain;
+}
+
+.icon-stdfohul {
+	background: url(../images/icons/stdfohul.png) no-repeat center center; background-size: contain;
+}
+
+.icon-cashbankout {
+	background: url(../images/icons/cashbankout.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repcashbank {
+	background: url(../images/icons/repcashbank.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repdaily {
+	background: url(../images/icons/repdaily.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repsundry {
+	background: url(../images/icons/repsundry.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repsales {
+	background: url(../images/icons/repsales.png) no-repeat center center; background-size: contain;
+}
+
+.icon-genledger {
+	background: url(../images/icons/genledger.png) no-repeat center center; background-size: contain;
+}
+
+.icon-purchasingorg {
+	background: url(../images/icons/purchasingorg.png) no-repeat center center; background-size: contain;
+}
+
+.icon-purchasinggroup {
+	background: url(../images/icons/purchasinggroup.png) no-repeat center center; background-size: contain;
+}
+
+.icon-purchinforec {
+	background: url(../images/icons/purchinforec.png) no-repeat center center; background-size: contain;
+}
+
+.icon-poheader {
+	background: url(../images/icons/poheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reppolistdetail {
+	background: url(../images/icons/reppolistdetail.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repposummary {
+	background: url(../images/icons/repposummary.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reppooutdetail {
+	background: url(../images/icons/reppooutdetail.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reppovendor {
+	background: url(../images/icons/reppovendor.png) no-repeat center center; background-size: contain;
+}
+
+.icon-requestedby {
+	background: url(../images/icons/requestedby.png) no-repeat center center; background-size: contain;
+}
+
+.icon-mrp {
+	background: url(../images/icons/mrp.png) no-repeat center center; background-size: contain;
+}
+
+.icon-formrequest {
+	background: url(../images/icons/formrequest.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportfr {
+	background: url(../images/icons/formrequest.png) no-repeat center center; background-size: contain;
+}
+
+.icon-formrequestplan {
+	background: url(../images/icons/formrequestplan.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repformreqplan {
+	background: url(../images/icons/formrequestplan.png) no-repeat center center; background-size: contain;
+}
+
+.icon-prheader {
+	background: url(../images/icons/prheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportpr {
+	background: url(../images/icons/prheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-grheader {
+	background: url(../images/icons/grheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportgr {
+	background: url(../images/icons/grheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-giheader {
+	background: url(../images/icons/giheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-bsheader {
+	background: url(../images/icons/bsheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-transstock {
+	background: url(../images/icons/transstock.png) no-repeat center center; background-size: contain;
+}
+
+.icon-transstockin {
+	background: url(../images/icons/transstock.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportts {
+	background: url(../images/icons/transstock.png) no-repeat center center; background-size: contain;
+}
+
+.icon-transstockfg {
+	background: url(../images/icons/transstock.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reptransstockfg {
+	background: url(../images/icons/transstock.png) no-repeat center center; background-size: contain;
+}
+
+.icon-sfheader {
+	background: url(../images/icons/sfheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportsf {
+	background: url(../images/icons/sfheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-productdetail {
+	background: url(../images/icons/productdetail.png) no-repeat center center; background-size: contain;
+}
+
+.icon-productstock {
+	background: url(../images/icons/productstock.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repmutasibarang {
+	background: url(../images/icons/repmutasibarang.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repinvgr {
+	background: url(../images/icons/repinvgr.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repinvgi {
+	background: url(../images/icons/repinvgi.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repinvinout {
+	background: url(../images/icons/repinvinout.png) no-repeat center center; background-size: contain;
+}
+
+.icon-contract {
+	background: url(../images/icons/contract.png) no-repeat center center; background-size: contain;
+}
+
+.icon-soheader {
+	background: url(../images/icons/soheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-bgtype {
+	background: url(../images/icons/bgtype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-bankgaransi {
+	background: url(../images/icons/bankgaransi.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repsosummary {
+	background: url(../images/icons/repsosummary.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repbenefitso {
+	background: url(../images/icons/repbenefitso.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repsoitemlaris {
+	background: url(../images/icons/repsoitemlaris.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repdetailso {
+	background: url(../images/icons/repdetailso.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repsosummaryyear {
+	background: url(../images/icons/repsosummaryyear.png) no-repeat center center; background-size: contain;
+}
+
+.icon-bom {
+	background: url(../images/icons/bom.png) no-repeat center center; background-size: contain;
+}
+
+.icon-productplan {
+	background: url(../images/icons/productplan.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repprodplan {
+	background: url(../images/icons/productplan.png) no-repeat center center; background-size: contain;
+}
+
+.icon-productoutput {
+	background: url(../images/icons/productoutput.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportprodout {
+	background: url(../images/icons/productoutput.png) no-repeat center center; background-size: contain;
+}
+
+.icon-position {
+	background: url(../images/icons/position.png) no-repeat center center; background-size: contain;
+}
+
+.icon-orgstructure {
+	background: url(../images/icons/orgstructure.png) no-repeat center center; background-size: contain;
+}
+
+.icon-levelorg {
+	background: url(../images/icons/levelorg.png) no-repeat center center; background-size: contain;
+}
+
+.icon-jobs {
+	background: url(../images/icons/jobs.png) no-repeat center center; background-size: contain;
+}
+
+.icon-menusource {
+	background: url(../images/icons/menusource.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeetype {
+	background: url(../images/icons/employeetype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-absstatus {
+	background: url(../images/icons/absstatus.png) no-repeat center center; background-size: contain;
+}
+
+.icon-sex {
+	background: url(../images/icons/sex.png) no-repeat center center; background-size: contain;
+}
+
+.icon-maritalstatus {
+	background: url(../images/icons/maritalstatus.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeestatus {
+	background: url(../images/icons/employeestatus.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employee {
+	background: url(../images/icons/employee.png) no-repeat center center; background-size: contain;
+}
+
+.icon-pocheader {
+	background: url(../images/icons/pocheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reqquot {
+	background: url(../images/icons/reqquot.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportso {
+	background: url(../images/icons/soheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportpo {
+	background: url(../images/icons/poheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportgr {
+	background: url(../images/icons/grheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportgi {
+	background: url(../images/icons/giheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-religion {
+	background: url(../images/icons/religion.png) no-repeat center center; background-size: contain;
+}
+
+.icon-education {
+	background: url(../images/icons/education.png) no-repeat center center; background-size: contain;
+}
+
+.icon-educationmajor {
+	background: url(../images/icons/educationmajor.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportbs {
+	background: url(../images/icons/bsheader.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportgl {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repinvap {
+	background: url(../images/icons/invoiceap.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repinvar {
+	background: url(../images/icons/invoicear.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repcbout {
+	background: url(../images/icons/cashbankout.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repcbin {
+	background: url(../images/icons/cashbankin.png) no-repeat center center; background-size: contain;
+}
+
+.icon-notagir {
+	background: url(../images/icons/notagir.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repnotagir {
+	background: url(../images/icons/notagir.png) no-repeat center center; background-size: contain;
+}
+
+.icon-notagrr {
+	background: url(../images/icons/notagrr.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repnotagrr {
+	background: url(../images/icons/notagrr.png) no-repeat center center; background-size: contain;
+}
+
+.icon-languagevalue {
+	background: url(../images/icons/languagevalue.png) no-repeat center center; background-size: contain;
+}
+
+.icon-splettertype {
+	background: url(../images/icons/splettertype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-absschedule {
+	background: url(../images/icons/absschedule.png) no-repeat center center; background-size: contain;
+}
+
+.icon-absrule {
+	background: url(../images/icons/absrule.png) no-repeat center center; background-size: contain;
+}
+
+.icon-hospital {
+	background: url(../images/icons/hospital.png) no-repeat center center; background-size: contain;
+}
+
+.icon-onleavetype {
+	background: url(../images/icons/onleavetype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-permitin {
+	background: url(../images/icons/permitin.png) no-repeat center center; background-size: contain;
+}
+
+.icon-permitexit {
+	background: url(../images/icons/permitexit.png) no-repeat center center; background-size: contain;
+}
+
+.icon-facilitytype {
+	background: url(../images/icons/facilitytype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-wagetype {
+	background: url(../images/icons/wagetype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-payrollperiod {
+	background: url(../images/icons/payrollperiod.png) no-repeat center center; background-size: contain;
+}
+
+.icon-taxwageprogressif {
+	background: url(../images/icons/taxwageprogressif.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportkekuatan {
+	background: url(../images/icons/reportkekuatan.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeebenefit {
+	background: url(../images/icons/employeebenefit.png) no-repeat center center; background-size: contain;
+}
+
+.icon-payrollprocess {
+	background: url(../images/icons/payrollprocess.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeewage {
+	background: url(../images/icons/employeewage.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeetax {
+	background: url(../images/icons/employeetax.png) no-repeat center center; background-size: contain;
+}
+
+.icon-rinciangaji {
+	background: url(../images/icons/rinciangaji.png) no-repeat center center; background-size: contain;
+}
+
+.icon-totalrincigaji {
+	background: url(../images/icons/totalrincigaji.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeeschedule {
+	background: url(../images/icons/employeeschedule.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportin {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportout {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportperday {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-familyrelation {
+	background: url(../images/icons/familyrelation.png) no-repeat center center; background-size: contain;
+}
+
+.icon-occupation {
+	background: url(../images/icons/occupation.png) no-repeat center center; background-size: contain;
+}
+
+.icon-productsales {
+	background: url(../images/icons/productsales.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeeover {
+	background: url(../images/icons/employeeover.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repemployeeover {
+	background: url(../images/icons/repemployeeover.png) no-repeat center center; background-size: contain;
+}
+
+.icon-productconversion {
+	background: url(../images/icons/productconversion.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repomset {
+	background: url(../images/icons/repomset.png) no-repeat center center; background-size: contain;
+}
+
+.icon-pos {
+	background: url(../images/icons/pos.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportts {
+	background: url(../images/icons/transstock.png) no-repeat center center; background-size: contain;
+}
+
+.icon-grretur {
+	background: url(../images/icons/grretur.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportgrretur {
+	background: url(../images/icons/grretur.png) no-repeat center center; background-size: contain;
+}
+
+.icon-giretur {
+	background: url(../images/icons/giretur.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportgiretur {
+	background: url(../images/icons/giretur.png) no-repeat center center; background-size: contain;
+}
+
+.icon-projectstatus {
+	background: url(../images/icons/projectstatus.png) no-repeat center center; background-size: contain;
+}
+
+.icon-projecttype {
+	background: url(../images/icons/projecttype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-project {
+	background: url(../images/icons/project.png) no-repeat center center; background-size: contain;
+}
+
+.icon-doctype {
+	background: url(../images/icons/doctype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-userprofile {
+	background: url(../images/icons/userprofile.png) no-repeat center center; background-size: contain;
+}
+
+.icon-logout {
+	background: url(../images/icons/logout.png) no-repeat center center; background-size: contain;
+}
+
+.icon-genbarcode {
+	background: url(../images/icons/genbarcode.png) no-repeat center center; background-size: contain;
+}
+
+.icon-ean13 {
+	background: url(../images/icons/ean13.png) no-repeat center center; background-size: contain;
+}
+
+.icon-code128 {
+	background: url(../images/icons/code128.png) no-repeat center center; background-size: contain;
+}
+
+.icon-barsticker {
+	background: url(../images/icons/barsticker.png) no-repeat center center; background-size: contain;
+}
+
+.icon-complete {
+	background: url(../images/icons/complete.png) no-repeat center center; background-size: contain;
+}
+
+.icon-box {
+	background: url(../images/icons/box.png) no-repeat center center; background-size: contain;
+}
+
+.icon-balance {
+	background: url(../images/icons/balance.png) no-repeat center center; background-size: contain;
+}
+
+.icon-graph {
+	background: url(../images/icons/graph.png) no-repeat center center; background-size: contain;
+}
+
+.icon-box2 {
+	background: url(../images/icons/box2.png) no-repeat center center; background-size: contain;
+}
+
+.icon-history {
+	background: url(../images/icons/history.png) no-repeat center center; background-size: contain;
+}
+
+.icon-widget {
+	background: url(../images/icons/widget.png) no-repeat center center; background-size: contain;
+}
+
+.icon-userdash {
+	background: url(../images/icons/userdash.png) no-repeat center center; background-size: contain;
+}
+
+.icon-pricecategory {
+	background: url(../images/icons/pricecategory.png) no-repeat center center; background-size: contain;
+}
+
+.icon-salesarea {
+	background: url(../images/icons/salesarea.png) no-repeat center center; background-size: contain;
+}
+
+.icon-storagebin {
+	background: url(../images/icons/storagebin.png) no-repeat center center; background-size: contain;
+}
+
+.icon-groupcustomer {
+	background: url(../images/icons/customergroup.png) no-repeat center center; background-size: contain;
+}
+
+.icon-mesin {
+	background: url(../images/icons/machine.png) no-repeat center center; background-size: contain;
+}
+
+.icon-sales {
+	background: url(../images/icons/sales.png) no-repeat center center; background-size: contain;
+}
+
+.icon-addressaccount {
+	background: url(../images/icons/addressaccount.png) no-repeat center center; background-size: contain;
+}
+
+.icon-slocaccounting {
+	background: url(../images/icons/slocaccounting.png) no-repeat center center; background-size: contain;
+}
+
+.icon-taxacc {
+	background: url(../images/icons/taxacc.png) no-repeat center center; background-size: contain;
+}
+
+.icon-kurs {
+	background: url(../images/icons/kurs.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeepiutang {
+	background: url(../images/icons/employeepiutang.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeepay {
+	background: url(../images/icons/employeepay.png) no-repeat center center; background-size: contain;
+}
+
+.icon-fixasset {
+	background: url(../images/icons/fixasset.png) no-repeat center center; background-size: contain;
+}
+
+.icon-employeestatus {
+	background: url(../images/icons/employeestatus.png) no-repeat center center; background-size: contain;
+}
+
+.icon-processprd {
+	background: url(../images/icons/processprd.png) no-repeat center center; background-size: contain;
+}
+
+.icon-qcparam {
+	background: url(../images/icons/qcparam.png) no-repeat center center; background-size: contain;
+}
+
+.icon-spletter {
+	background: url(../images/icons/spletter.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportinventory {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportpurchasing {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportorder {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reportacc {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repprod {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repaccpay {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repaccpers {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-repaccrec {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-recallbuyprice {
+	background: url(../images/icons/recall.png) no-repeat center center; background-size: contain;
+}
+
+.icon-recalljurnal {
+	background: url(../images/icons/recall.png) no-repeat center center; background-size: contain;
+}
+
+.icon-kas {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-biayapenjualan {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-biayaumum {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-hpp {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-balancesheet {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-profitloss {
+	background: url(../images/icons/report.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reqpay {
+	background: url(../images/icons/reqpay.png) no-repeat center center; background-size: contain;
+}
+
+.icon-rfq {
+	background: url(../images/icons/rfq.png) no-repeat center center; background-size: contain;
+}
+
+.icon-qctest {
+	background: url(../images/icons/qctest.png) no-repeat center center; background-size: contain;
+}
+
+.icon-qcparam {
+	background: url(../images/icons/qcparam.png) no-repeat center center; background-size: contain;
+}
+
+.icon-packinglist {
+	background: url(../images/icons/packinglist.png) no-repeat center center; background-size: contain;
+}
+
+.icon-reppackinglist {
+	background: url(../images/icons/packinglist.png) no-repeat center center; background-size: contain;
+}
+
+.icon-specialdutytype {
+	background: url(../images/icons/specialdutytype.png) no-repeat center center; background-size: contain;
+}
+
+.icon-youtube {
+	background: url(../images/icons/youtube.png) no-repeat center center; background-size: contain;
+}
+
+.icon-settings {
+	background: url(../images/icons/settings.png) no-repeat center center; background-size: contain;
+}
+
+.icon-browser {
+	background: url(../images/icons/browser.png) no-repeat center center; background-size: contain;
+}
+
+.icon-personalization {
+	background: url(../images/icons/personalization.png) no-repeat center center; background-size: contain;
+}
