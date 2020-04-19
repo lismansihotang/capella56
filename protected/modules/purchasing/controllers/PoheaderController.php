@@ -63,7 +63,7 @@ class PoheaderController extends Controller {
     Yii::app()->end();
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
 		$plantid = GetSearchText(array('POST','GET'),'plantid',0,'int');
 		$poheaderid = GetSearchText(array('POST','Q'),'poheaderid');
 		$plantcode     		= GetSearchText(array('POST','Q'),'plantcode');
@@ -109,7 +109,7 @@ class PoheaderController extends Controller {
 						and t.isjasa = 0
 						and t.poheaderid in (select distinct z.poheaderid 
 							from podetail z 
-							where z.qty > z.grqty)
+							where (z.qty + (z.toleransiup * z.qty / 100)) > z.grqty)
 						",
 					array(
 				':poheaderid' =>  $poheaderid ,
@@ -141,7 +141,7 @@ class PoheaderController extends Controller {
 						and t.isjasa = 1
 						and t.poheaderid in (select distinct z.poheaderid 
 							from pojasa z 
-							where z.qty > z.grqty)
+							where (z.qty + (z.toleransiup * z.qty / 100)) > z.grqty)
 						",
 					array(
 				':poheaderid' =>  $poheaderid ,
@@ -297,6 +297,13 @@ class PoheaderController extends Controller {
 				left join product za on za.productid = z.productid 
 				where coalesce(za.productname,'') like '".$productname."'
 				)":'').
+					(($productcode != '%%')?"
+				and t.poheaderid in (
+				select distinct z.poheaderid 
+				from podetail z 
+				left join product za on za.productid = z.productid 
+				where coalesce(za.productcode,'') like '".$productcode."'
+				)":'').
 				(($prno != '%%')?"
 				and t.poheaderid in (
 				select distinct z.poheaderid 
@@ -347,7 +354,7 @@ class PoheaderController extends Controller {
 						and t.isjasa = 0
 						and t.poheaderid in (select distinct z.poheaderid 
 							from podetail z 
-							where z.qty > z.grqty)
+							where (z.qty + (z.toleransiup * z.qty / 100)) > z.grqty)
 						",
 					array(
 				':poheaderid' =>  $poheaderid ,
@@ -381,7 +388,7 @@ class PoheaderController extends Controller {
 						and t.isjasa = 1
 						and t.poheaderid in (select z.poheaderid 
 							from pojasa z 
-							where z.qty > z.grqty)
+							where (z.qty + (z.toleransiup * z.qty / 100)) > z.grqty)
 						",
 					array(
 				':poheaderid' =>  $poheaderid ,
@@ -547,6 +554,13 @@ class PoheaderController extends Controller {
 				left join product za on za.productid = z.productid 
 				where coalesce(za.productname,'') like '".$productname."'
 				)":'').
+					(($productcode != '%%')?"
+				and t.poheaderid in (
+				select distinct z.poheaderid 
+				from podetail z 
+				left join product za on za.productid = z.productid 
+				where coalesce(za.productcode,'') like '".$productcode."'
+				)":'').
 				(($prno != '%%')?"
 				and t.poheaderid in (
 				select distinct z.poheaderid 
@@ -640,7 +654,7 @@ class PoheaderController extends Controller {
     echo CJSON::encode($items);
   }
 	public function actionSearchdetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -739,7 +753,7 @@ class PoheaderController extends Controller {
     echo CJSON::encode($result);
   }
   public function actionSearchPojasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -760,24 +774,24 @@ class PoheaderController extends Controller {
 			->leftjoin('mesin c', 'c.mesinid = t.mesinid')
 			->leftjoin('sloc d', 'd.slocid = t.sloctoid')
 			->leftjoin('prheader e', 'e.prheaderid = t.prheaderid')
-      ->leftjoin('materialtype f', 'f.materialtypeid = a.materialtypeid')			
-      ->where('t.poheaderid = :poheaderid',
+->leftjoin('materialtype f', 'f.materialtypeid = a.materialtypeid')			
+->where('t.poheaderid = :poheaderid',
 			array(
 				':poheaderid' => $id
 			))->queryScalar();
     $result['total'] = $cmd;
     $cmd             = Yii::app()->db->createCommand()
-      ->select('t.*,e.prno,a.productcode,a.productname,c.namamesin,d.sloccode,t.description,f.materialtypecode,
-        getamountdetailbypo(t.poheaderid,t.pojasaid) as totprice,
-        (select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uomid) as uomcode')
-      ->from('pojasa t')
-      ->leftjoin('poheader g', 'g.poheaderid = t.poheaderid')
-      ->leftjoin('product a', 'a.productid = t.productid')
-      ->leftjoin('mesin c', 'c.mesinid = t.mesinid')
-      ->leftjoin('sloc d', 'd.slocid = t.sloctoid')
+					->select('t.*,e.prno,a.productcode,a.productname,c.namamesin,d.sloccode,t.description,f.materialtypecode,
+					getamountdetailbypo(t.poheaderid,t.pojasaid) as totprice,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uomid) as uomcode')
+					->from('pojasa t')
+					->leftjoin('poheader g', 'g.poheaderid = t.poheaderid')
+					->leftjoin('product a', 'a.productid = t.productid')
+					->leftjoin('mesin c', 'c.mesinid = t.mesinid')
+					->leftjoin('sloc d', 'd.slocid = t.sloctoid')
 			->leftjoin('prheader e', 'e.prheaderid = t.prheaderid')
 			->leftjoin('materialtype f', 'f.materialtypeid = a.materialtypeid')
-      ->where('t.poheaderid = :poheaderid', array(
+					->where('t.poheaderid = :poheaderid', array(
 		':poheaderid' => $id
 		))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
     foreach ($cmd as $data) {
@@ -789,28 +803,29 @@ class PoheaderController extends Controller {
         'prno' => $data['prno'],
         'prjasaid' => $data['prjasaid'],
         'productid' => $data['productid'],
-        'productcode' => $data['productcode'],
-        'productname' => $data['productname'],
+		'productcode' => $data['productcode'],
+		'productname' => $data['productname'],
         'qty' => Yii::app()->format->formatNumber($data['qty']),
         'uomid' => $data['uomid'],
         'uomcode' => $data['uomcode'],
-		    'reqdate' => date(Yii::app()->params['dateviewfromdb'], strtotime($data['reqdate'])),
+		'reqdate' => date(Yii::app()->params['dateviewfromdb'], strtotime($data['reqdate'])),
         'mesinid' => $data['mesinid'],
         'namamesin' => $data['namamesin'],
         'price' => Yii::app()->format->formatNumber($data['price']),
         'totprice' => Yii::app()->format->formatNumber($data['totprice']),
         'sloctoid' => $data['sloctoid'],
         'sloccode' => $data['sloccode'],
-		    'description' => $data['description']
+		'description' => $data['description']
       );
     }
     $result = array_merge($result, array(
       'rows' => $row
     ));
+    ;
     echo CJSON::encode($result);
   }
   public function actionSearchPoResult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -825,27 +840,29 @@ class PoheaderController extends Controller {
     $result          = array();
     $row             = array();
     $cmd             = Yii::app()->db->createCommand()->select('count(1) as total')
-      ->from('poresult t')
-      ->leftjoin('poheader g', 'g.poheaderid = t.poheaderid')
-      ->leftjoin('product a', 'a.productid = t.productid')
-      ->leftjoin('prheader b', 'b.prheaderid = t.prheaderid')
-      ->where('t.poheaderid = :poheaderid',
-        array(':poheaderid' => $id))->queryScalar();
+					->from('poresult t')
+					->leftjoin('poheader g', 'g.poheaderid = t.poheaderid')
+					->leftjoin('product a', 'a.productid = t.productid')
+					->leftjoin('prheader b', 'b.prheaderid = t.prheaderid')
+					->where('t.poheaderid = :poheaderid',
+					array(
+				':poheaderid' => $id
+				))->queryScalar();
     $result['total'] = $cmd;
     $cmd             = Yii::app()->db->createCommand()
-      ->select('t.*,a.productcode,a.productname,b.prno,
-        (select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uomid) as uomcode,t.description,
-        (select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom2id) as uom2code,
-        (select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code,
-        (select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom4id) as uom4code')
-      ->from('poresult t')
-      ->leftjoin('poheader g', 'g.poheaderid = t.poheaderid')
-      ->leftjoin('product a', 'a.productid = t.productid')
-      ->leftjoin('prheader b', 'b.prheaderid = t.prheaderid')
-      ->where('t.poheaderid = :poheaderid', array(
-		    ':poheaderid' => $id
-		  ))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
-	  foreach ($cmd as $data) {
+					->select('t.*,a.productcode,a.productname,b.prno,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uomid) as uomcode,t.description,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom2id) as uom2code,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom4id) as uom4code')
+					->from('poresult t')
+					->leftjoin('poheader g', 'g.poheaderid = t.poheaderid')
+					->leftjoin('product a', 'a.productid = t.productid')
+					->leftjoin('prheader b', 'b.prheaderid = t.prheaderid')
+					->where('t.poheaderid = :poheaderid', array(
+		':poheaderid' => $id
+		))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
+	foreach ($cmd as $data) {
       $row[] = array(
         'poresultid' => $data['poresultid'],
         'poheaderid' => $data['poheaderid'],
@@ -853,21 +870,18 @@ class PoheaderController extends Controller {
         'prheaderid' => $data['prheaderid'],
         'prno' => $data['prno'],
         'productid' => $data['productid'],
-        'productcode' => $data['productcode'],
-        'productname' => $data['productname'],
+		'productcode' => $data['productcode'],
+		'productname' => $data['productname'],
         'qty' => Yii::app()->format->formatNumber($data['qty']),
-        'qty2' => Yii::app()->format->formatNumber($data['qty2']),
-        'qty3' => Yii::app()->format->formatNumber($data['qty3']),
-        'qty4' => Yii::app()->format->formatNumber($data['qty4']),
+		'qty2' => Yii::app()->format->formatNumber($data['qty2']),
+		'qty3' => Yii::app()->format->formatNumber($data['qty3']),
         'uomid' => $data['uomid'],
-        'uom2id' => $data['uom2id'],
-        'uom3id' => $data['uom3id'],
-        'uom4id' => $data['uom4id'],
+		'uom2id' => $data['uom2id'],
+		'uom3id' => $data['uom3id'],
         'uomcode' => $data['uomcode'],
-        'uom2code' => $data['uom2code'],
-        'uom3code' => $data['uom3code'],
-        'uom4code' => $data['uom4code'],
-        'description' => $data['description']
+		'uom2code' => $data['uom2code'],
+		'uom3code' => $data['uom3code'],
+		'description' => $data['description']
       );
     }
     $result = array_merge($result, array(
@@ -876,7 +890,7 @@ class PoheaderController extends Controller {
     echo CJSON::encode($result);
   }
   public function actionSearchTaxpo() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -891,18 +905,20 @@ class PoheaderController extends Controller {
     $result          = array();
     $row             = array();
     $cmd             = Yii::app()->db->createCommand()->select('count(1) as total')
-      ->from('taxpo t')
-      ->leftjoin('tax a', 'a.taxid = t.taxid')
-      ->where('t.poheaderid = :poheaderid',
-        array(':poheaderid' => $id))->queryScalar();
+					->from('taxpo t')
+					->leftjoin('tax a', 'a.taxid = t.taxid')
+					->where('t.poheaderid = :poheaderid',
+					array(
+						':poheaderid' => $id
+					))->queryScalar();
     $result['total'] = $cmd;
     $cmd             = Yii::app()->db->createCommand()
-      ->select('t.*,a.taxcode,a.taxvalue')
-      ->from('taxpo t')
-      ->leftjoin('tax a', 'a.taxid = t.taxid')
-      ->where('t.poheaderid = :poheaderid', array(
-		    ':poheaderid' => $id
-		  ))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
+					->select('t.*,a.taxcode,a.taxvalue')
+					->from('taxpo t')
+					->leftjoin('tax a', 'a.taxid = t.taxid')
+					->where('t.poheaderid = :poheaderid', array(
+		':poheaderid' => $id
+		))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
     foreach ($cmd as $data) {
       $row[] = array(
         'taxpoid' => $data['taxpoid'],
@@ -915,6 +931,7 @@ class PoheaderController extends Controller {
     $result = array_merge($result, array(
       'rows' => $row
     ));
+    ;
     echo CJSON::encode($result);
   }
   public function actionReject() {
@@ -965,21 +982,22 @@ class PoheaderController extends Controller {
   }
   private function ModifyData($connection,$arraydata) {
 		$id = (int)$arraydata[0];
-		$sql = 'call Modifpoheader(:vid,:vpodate,:vplantid,:vaddressbookid,:vaddresscontactid,:vpaymentmethodid,
+		$sql = 'call Modifpoheader(:vid,:vpono,:vpodate,:vplantid,:vaddressbookid,:vaddresscontactid,:vpaymentmethodid,
 								:vcurrencyid,:vcurrencyrate,:visjasa,:visimport,:vheadernote,:vdatauser)';
 		$command=$connection->createCommand($sql);
 		$command->bindvalue(':vid', $arraydata[0], PDO::PARAM_STR);
 		$this->DeleteLock($this->menuname, $arraydata[0]);
-		$command->bindvalue(':vpodate', $arraydata[1], PDO::PARAM_STR);
-		$command->bindvalue(':vplantid', $arraydata[2], PDO::PARAM_STR);
-		$command->bindvalue(':vaddressbookid', $arraydata[3], PDO::PARAM_STR);
-		$command->bindvalue(':vaddresscontactid', $arraydata[4], PDO::PARAM_STR);
-		$command->bindvalue(':vpaymentmethodid', $arraydata[5], PDO::PARAM_STR);
-		$command->bindvalue(':vcurrencyid', $arraydata[6], PDO::PARAM_STR);
-		$command->bindvalue(':vcurrencyrate', $arraydata[7], PDO::PARAM_STR);
-		$command->bindvalue(':visjasa', $arraydata[8], PDO::PARAM_STR);
-		$command->bindvalue(':visimport', $arraydata[9], PDO::PARAM_STR);
-		$command->bindvalue(':vheadernote', $arraydata[10], PDO::PARAM_STR);
+		$command->bindvalue(':vpono', $arraydata[1], PDO::PARAM_STR);
+		$command->bindvalue(':vpodate', $arraydata[2], PDO::PARAM_STR);
+		$command->bindvalue(':vplantid', $arraydata[3], PDO::PARAM_STR);
+		$command->bindvalue(':vaddressbookid', $arraydata[4], PDO::PARAM_STR);
+		$command->bindvalue(':vaddresscontactid', $arraydata[5], PDO::PARAM_STR);
+		$command->bindvalue(':vpaymentmethodid', $arraydata[6], PDO::PARAM_STR);
+		$command->bindvalue(':vcurrencyid', $arraydata[7], PDO::PARAM_STR);
+		$command->bindvalue(':vcurrencyrate', $arraydata[8], PDO::PARAM_STR);
+		$command->bindvalue(':visjasa', $arraydata[9], PDO::PARAM_STR);
+		$command->bindvalue(':visimport', $arraydata[10], PDO::PARAM_STR);
+		$command->bindvalue(':vheadernote', $arraydata[11], PDO::PARAM_STR);
 		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
 		$command->execute();					
 	}
@@ -989,6 +1007,7 @@ class PoheaderController extends Controller {
     $transaction = $connection->beginTransaction();
     try {
 			$this->ModifyData($connection,array((isset($_POST['poheader-poheaderid'])?$_POST['poheader-poheaderid']:''),
+			$_POST['poheader-pono'],
 			date(Yii::app()->params['datetodb'], strtotime($_POST['poheader-podate'])),
 			$_POST['poheader-plantid'],$_POST['poheader-addressbookid'],$_POST['poheader-addresscontactid'],$_POST['poheader-paymentmethodid'],
 			$_POST['poheader-currencyid'],$_POST['poheader-currencyrate'],(isset($_POST['poheader-isjasa']) ? 1 : 0),
@@ -1031,7 +1050,7 @@ class PoheaderController extends Controller {
 		$command->execute();
 	}
   public function actionSavedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1063,7 +1082,7 @@ class PoheaderController extends Controller {
 		}
   }
   public function actionSavepojasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1102,17 +1121,17 @@ class PoheaderController extends Controller {
 		}
   }
   public function actionSavePoresult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
     $transaction = $connection->beginTransaction();
     try {
       if (isset($_POST['isNewRecord'])) {
-        $sql     = 'call InsertPoresult(:vpoheaderid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vuom4id,:vqty,:vqty2,:vqty3,:vqty4,:vdescription,:vdatauser)';
+        $sql     = 'call InsertPoresult(:vpoheaderid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vqty,:vqty2,:vqty3,:vdescription,:vdatauser)';
         $command = $connection->createCommand($sql);
       } else {
-        $sql     = 'call UpdatePoresult(:vid,:vpoheaderid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vuom4id,:vqty,:vqty2,:vqty3,:vqty4,:vdescription,:vdatauser)';
+        $sql     = 'call UpdatePoresult(:vid,:vpoheaderid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vqty,:vqty2,:vqty3,:vdescription,:vdatauser)';
         $command = $connection->createCommand($sql);
         $command->bindvalue(':vid', $_POST['poresultid'], PDO::PARAM_STR);
         $this->DeleteLock($this->menuname, $_POST['poresultid']);
@@ -1122,11 +1141,9 @@ class PoheaderController extends Controller {
       $command->bindvalue(':vuomid', $_POST['uomid'], PDO::PARAM_STR);
       $command->bindvalue(':vuom2id', $_POST['uom2id'], PDO::PARAM_STR);
 			$command->bindvalue(':vuom3id', $_POST['uom3id'], PDO::PARAM_STR);
-			$command->bindvalue(':vuom4id', $_POST['uom4id'], PDO::PARAM_STR);
 			$command->bindvalue(':vqty', $_POST['qty'], PDO::PARAM_STR);
 			$command->bindvalue(':vqty2', $_POST['qty2'], PDO::PARAM_STR);
 			$command->bindvalue(':vqty3', $_POST['qty3'], PDO::PARAM_STR);
-			$command->bindvalue(':vqty4', $_POST['qty4'], PDO::PARAM_STR);
       $command->bindvalue(':vdescription', $_POST['description'], PDO::PARAM_STR);
       $command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
       $command->execute();
@@ -1154,7 +1171,7 @@ class PoheaderController extends Controller {
 		$command->execute();
 	}
   public function actionSavetaxpo() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1423,7 +1440,7 @@ class PoheaderController extends Controller {
     }
 	}
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1446,7 +1463,7 @@ class PoheaderController extends Controller {
     }
   }
 	public function actionPurgealldetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1469,7 +1486,7 @@ class PoheaderController extends Controller {
     }
   }
 	public function actionPurgedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1492,7 +1509,7 @@ class PoheaderController extends Controller {
     }
   }
   public function actionPurgepojasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1515,7 +1532,7 @@ class PoheaderController extends Controller {
     }
   }
   public function actionPurgeresult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1538,7 +1555,7 @@ class PoheaderController extends Controller {
     }
   }
   public function actionPurgeTaxpo() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1677,7 +1694,7 @@ class PoheaderController extends Controller {
 					$symbol = '';
 					foreach ($dataReader1 as $row1) {
 						$this->pdf->row(array(
-							Yii::app()->format->formatCurrency($row1['qty']),
+							Yii::app()->format->formatNumber($row1['qty']),
 							$row1['uomcode'],
 							$row1['productname']."\n"."Request Date: ".date(Yii::app()->params['dateviewfromdb'], strtotime($row1['reqdate']))."\n"."Note: ".$row1['description'],
 							Yii::app()->format->formatCurrency($row1['price'], $row1['symbol']),
@@ -1750,17 +1767,17 @@ class PoheaderController extends Controller {
 					$symbol = '';
 					foreach ($dataReader1 as $row1) {
 						$this->pdf->row(array(
-							Yii::app()->format->formatCurrency($row1['qty']),
+							Yii::app()->format->formatNumber($row1['qty']),
 							$row1['uomcode'],
 							$row1['productname'].
 							"\n"."Under Tol: ".$row1['toleransidown'].'%'.
 							"\n"."Over Tol: ".$row1['toleransiup'].'%'.
 							"\n"."Request Date: ".date(Yii::app()->params['dateviewfromdb'], strtotime($row1['arrivedate'])).
 							"\n"."Note: ".$row1['itemnote'],
-							Yii::app()->format->formatCurrency($row1['price'], $row1['symbol']),
-							Yii::app()->format->formatCurrency($row1['jumlah'], $row1['symbol']),
-							Yii::app()->format->formatCurrency($row1['ppn'], $row1['symbol']),
-							Yii::app()->format->formatCurrency($row1['total'], $row1['symbol'])
+							Yii::app()->format->formatPo($row1['price'], $row1['symbol']),
+							Yii::app()->format->formatPo($row1['jumlah'], $row1['symbol']),
+							Yii::app()->format->formatPo($row1['ppn'], $row1['symbol']),
+							Yii::app()->format->formatPo($row1['total'], $row1['symbol'])
 						));
 						$jumlah = $row1['jumlah'] + $jumlah;
 						$ppn = $row1['ppn'] + $ppn;
@@ -1772,9 +1789,9 @@ class PoheaderController extends Controller {
 						'',
 						'',
 						'Grand Total',
-						Yii::app()->format->formatCurrency($jumlah,$symbol),
-						Yii::app()->format->formatCurrency($ppn,$symbol),
-						Yii::app()->format->formatCurrency($total,$symbol),
+						Yii::app()->format->formatPo($jumlah,$symbol),
+						Yii::app()->format->formatPo($ppn,$symbol),
+						Yii::app()->format->formatPo($total,$symbol),
 					));
 				}
 				else {
@@ -1789,7 +1806,7 @@ class PoheaderController extends Controller {
 						$symbol = '';
 						foreach ($dataReader1 as $row1) {
 						$this->pdf->row(array(
-						Yii::app()->format->formatCurrency($row1['qty']),
+						Yii::app()->format->formatNumber($row1['qty']),
 						$row1['uomcode'],
 						iconv("UTF-8", "ISO-8859-1", $row1['productname']),
 						date(Yii::app()->params['dateviewfromdb'], strtotime($row1['arrivedate'])),

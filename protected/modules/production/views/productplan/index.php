@@ -54,7 +54,18 @@
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
-				return value;
+				if (row.recordstatus >= 4) {
+					if (row.qtyres > 0) {
+						return '<div style=\"background-color:yellow;color:black;\">'+value+'</div>';
+					} else 
+					if (row.qtyres == 0) {
+						return '<div style=\"background-color:red;color:white;\">'+value+'</div>';
+					} else {
+						return value;
+					}
+				} else {
+					return value;
+				}
 		}},
 		{
 			field:'soheaderid',
@@ -97,17 +108,20 @@
 			return row.recordstatusname;
 		}},",
 	'addload'=>"
-$('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.");
 		$('#productplan-productplandate').datebox({
 			value: (new Date().toString('dd-MMM-yyyy'))
 		});	",
-	'searchfield'=> array ('productplanid','plantcode','productplanno','productplandate','sono','customer','sloccode','productname','description','recordstatus'),
+	'searchfield'=> array ('productplanid','plantcode','productplanno','productplandate','sono','customer','sloccode','productcode','productname','description','recordstatus'),
 	'headerform'=> "
 		<input type='hidden' id='productplan-productid' name='productplan-productid' value=''></input>
 		<table cellpadding='5'>
 		<tr>
+				<td>".GetCatalog('productplanno')."</td>
+				<td><input class='easyui-textbox' id='productplan-productplanno' name='productplan-productplanno' data-options='readonly:true'></input></td>
 				<td>".GetCatalog('productplandate')."</td>
 				<td><input class='easyui-datebox' id='productplan-productplandate' name='productplan-productplandate' data-options='formatter:dateformatter,required:true,parser:dateparser'></input></td>
+			</tr>
+			<tr>
 				<td>".getCatalog('plant')."</td>
 				<td><select class='easyui-combogrid' id='productplan-plantid' name='productplan-plantid' style='width:150px' data-options=\"
 								panelWidth: '500px',
@@ -125,8 +139,6 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 								fitColumns: true
 						\">
 				</select></td>
-</tr>
-<tr>
 			<td>".GetCatalog('soheader')."</td>
 				<td>
 					<select class='easyui-combogrid' id='productplan-soheaderid' name='productplan-soheaderid' style='width:250px' data-options=\"
@@ -177,6 +189,8 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 						fitColumns: true\">
 					</select>
 				</td>
+			</tr>
+			<tr>
 				<td>".GetCatalog('customer')."</td>
 				<td>
 					<select class='easyui-combogrid' id='productplan-addressbookid' name='productplan-addressbookid' style='width:250px' data-options=\"
@@ -194,8 +208,6 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 						fitColumns: true\">
 					</select>
 				</td>
-			</tr>
-			<tr>
 				<td>".GetCatalog('okparent')."</td>
 				<td>
 					<select class='easyui-combogrid' id='productplan-parentplanid' name='productplan-parentplanid' style='width:250px' data-options=\"
@@ -229,6 +241,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 	'downloadbuttons'=>"
 		<a href='javascript:void(0)' title='".getCatalog('pdfoperator')."' class='easyui-linkbutton' iconCls='icon-pdf' plain='true' onclick='pdfoperator()'></a>
 		<a href='javascript:void(0)' title='".getCatalog('pdfFG')."' class='easyui-linkbutton' iconCls='icon-pdf' plain='true' onclick='pdfFG()'></a>
+		<a href='javascript:void(0)' title='".getCatalog('pdfpakai')."' class='easyui-linkbutton' iconCls='icon-pdf' plain='true' onclick='pdfpakai()'></a>
 	",
 	'loadsuccess' => "
 		$('#productplan-productplanno').textbox('setValue',data.productplanno);
@@ -294,6 +307,11 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 			var array = 'id='+rows.productplanid;
 			window.open('".Yii::app()->createUrl('production/productplan/pdfFG')."?'+array);
 		};
+		function pdfpakai() {
+			var rows = $('#dg-productplan').edatagrid('getSelected');
+			var array = 'id='+rows.productplanid;
+			window.open('".Yii::app()->createUrl('production/productplan/pdfpakai')."?'+array);
+		};
 		function GenerateBOMPP() {
 			var rows = $('#dg-productplan-productplanfg').edatagrid('getSelections');
 			jQuery.ajax({'url':'".$this->createUrl('productplan/startup') ."',
@@ -337,6 +355,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 			'subs'=>"
 				{field:'productplanfgid',title:'".getCatalog('planfgid') ."',width:'60px'},
 				{field:'materialtypecode',title:'".GetCatalog('materialtypecode') ."',width:'150px'},
+				{field:'productcode',title:'".GetCatalog('productcode') ."',width:'150px'},
 				{field:'productname',title:'".GetCatalog('productname') ."',width:'450px'},
 				{field:'qtystock',title:'".GetCatalog('qtystock') ."',formatter: function(value,row,index){
 					if (row.stockcount == '1') {
@@ -351,11 +370,11 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 					},width:'100px'},
 				{field:'qty',title:'".GetCatalog('qty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'qtyres',title:'".GetCatalog('qtyprod') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'qtyout',title:'".GetCatalog('qtyout') ."',
 					formatter: function(value,row,index){
@@ -363,17 +382,19 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 					},width:'100px'},
 				{field:'qtyokfree',title:'".GetCatalog('qtyokfree') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'uomcode',title:'".GetCatalog('uomcode') ."',width:'80px'},
 				{field:'qty2',title:'".GetCatalog('qty2') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom2code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom2code',title:'".GetCatalog('uom2code') ."',width:'80px'},
 				{field:'qty3',title:'".GetCatalog('qty3') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom3code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom3code',title:'".GetCatalog('uom3code') ."',width:'80px'},
 				{field:'bomversion',title:'".GetCatalog('bomversion') ."',width:'100px'},
 				{field:'processprdname',title:'".GetCatalog('processprdname') ."',width:'100px'},
 				{field:'namamesin',title:'".GetCatalog('mesin') ."',width:'150px'},
@@ -467,7 +488,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 						return value;
 					}
 				},
-								{
+				{
 					field:'materialtypecode',
 					title:'".GetCatalog('materialtypecode') ."',
 					editor: {
@@ -480,6 +501,15 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 					width:'150px',
 					formatter: function(value,row,index){
 						return value;
+					}
+				},
+				{
+					field:'productcode',
+					title:'".getCatalog('productcode') ."',
+					width:'150px',
+					sortable: true,
+					formatter: function(value,row,index){
+										return row.productcode;
 					}
 				},
 				{
@@ -496,6 +526,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 							url:'".Yii::app()->createUrl('common/product/index',array('grid'=>true,'plantplanhp'=>true)) ."',
 							onBeforeLoad: function(param){
 								param.plantid = $('#productplan-plantid').combogrid('getValue');
+								param.addressbookid = $('#productplan-addressbookid').combogrid('getValue');
 							},
 							fitColumns:true,
 							required:true,
@@ -521,7 +552,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 										$(uomid.target).combogrid('setValue',data.uom1);
 										$(uom2id.target).combogrid('setValue',data.uom2);
 										$(uom3id.target).combogrid('setValue',data.uom3);
-										$(stdqty.target).numberbox('setValue',data.qty);
+										$(stdqty.target).numberbox('setValue',data.qty1);
 										$(stdqty2.target).numberbox('setValue',data.qty2);
 										$(stdqty3.target).numberbox('setValue',data.qty3);
 										$(bomid.target).combogrid('setValue',data.bomid);
@@ -894,6 +925,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 							},
 							onBeforeLoad: function(param){
 								param.plantid = $('#productplan-plantid').combogrid('getValue');
+								param.addressbookid = $('#productplan-addressbookid').combogrid('getValue');
 								param.productid = $('#productplan-productid').val();
 							},
 							loadMsg: '".getCatalog('pleasewait')."',
@@ -934,6 +966,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 				{field:'productplandetailid',title:'".GetCatalog('ID') ."',width:'50px'},
 				{field:'productplanfgid',title:'".GetCatalog('planfgid') ."',width:'50px'},
 				{field:'materialtypecode',title:'".GetCatalog('materialtypecode') ."',width:'150px'},
+				{field:'productcode',title:'".GetCatalog('productcode') ."',width:'150px'},
 				{field:'productname',title:'".GetCatalog('productname') ."',width:'450px'},
 				{field:'qtystock',title:'".GetCatalog('qtystock') ."',formatter: function(value,row,index){
 					if (row.stockcount == '1') {
@@ -944,14 +977,14 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 				},width:'100px'},
 				{field:'qty',title:'".GetCatalog('qty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'qtyfr',title:'".GetCatalog('qtyfr') ."',
 					formatter: function(value,row,index){
 						if (row.frcount == '1') {
 							return '<div style=\"background-color:cyan\">'+formatnumber('',value)+'</div>';
 						} else {
-							return formatnumber('',value,row.uomcode);
+							return formatnumber('',value);
 						}
 					},width:'100px'},
 				{field:'qtytrf',title:'".GetCatalog('qtytrf') ."',
@@ -959,7 +992,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 						if (row.trfcount == '1') {
 							return '<div style=\"background-color:cyan\">'+formatnumber('',value)+'</div>';
 						} else {
-							return formatnumber('',value,row.uomcode);
+							return formatnumber('',value);
 						}
 					},width:'100px'},
 				{field:'qtyres',title:'".GetCatalog('qtyuse') ."',
@@ -967,25 +1000,28 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 						if (row.rescount == '1') {
 							return '<div style=\"background-color:cyan\">'+formatnumber('',value)+'</div>';
 						} else {
-							return formatnumber('',value,row.uomcode);
+							return formatnumber('',value);
 						}
 					},width:'100px'},
+				{field:'uomcode',title:'".GetCatalog('uomcode') ."',width:'80px'},
 				{field:'qty2',title:'".GetCatalog('qty2') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom2code);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'qtyres2',title:'".GetCatalog('qtyuse2') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom2code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom2code',title:'".GetCatalog('uom2code') ."',width:'80px'},
 				{field:'qty3',title:'".GetCatalog('qty3') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom3code);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'qtyres3',title:'".GetCatalog('qtyuse3') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom3code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom3code',title:'".GetCatalog('uom3code') ."',width:'80px'},
 				{field:'bomversion',title:'".GetCatalog('bomversion') ."',width:'200px'},
 				{field:'slocfromcode',title:'".GetCatalog('slocfromcode') ."',width:'150px'},
 				{field:'sloctocode',title:'".GetCatalog('sloctocode') ."',width:'150px'},
@@ -1127,6 +1163,15 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 					}
 				},
 				{
+					field:'productcode',
+					title:'".getCatalog('productcode') ."',
+					width:'150px',
+					sortable: true,
+					formatter: function(value,row,index){
+										return row.productcode;
+					}
+				},
+				{
 					field:'productid',
 					title:'".getCatalog('productname') ."',
 					editor:{
@@ -1154,7 +1199,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 								var stdqty2 = $('#dg-productplan-productplandetail').datagrid('getEditor', {index: index, field:'stdqty2'});
 								var stdqty3 = $('#dg-productplan-productplandetail').datagrid('getEditor', {index: index, field:'stdqty3'});
 								var bomid = $('#dg-productplan-productplandetail').datagrid('getEditor', {index: index, field:'bomid'});								
-								jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/indexproductplant',array('grid'=>true,'getdata'=>true)) ."',
+								jQuery.ajax({'url':'".Yii::app()->createUrl('common/productplant/index',array('grid'=>true,'getdata'=>true)) ."',
 									'data':{'productid':$(productid.target).combogrid('getValue')},
 									'type':'post','dataType':'json',
 									'success':function(data)
@@ -1162,7 +1207,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 										$(uomid.target).combogrid('setValue',data.uom1);
 										$(uom2id.target).combogrid('setValue',data.uom2);
 										$(uom3id.target).combogrid('setValue',data.uom3);
-										$(stdqty.target).numberbox('setValue',data.qty1);
+										$(stdqty.target).numberbox('setValue',data.qty);
 										$(stdqty2.target).numberbox('setValue',data.qty2);
 										$(stdqty3.target).numberbox('setValue',data.qty3);
 										$(bomid.target).combogrid('setValue',data.bomid);
@@ -1356,6 +1401,7 @@ $('#productplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.
 						},
 						onBeforeLoad: function(param){
 							param.plantid = $('#productplan-plantid').combogrid('getValue');
+							param.addressbookid = $('#productplan-addressbookid').combogrid('getValue');
 							param.productid = $('#productplan-productid').val();
 						},
 						fitColumns:true,

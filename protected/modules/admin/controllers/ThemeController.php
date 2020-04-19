@@ -9,7 +9,7 @@ class ThemeController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$themeid = GetSearchText(array('POST','Q'),'themeid');
 		$themename = GetSearchText(array('POST','Q'),'themename');
 		$description = GetSearchText(array('POST','Q'),'description');
@@ -152,19 +152,24 @@ class ThemeController extends Controller {
 			}	
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('themeid');
+		$this->dataprint['themename'] = GetSearchText(array('GET'),'themename');
+		$this->dataprint['themeprev'] = GetSearchText(array('GET'),'themeprev');
+		$this->dataprint['url'] = GetSearchText(array('GET'),'url');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'themeid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlethemename'] = GetCatalog('themename');
-		$this->dataprint['titledescription'] = GetCatalog('description');
 		$this->dataprint['titlethemeprev'] = GetCatalog('themeprev');
+		$this->dataprint['titledescription'] = GetCatalog('description');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-		$this->dataprint['url'] = Yii::app()->params['baseUrl'];
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['themename'] = GetSearchText(array('GET'),'themename');
-    $this->dataprint['themeprev'] = GetSearchText(array('GET'),'themeprev');
   }
 }

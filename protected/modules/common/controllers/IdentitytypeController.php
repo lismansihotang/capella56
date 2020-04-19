@@ -9,7 +9,7 @@ class IdentitytypeController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$identitytypeid = GetSearchText(array('POST','Q'),'identitytypeid');
 		$identitytypename = GetSearchText(array('POST','Q'),'identitytypename');
 		$page = GetSearchText(array('POST','GET'),'page',1,'int');
@@ -147,15 +147,20 @@ class IdentitytypeController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('identitytypeid');
+		$this->dataprint['identitytypename'] = GetSearchText(array('GET'),'identitytypename');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'identitytypeid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titleidentitytypename'] = GetCatalog('identitytypename');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['identitytypename'] = GetSearchText(array('GET'),'identitytypename');
   }
 }

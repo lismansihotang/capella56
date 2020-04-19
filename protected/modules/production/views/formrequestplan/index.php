@@ -105,7 +105,6 @@
 		$('#formrequestplan-formrequestdate').datebox({
 			value: (new Date().toString('dd-MMM-yyyy'))
 		});	
-$('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.");
 		$('#tabdetails-formrequestplan').tabs('disableTab',1);
 		$('#tabdetails-formrequestplan').tabs('disableTab',2);
 	",
@@ -114,8 +113,14 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 	<input type='hidden' id='formrequestplan-isjasa-value' name='formrequestplan-isjasa-value'></input>
 		<table cellpadding='5'>
 			<tr>
+				<td>".GetCatalog('formrequestno')."</td>
+				<td><input class='easyui-textbox' id='formrequestplan-formrequestno' name='formrequestplan-formrequestno' data-options='readonly:true'></input></td>
+			</tr>
+			<tr>
 				<td>".GetCatalog('formrequestdate')."</td>
 				<td><input class='easyui-datebox' type='text' id='formrequestplan-formrequestdate' name='formrequestplan-formrequestdate' data-options='formatter:dateformatter,required:true,parser:dateparser'></input></td>
+			</tr>
+			<tr>
 				<td>".getCatalog('plant')."</td>
 				<td><select class='easyui-combogrid' id='formrequestplan-plantid' name='formrequestplan-plantid' style='width:150px' data-options=\"
 								panelWidth: '500px',
@@ -133,7 +138,7 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 								fitColumns: true
 						\">
 				</select></td>
-			</tr>
+				</tr>
 				<tr>
 				<td>".GetCatalog('productplan')."</td>
 				<td>
@@ -159,7 +164,9 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 						fitColumns: true\">
 					</select>
 				</td>
-<td>".GetCatalog('isjasa')."</td>
+			</tr>
+			<tr>
+				<td>".GetCatalog('isjasa')."</td>
 				<td><input class='easyui-checkbox' id='formrequestplan-isjasa' name='formrequestplan-isjasa' data-options=\"
 				onChange: function(checked){
 					if (checked == true) {
@@ -220,7 +227,9 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 						fitColumns: true\">
 					</select>
 				</td>
-<td>".GetCatalog('requestedby')."</td>
+			</tr>
+			<tr>
+				<td>".GetCatalog('requestedby')."</td>
 				<td>
 					<select class='easyui-combogrid' id='formrequestplan-requestedbyid' name='formrequestplan-requestedbyid' style='width:250px' data-options=\"
 						panelWidth: '500px',
@@ -314,16 +323,19 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 					},width:'100px'},
 				{field:'tsqty',title:'".GetCatalog('tsqty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uomcode',title:'".GetCatalog('uomcode') ."',width:'80px'},
 				{field:'qty2',title:'".GetCatalog('qty2') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom2code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom2code',title:'".GetCatalog('uom2code') ."',width:'80px'},
 				{field:'qty3',title:'".GetCatalog('qty3') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom3code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom3code',title:'".GetCatalog('uom3code') ."',width:'80px'},
 				{field:'reqdate',title:'".GetCatalog('reqdate') ."',width:'100px'},
 				{field:'sloccode',title:'".GetCatalog('sloccode') ."',width:'100px'},
 				{field:'namamesin',title:'".GetCatalog('mesin') ."',width:'150px'},
@@ -415,6 +427,15 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 					width:'150px',
 					formatter: function(value,row,index){
 						return value;
+					}
+				},
+				{
+					field:'productcode',
+					title:'".getCatalog('productcode') ."',
+					width:'150px',
+					sortable: true,
+					formatter: function(value,row,index){
+										return row.productcode;
 					}
 				},
 				{
@@ -960,24 +981,27 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 				{field:'productname',title:'".GetCatalog('productname') ."',width:'250px'},
 				{field:'qty',title:'".GetCatalog('qty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'prqty',title:'".GetCatalog('prqty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'tsqty',title:'".GetCatalog('tsqty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uomcode',title:'".GetCatalog('uomcode') ."',width:'80px'},
 				{field:'qty2',title:'".GetCatalog('qty2') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom2code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom2code',title:'".GetCatalog('uom2code') ."',width:'80px'},
 				{field:'qty3',title:'".GetCatalog('qty3') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom3code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom3code',titl21e:'".GetCatalog('uom3code') ."',width:'80px'},
 				{field:'description',title:'".GetCatalog('description') ."',width:'300px'},
 			",
 			'columns'=>"
@@ -1069,6 +1093,15 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 					}
 				},
 				{
+					field:'productcode',
+					title:'".getCatalog('productcode') ."',
+					width:'150px',
+					sortable: true,
+					formatter: function(value,row,index){
+										return row.productcode;
+					}
+				},				
+				{
 					field:'productid',
 					title:'".getCatalog('productname') ."',
 					editor:{
@@ -1092,7 +1125,6 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 								var uomid = $('#dg-formrequestplan-formrequestresult').datagrid('getEditor', {index: index, field:'uomid'});
 								var uom2id = $('#dg-formrequestplan-formrequestresult').datagrid('getEditor', {index: index, field:'uom2id'});
 								var uom3id = $('#dg-formrequestplan-formrequestresult').datagrid('getEditor', {index: index, field:'uom3id'});
-								var uom4id = $('#dg-formrequestplan-formrequestresult').datagrid('getEditor', {index: index, field:'uom4id'});
 								var stdqty = $('#dg-formrequestplan-formrequestresult').datagrid('getEditor', {index: index, field:'stdqty'});
 								var stdqty2 = $('#dg-formrequestplan-formrequestresult').datagrid('getEditor', {index: index, field:'stdqty2'});
 								var stdqty3 = $('#dg-formrequestplan-formrequestresult').datagrid('getEditor', {index: index, field:'stdqty3'});
@@ -1118,7 +1150,7 @@ $('#formrequestplan-plantid').combogrid('setValue',".Yii::app()->user->defaultpl
 							]]
 						}	
 					},
-					width:'150px',
+					width:'450px',
 					sortable: true,
 					formatter: function(value,row,index){
 										return row.productname;

@@ -9,7 +9,7 @@ class ProvinceController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$provinceid = GetSearchText(array('POST','Q'),'provinceid');
 		$countrycode = GetSearchText(array('POST','Q'),'countrycode');
 		$countryname = GetSearchText(array('POST','Q'),'countryname');
@@ -22,56 +22,34 @@ class ProvinceController extends Controller {
 		$offset = ($page-1) * $rows;
 		$result = array();
 		$row = array();
+		$selectcount = ' select count(1) as total ';
+		$select = ' select t.provinceid,t.provincecode,t.provincename,t.countryid,p.countrycode,p.countryname,t.recordstatus ';
+		$from = ' from province t 
+			left join country p on p.countryid = t.countryid';
+		$where = ' where ';
 		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')	
-				->from('province t')
-				->join('country p', 't.countryid=p.countryid')
-				->where('(provinceid like :provinceid) and (provincecode like :provincecode) and (provincename like :provincename) and (p.countryname like :countryname)
-					and (p.countrycode like :countrycode)',
-						array(':provinceid'=>$provinceid,':provincecode'=>$provincecode,':provincename'=>$provincename,':countryname'=>$countryname,
-						':countrycode'=>$countrycode))
-				->queryScalar();
+			$where .= " (provinceid like '".$provinceid."') 
+			and (provincecode like '".$provincecode."') 
+			and (provincename like '".$provincename."') 
+			and (p.countryname like '".$countryname."')
+			and (p.countrycode like '".$countrycode."') ";
+		} else {
+			$where .= " ((provinceid like '".$provinceid."') 
+			or (provincecode like '".$provincecode."') 
+			or (provincename like '".$provincename."') 
+			or (p.countryname like '".$countryname."')
+			or (p.countrycode like '".$countrycode."')) 
+			and t.recordstatus = 1 ";
 		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')	
-				->from('province t')
-				->join('country p', 't.countryid=p.countryid')
-				->where('((provinceid like :provinceid) or (provincecode like :provincecode) or (provincename like :provincename) or (p.countryname like :countryname)
-				or (p.countrycode like :countrycode)) 
-				and t.recordstatus = 1',
-						array(':provinceid'=>$provinceid,':provincecode'=>$provincecode,':provincename'=>$provincename,':countryname'=>$countryname,
-						':countrycode'=>$countrycode))
-				->queryScalar();
-		}
+		$sql = $selectcount . $from . $where;
+		$cmd = Yii::app()->db->createCommand($sql)->queryScalar();
 		$result['total'] = $cmd;
 		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('t.*,p.countryname')			
-				->from('province t')
-				->join('country p', 't.countryid=p.countryid')
-				->where('(provinceid like :provinceid) and (provincecode like :provincecode) and (provincename like :provincename) and (p.countryname like :countryname)
-				and (p.countrycode like :countrycode)',
-						array(':provinceid'=>$provinceid,':provincecode'=>$provincecode,':provincename'=>$provincename,':countryname'=>$countryname,
-						':countrycode'=>$countrycode))
-				->offset($offset)
-				->limit($rows)
-				->order($sort.' '.$order)
-				->queryAll();
+			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order . ' limit ' . $offset . ',' . $rows;
+		} else {
+			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order;
 		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->select('t.*,p.countryname')			
-				->from('province t')
-				->join('country p', 't.countryid=p.countryid')
-				->where('((provinceid like :provinceid) or (provincecode like :provincecode) or (provincename like :provincename) or (p.countryname like :countryname)
-				or (p.countrycode like :countrycode)) and t.recordstatus = 1',
-						array(':provinceid'=>$provinceid,':provincecode'=>$provincecode,':provincename'=>$provincename,':countryname'=>$countryname,
-						':countrycode'=>$countrycode))
-				->order($sort.' '.$order)
-				->queryAll();
-		}
+		$cmd = Yii::app()->db->createCommand($sql)->queryAll();
 		foreach($cmd as $data) {	
 			$row[] = array(
 			'provinceid'=>$data['provinceid'],
@@ -170,21 +148,26 @@ class ProvinceController extends Controller {
 			}	
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-    $this->dataprint['titleid'] = GetCatalog('provinceid');
-    $this->dataprint['titlecountrycode'] = GetCatalog('countrycode');
-    $this->dataprint['titlecountryname'] = GetCatalog('countryname');
-    $this->dataprint['titleprovincecode'] = GetCatalog('provincecode');
-    $this->dataprint['titleprovincename'] = GetCatalog('provincename');
-    $this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['countrycode'] = GetSearchText(array('GET'),'countrycode');
-    $this->dataprint['countryname'] = GetSearchText(array('GET'),'countryname');
-    $this->dataprint['provincecode'] = GetSearchText(array('GET'),'provincecode');
-    $this->dataprint['provincename'] = GetSearchText(array('GET'),'provincename');
+		$this->dataprint['provincecode'] = GetSearchText(array('GET'),'provincecode');
+		$this->dataprint['provincename'] = GetSearchText(array('GET'),'provincename');
+		$this->dataprint['countrycode'] = GetSearchText(array('GET'),'countrycode');
+		$this->dataprint['countryname'] = GetSearchText(array('GET'),'countryname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'provinceid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
+		$this->dataprint['titleprovincecode'] = GetCatalog('provincecode');
+		$this->dataprint['titleprovincename'] = GetCatalog('provincename');
+		$this->dataprint['titlecountrycode'] = GetCatalog('countrycode');
+		$this->dataprint['titlecountryname'] = GetCatalog('countryname');
+		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
   }
 }

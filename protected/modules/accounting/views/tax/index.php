@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('accounting/tax/upload'),
 	'downpdf'=>Yii::app()->createUrl('accounting/tax/downpdf'),
 	'downxls'=>Yii::app()->createUrl('accounting/tax/downxls'),
+	'downdoc'=>Yii::app()->createUrl('accounting/tax/downdoc'),
 	'columns'=>"
 		{
 			field:'taxid',

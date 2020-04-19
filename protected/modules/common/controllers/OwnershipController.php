@@ -9,7 +9,7 @@ class OwnershipController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$ownershipid = GetSearchText(array('POST','Q'),'ownershipid');
 		$ownershipname = GetSearchText(array('POST','Q'),'ownershipname');
 		$page = GetSearchText(array('POST','GET'),'page',1,'int');
@@ -153,10 +153,15 @@ class OwnershipController extends Controller {
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('ownershipid');
+		$this->dataprint['ownershipname'] = GetSearchText(array('GET'),'ownershipname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'ownershipid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titleownershipname'] = GetCatalog('ownershipname');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['ownershipname'] = GetSearchText(array('GET'),'ownershipname');
   }
 }

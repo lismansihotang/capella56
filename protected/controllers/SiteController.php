@@ -42,11 +42,19 @@ class SiteController extends Controller {
 		$command->bindvalue(':vthemeid',$_POST['themeid'],PDO::PARAM_STR);
 		$command->bindvalue(':vusername',$_POST['username'],PDO::PARAM_STR);
 		$command->execute();
+    $model = Yii::app()->db->createCommand("select a.useraccessid,a.username,a.password,a.realname,b.languagename,c.themename 
+      from useraccess a
+      join language b on b.languageid = a.languageid 
+      join theme c on c.themeid = a.themeid 
+      where username = '" . $_POST['username'] . "'")->queryRow();
 		Yii::app()->user->realname = $_POST['realname'];
 		Yii::app()->user->email = $_POST['email'];
 		Yii::app()->user->phoneno = $_POST['phoneno'];
 		Yii::app()->user->languageid = $_POST['languageid'];
+		Yii::app()->user->languagename = $_POST['languagename'];
 		Yii::app()->user->themeid = $_POST['themeid'];
+    Yii::app()->user->themename = $model['themename'];
+    Yii::app()->theme = $model['themename'];
 		GetMessage(false, getcatalog('insertsuccess'));
   }
   public function actionHome() {		
@@ -75,7 +83,7 @@ class SiteController extends Controller {
     $this->redirect(Yii::app()->user->returnUrl);
   }
 	public function actionGetHistoryData() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$menuname = filter_input(INPUT_POST,'menuname');
 		$tableid = filter_input(INPUT_POST,'tableid');
 		$result     = array();
@@ -159,5 +167,45 @@ class SiteController extends Controller {
     catch (Exception $ex) {
       GetMessage(true,$ex->errorInfo);
     }
+  }
+  public function actionusertodo() {
+    header('Content-Type: application/json');
+    $page = GetSearchText(array('POST','GET'),'page',1,'int');
+		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
+		$sort = GetSearchText(array('POST','GET'),'sort','usertodoid','int');
+		$order = GetSearchText(array('POST','GET'),'order','desc','int');
+    $offset = ($page - 1) * $rows;
+    $result = array();
+    $row    = array();
+    $cmd = Yii::app()->db->createCommand()
+			->selectdistinct('count(1) as total')
+			->from('usertodo t')
+			->leftjoin('useraccess a','a.useraccessid = t.useraccessid')
+			->where("username = '" . Yii::app()->user->name . "' 
+				and isread = 0 
+				and plantid in (".getUserObjectValues('plant').")")
+			->queryScalar();
+    $result['total'] = $cmd;
+    $cmd = Yii::app()->db->createCommand()
+			->selectdistinct('t.usertodoid,t.tododate,t.menuname,t.docno,t.description')
+			->from('usertodo t')
+			->leftjoin('useraccess a','a.useraccessid = t.useraccessid')
+			->where("a.username = '" . Yii::app()->user->name . "' 
+				and isread = 0 
+				and plantid in (".getUserObjectValues('plant').")")
+			->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
+    foreach ($cmd as $data) {
+      $row[] = array(
+        'usertodoid' => $data['usertodoid'],
+        'tododate' => date(Yii::app()->params['dateviewfromdb'], strtotime($data['tododate'])),
+        'menuname' => $data['menuname'],
+        'docno' => $data['docno'],
+        'description' => $data['description']
+      );
+    }
+    $result = array_merge($result, array(
+      'rows' => $row
+    ));
+    echo CJSON::encode($result);
   }
 }

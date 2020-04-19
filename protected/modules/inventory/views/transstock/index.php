@@ -131,8 +131,14 @@
 	<input type='hidden' id='transstock-isretur-value' name='transstock-isretur-value' />
 		<table cellpadding='5'>
 			<tr>
+				<td>".GetCatalog('transstockno')."</td>
+				<td><input class='easyui-textbox' id='transstock-transstockno' name='transstock-transstockno' data-options='readonly:true'></input></td>
+			</tr>
+			<tr>
 				<td>".GetCatalog('transstockdate')."</td>
 				<td><input class='easyui-datebox' type='text' id='transstock-transstockdate' name='transstock-transstockdate' data-options='formatter:dateformatter,required:true,parser:dateparser'></input></td>
+			</tr>
+			<tr>
 				<td>".getCatalog('plant')."</td>
 				<td><select class='easyui-combogrid' id='transstock-plantid' name='transstock-plantid' style='width:150px' data-options=\"
 								panelWidth: '500px',
@@ -149,9 +155,7 @@
 								]],
 								fitColumns: true
 						\">
-				</select>
-</tr>
-<tr></td>
+				</select></td>
 			<td>".GetCatalog('isretur')."</td>
 				<td><input class='easyui-checkbox' id='transstock-isretur' name='transstock-isretur' data-options=\"
 				onChange: function(checked){
@@ -162,6 +166,8 @@
 					}
 				}
 				\"></input></td>
+				</tr>
+			<tr>
 				<td>".GetCatalog('formrequest')."</td>
 				<td>
 					<select class='easyui-combogrid' id='transstock-formrequestid' name='transstock-formrequestid' style='width:250px' data-options=\"
@@ -223,12 +229,16 @@
 			<tr>
 				<td>".GetCatalog('productplanno')."</td>
 				<td><input class='easyui-textbox' id='transstock-productplanno' name='transstock-productplanno' data-options='readonly:true' style='width:200px'></input></td>
+			</tr>
+			<tr>
 				<td>".GetCatalog('sono')."</td>
 				<td><input class='easyui-textbox' id='transstock-sono' name='transstock-sono' data-options='readonly:true' style='width:200px'></input></td>
 			</tr>
 			<tr>
 				<td>".GetCatalog('customer')."</td>
 				<td><input class='easyui-textbox' id='transstock-fullname' name='transstock-fullname' data-options='readonly:true' style='width:250px'></input></td>
+			</tr>
+			<tr>
 				<td>".GetCatalog('slocfrom')."</td>
 				<td>
 					<select class='easyui-combogrid' id='transstock-slocfromid' name='transstock-slocfromid' style='width:250px' data-options=\"
@@ -248,7 +258,6 @@
 						fitColumns: true\">
 					</select>
 				</td>
-</tr><tr>
 				<td>".GetCatalog('slocto')."</td>
 				<td>
 					<select class='easyui-combogrid' id='transstock-sloctoid' name='transstock-sloctoid' style='width:250px' data-options=\"
@@ -298,6 +307,8 @@
 						fitColumns: true\">
 					</select>
 				</td>
+			</tr>
+			<tr>
 				<td>".GetCatalog('headernote')."</td>
 				<td><input class='easyui-textbox' id='transstock-headernote' name='transstock-headernote' data-options='multiline:true' style='width:300px;height:100px'></input></td>
 			</tr>
@@ -307,7 +318,6 @@
 		$('#transstock-transstockdate').datebox({
 			value: (new Date().toString('dd-MMM-yyyy'))
 		});
-$('#transstock-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.");
 	",
 	'loadsuccess' => "
 		$('#transstock-transstockno').textbox('setValue',data.transstockno);
@@ -339,18 +349,28 @@ $('#transstock-plantid').combogrid('setValue',".Yii::app()->user->defaultplant."
 						if (row.stockcount == '1') {
 						return '<div style=\"background-color:cyan\">'+formatnumber('',value)+'</div>';
 						} else {
-							return formatnumber('',value,row.uomcode);
+							return formatnumber('',value);
+						}
+					},width:'100px'},
+					{field:'qtyreq',title:'".GetCatalog('qtyreq') ."',formatter: function(value,row,index){
+						if (row.stockcount == '1') {
+						return '<div style=\"background-color:cyan\">'+formatnumber('',value)+'</div>';
+						} else {
+							return formatnumber('',value);
 						}
 					},width:'100px'},
 				{field:'qty',title:'".GetCatalog('qty') ."',formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uomcode',title:'".GetCatalog('uomcode') ."',width:'80px'},
 				{field:'qty2',title:'".GetCatalog('qty2') ."',formatter: function(value,row,index){
-						return formatnumber('',value,row.uom2code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom2code',title:'".GetCatalog('uom2code') ."',width:'80px'},
 				{field:'qty3',title:'".GetCatalog('qty3') ."',formatter: function(value,row,index){
-						return formatnumber('',value,row.uom3code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom3code',title:'".GetCatalog('uom3code') ."',width:'80px'},
 				{field:'rakasal',title:'".GetCatalog('rakasal') ."',width:'100px'},
 				{field:'namamesin',title:'".GetCatalog('mesin') ."',width:'150px'},
 				{field:'lotno',title:'".GetCatalog('lotno') ."',width:'180px'},
@@ -446,12 +466,21 @@ $('#transstock-plantid').combogrid('setValue',".Yii::app()->user->defaultplant."
 					}
 				},
 				{
+					field:'productcode',
+					title:'".GetCatalog('productcode') ."',
+					width:'150px',
+					sortable: true,
+					formatter: function(value,row,index){
+										return row.productcode;
+					}
+				},
+				{
 					field:'productid',
 					title:'".GetCatalog('productname') ."',
 					editor:{
 						type:'combogrid',
 						options:{
-							panelWidth:'500px',
+							panelWidth:'800px',
 							mode : 'remote',
 							method:'get',
 							idField:'productid',
@@ -479,7 +508,7 @@ $('#transstock-plantid').combogrid('setValue',".Yii::app()->user->defaultplant."
 										$(uom3id.target).combogrid('setValue',data.uom3);
 										$(stdqty.target).numberbox('setValue',data.qty1);
 										$(stdqty2.target).numberbox('setValue',data.qty2);
-										$(stdqty3.target).numberbox('setValue',data.qty3);										
+										$(stdqty3.target).numberbox('setValue',data.qty3);
 									} ,
 									'cache':false});
 							},
@@ -487,6 +516,7 @@ $('#transstock-plantid').combogrid('setValue',".Yii::app()->user->defaultplant."
 							columns:[[
 								{field:'productid',title:'".GetCatalog('productid')."',width:'50px'},
 								{field:'materialtypecode',title:'".GetCatalog('materialtypecode')."',width:'150px'},
+								{field:'productcode',title:'".GetCatalog('productcode')."',width:'150px'},
 								{field:'productname',title:'".GetCatalog('productname')."',width:'400px'},
 							]]
 						}	
@@ -495,6 +525,24 @@ $('#transstock-plantid').combogrid('setValue',".Yii::app()->user->defaultplant."
 					sortable: true,
 					formatter: function(value,row,index){
 										return row.productname;
+					}
+				},
+				{
+					field:'qtystock',
+					title:'".GetCatalog('qtystock') ."',
+					width:'100px',
+					sortable: true,
+					formatter: function(value,row,index){
+						return formatnumber('',value);
+					}
+				},
+				{
+					field:'qtyreq',
+					title:'".GetCatalog('qtyreq') ."',
+					width:'100px',
+					sortable: true,
+					formatter: function(value,row,index){
+						return formatnumber('',value);
 					}
 				},
 				{

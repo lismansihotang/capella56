@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/addresstype/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/addresstype/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/addresstype/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/addresstype/downdoc'),
 	'columns'=>"
 		{
 			field:'addresstypeid',
@@ -40,7 +41,7 @@
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"". Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+					return '<img src=\"". Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 				} else {
 					return '';
 				}

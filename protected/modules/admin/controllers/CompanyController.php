@@ -23,7 +23,7 @@ class CompanyController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$companyid = GetSearchText(array('POST','Q'),'companyid');
 		$companyname = GetSearchText(array('POST','Q'),'companyname');
 		$companycode = GetSearchText(array('POST','Q'),'companycode');
@@ -78,7 +78,7 @@ class CompanyController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchauth() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$companyid = GetSearchText(array('Q'),'companyid');
 		$companyname = GetSearchText(array('Q'),'companyname');
 		$companycode = GetSearchText(array('Q'),'companycode');
@@ -91,7 +91,7 @@ class CompanyController extends Controller {
 		$connection = Yii::app()->db;
 		$from = 'from company t';
 		$where = "
-			where (companyname like '".$companyname."') or (companycode like '".$companycode."')
+			where ((companyname like '".$companyname."') or (companycode like '".$companycode."'))
 				and t.recordstatus = 1 and companyid in (".getUserObjectValues('company').")";
 		$sqlcount = ' select count(1) as total '.$from.' '.$where;
 		$sql = 'select t.companyid,t.companycode,t.companyname '.$from.' '.$where;
@@ -109,7 +109,7 @@ class CompanyController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchcombo() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$companyid = GetSearchText(array('Q'),'companyid');
 		$companyname = GetSearchText(array('Q'),'companyname');
 		$companycode = GetSearchText(array('Q'),'companycode');
@@ -255,7 +255,7 @@ class CompanyController extends Controller {
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		if (isset($_POST['id'])) {
 			$id=$_POST['id'];
 			$connection=Yii::app()->db;
@@ -275,22 +275,30 @@ class CompanyController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('companyid');
-		$this->dataprint['titlecompanyname'] = GetCatalog('companyname');
+		$this->dataprint['companycode'] = GetSearchText(array('GET'),'companycode');
+		$this->dataprint['companyname'] = GetSearchText(array('GET'),'companyname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'languageid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlecompanycode'] = GetCatalog('companycode');
+		$this->dataprint['titlecompanyname'] = GetCatalog('companyname');
 		$this->dataprint['titleaddress'] = GetCatalog('address');
 		$this->dataprint['titlecityname'] = GetCatalog('cityname');
 		$this->dataprint['titlezipcode'] = GetCatalog('zipcode');
 		$this->dataprint['titletaxno'] = GetCatalog('taxno');
+		$this->dataprint['titlecurrencyname'] = GetCatalog('currencyname');
 		$this->dataprint['titlefaxno'] = GetCatalog('faxno');
+		$this->dataprint['titlephoneno'] = GetCatalog('phoneno');
+		$this->dataprint['titlewebaddress'] = GetCatalog('webaddress');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['companyname'] = GetSearchText(array('GET'),'companyname');
-    $this->dataprint['companycode'] = GetSearchText(array('GET'),'companycode');
   }
 }

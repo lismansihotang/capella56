@@ -9,7 +9,7 @@ class AddresstypeController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$addresstypeid = GetSearchText(array('POST','Q'),'addresstypeid');
 		$addresstypename = GetSearchText(array('POST','Q'),'addresstypename');
 		$page = GetSearchText(array('POST'),'page',1,'int');
@@ -147,15 +147,20 @@ class AddresstypeController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('addresstypeid');
+		$this->dataprint['addresstypename'] = GetSearchText(array('GET'),'addresstypename');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'addresstypeid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titleaddresstypename'] = GetCatalog('addresstypename');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['addresstypename'] = GetSearchText(array('GET'),'addresstypename');
   }
 }

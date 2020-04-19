@@ -14,7 +14,7 @@ class TransstockinController extends Controller {
       $this->renderPartial('index', array());
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $transstockid 		= GetSearchText(array('POST','Q'),'transstockid','','int');
     $plantid 		= GetSearchText(array('POST','GET'),'plantid','','int');
     $slocfromid 		= GetSearchText(array('POST','GET'),'slocfromid','','int');
@@ -302,7 +302,7 @@ class TransstockinController extends Controller {
     return CJSON::encode($result);
 	}
   public function actionSearchdetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -426,7 +426,7 @@ class TransstockinController extends Controller {
 		}
   }
   public function actionSavedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -469,7 +469,7 @@ class TransstockinController extends Controller {
 		}
   }
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -494,7 +494,7 @@ class TransstockinController extends Controller {
     }
   }
   public function actionPurgedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;

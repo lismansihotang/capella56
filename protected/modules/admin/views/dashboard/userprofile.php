@@ -1,25 +1,26 @@
+<?php $model = Yii::app()->db->createCommand("select `username`,`password`,realname,email,phoneno from useraccess where lower(username) = lower('".Yii::app()->user->name."')")->queryRow();?>
 <div style="padding:10px 30px 20px 30px">
 <form id="UserProfile" class="easyui-form" method="post" data-options="novalidate:true">
 	<table cellpadding="5">
 		<tr>
-			<td style="padding:5px">Nama User</td>
-			<td><input aria-label="username" class="easyui-textbox" type="text" name="username" data-options="required:true" value="<?php echo Yii::app()->user->username?>"></input></td>
+			<td id='userprofile-username' style="padding:5px"></td>
+			<td><input class="easyui-textbox" type="text" name="username" data-options="required:true" value="<?php echo $model['username']?>"></input></td>
 		</tr>
 		<tr>
-			<td style="padding:5px">Nama Asli</td>
-			<td><input aria-label="realname" class="easyui-textbox" type="text" name="realname" data-options="required:true" value="<?php echo Yii::app()->user->realname?>" style='width:200px'></input></td>
+			<td id='userprofile-realname' style="padding:5px"></td>
+			<td><input class="easyui-textbox" type="text" name="realname" data-options="required:true" value="<?php echo $model['realname']?>" style='width:200px'></input></td>
 		</tr>
 		<tr>
-			<td style="padding:5px">Email</td>
-			<td><input aria-label="email" class="easyui-textbox" type="text" name="email" data-options="required:true" value="<?php echo Yii::app()->user->email?>" style='width:300px'></input></td>
+			<td id='userprofile-email' style="padding:5px"></td>
+			<td><input class="easyui-textbox" type="text" name="email" data-options="required:true" value="<?php echo $model['email']?>" style='width:300px'></input></td>
 		</tr>
 		<tr>
-			<td style="padding:5px">No Telp</td>
-			<td><input aria-label="phoneno" class="easyui-textbox" type="text" name="phoneno" data-options="required:true" value="<?php echo Yii::app()->user->phoneno?>"></input></td>
+			<td id='userprofile-phoneno' style="padding:5px"></td>
+			<td><input class="easyui-textbox" type="text" name="phoneno" data-options="required:true" value="<?php echo $model['phoneno']?>"></input></td>
 		</tr>
 		<tr>
-			<td style="padding:5px">Password</td>
-			<td><input aria-label="password" class="easyui-textbox" type="text" name="password" data-options="required:true" value="<?php echo Yii::app()->user->password?>" style='width:300px'></input></td>
+			<td id='userprofile-password' style="padding:5px"></td>
+			<td><input class="easyui-textbox" type="text" name="password" data-options="required:true" value="<?php echo $model['password']?>" style='width:300px'></input></td>
 		</tr>
 		<tr>
 			<td style="padding:5px"><a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitProfile()">Submit</a></td>
@@ -29,6 +30,20 @@
 </form>
 </div>
 <script>
+	$(document).ready(function(){
+		var parent=document.getElementById('userprofile-username');
+		parent.innerHTML = localStorage.getItem("catalogusername");
+		parent=document.getElementById('userprofile-realname');
+		parent.innerHTML = localStorage.getItem("catalogrealname");
+		parent=document.getElementById('userprofile-realname');
+		parent.innerHTML = localStorage.getItem("catalogrealname");
+		parent=document.getElementById('userprofile-email');
+		parent.innerHTML = localStorage.getItem("catalogemail");
+		parent=document.getElementById('userprofile-phoneno');
+		parent.innerHTML = localStorage.getItem("catalogphoneno");
+		parent=document.getElementById('userprofile-password');
+		parent.innerHTML = localStorage.getItem("catalogpassword");
+	});
 	function submitProfile(){
 		$('#UserProfile').form('submit',{
 	url:'<?php echo Yii::app()->createUrl('site/saveprofile') ?>',

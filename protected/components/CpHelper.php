@@ -1,20 +1,23 @@
 <?php
 function GetCatalog($menuname) {
-	$dependency = new CDbCacheDependency("select max(updatedate) from catalogsys");
+	$dependency = new CDbCacheDependency('select max(updatedate) from catalogsys');
 	$connection = Yii::app()->db;
 	if (Yii::app()->user->id !== null) {
-		$sql = "select catalogval as katalog 
+		$sql = 'select catalogval as katalog 
 			from catalogsys a 
 			inner join useraccess b on b.languageid = a.languageid 
 			where catalogname = :catalogname 
-			and b.username = '" . Yii::app()->user->id . "'";
-	} else {
-		$sql = "select catalogval as katalog 
+			and b.username = :user';
+			$comm = $connection->cache(1000, $dependency)->createCommand($sql);
+			$comm->bindvalue(':catalogname',$menuname,PDO::PARAM_STR);
+			$comm->bindvalue(':user',Yii::app()->user->id,PDO::PARAM_STR);
+		} else {
+		$sql = 'select catalogval as katalog 
 			from catalogsys a 
 			where languageid = 1 
-			and catalogname = :catalogname";
+			and catalogname = :catalogname';
+		$comm = $connection->cache(1000, $dependency)->createCommand($sql);
 	}
-	$comm = $connection->cache(1000, $dependency)->createCommand($sql);
 	$comm->bindvalue(':catalogname',$menuname,PDO::PARAM_STR);
 	$menu = $comm->queryScalar();
 	if (($menu != null) || ($menu != '')) {
@@ -24,7 +27,7 @@ function GetCatalog($menuname) {
 	}
 }
 function GetMessage($isError = false, $catalogname = '', $typeerror = 0) {
-	header("Content-Type: application/json");	
+	header('Content-Type: application/json');	
 	if ($isError == true) {
 		$isError = 1;
 	} else {
@@ -37,21 +40,24 @@ function GetMessage($isError = false, $catalogname = '', $typeerror = 0) {
 	Yii::app()->end();
 }
 function GetMessageConsole($catalogname = '') {
-	$catalogname = str_replace('CDbCommand failed to execute the SQL statement: SQLSTATE[45000]:','',$catalogname);
-	$catalogname = str_replace('<<Unknown error>>:','',$catalogname);
-	$catalogname = str_replace(' The SQL statement','',$catalogname);
+	$catalogname = strtr($catalogname,array('CDbCommand failed to execute the SQL statement: SQLSTATE[45000]:'=>''));
+	$catalogname = strtr($catalogname,array('<<Unknown error>>:'=>''));
+	$catalogname = strtr($catalogname,array(' The SQL statement'=>''));
 	$catalogname = 'Pesan: '.$catalogname;
 	return $catalogname;
 }
 function CheckDoc($wfname) {
-  $sql = "select getwfmaxstatbywfname('".$wfname."')";
-  $isallow = Yii::app()->db->createCommand($sql)->queryScalar();
+	$sql = 'select getwfmaxstatbywfname(:wfname)';
+	$comm = Yii::app()->db->createCommand($sql);
+	$comm->bindvalue(':wfname',$wfname,PDO::PARAM_STR);
+  $isallow = $comm->queryScalar();
   return $isallow;
 }
 function GetKey($username) {
-  $dependency = new CDbCacheDependency("select max(updatedate) from useraccess");
-	$sql = "select authkey from useraccess where lower(username) = '" . $username . "'";
-	return Yii::app()->db->cache(1000, $dependency)->createCommand($sql)->queryScalar();
+  $dependency = new CDbCacheDependency('select max(updatedate) from useraccess');
+	$sql = 'select authkey from useraccess where lower(username) = :username';
+	$comm = Yii::app()->db->cache(1000, $dependency)->createCommand($sql);
+	return $comm->queryScalar();
 }
 function GetMenuAuth($menuobject) {
   $dependency = new CDbCacheDependency("select max(gm.updatedate) 
@@ -61,15 +67,17 @@ function GetMenuAuth($menuobject) {
     inner join useraccess ua on ua.useraccessid = ug.useraccessid
     where upper(ma.menuobject) = upper('" . $menuobject . "') 
     and lower(ua.username) = lower('" . Yii::app()->user->id . "')");
-  $sql     = "select ifnull(count(1),0)
+  $sql     = 'select ifnull(count(1),0)
     from groupmenuauth gm
     inner join menuauth ma on ma.menuauthid = gm.menuauthid
     inner join usergroup ug on ug.groupaccessid = gm.groupaccessid
     inner join useraccess ua on ua.useraccessid = ug.useraccessid
-    where upper(ma.menuobject) = upper('" . $menuobject . "') 
-    and lower(ua.username) = lower('" . Yii::app()->user->id . "')";
-  $data    = Yii::app()->db->cache(1000, $dependency)->createCommand($sql)->queryScalar();
-  return $data;
+    where upper(ma.menuobject) = upper(:menuobject) 
+		and lower(ua.username) = lower(:user)';
+	$comm = Yii::app()->db->cache(1000, $dependency)->createCommand($sql);
+	$comm->bindvalue(':menuobject',$menuobject,PDO::PARAM_STR);
+	$comm->bindvalue(':user',Yii::app()->user->id,PDO::PARAM_STR);
+  return $comm->queryScalar();
 }
 function GetItems() {
   $dependency = new CDbCacheDependency("SELECT max(b.updatedate)
@@ -137,16 +145,16 @@ function getSubMenu($menuname) {
 	return $items;
 }
 function eja($number) {
-  $number       = str_replace(',', '', $number);
+  $number       = strtr($number,array(','=>''));
   $before_comma = trim(to_word($number));
   $after_comma  = trim(comma($number));
   $results      = $before_comma . ' koma ' . $after_comma;
-  $results = str_replace('nol nol nol nol nol','',$results);
-  $results = str_replace('nol nol nol nol nol','',$results);
-  $results = str_replace('nol nol nol','',$results);
-  $results = str_replace('nol nol nol','',$results);
-  $results = str_replace('nol nol','',$results);
-  $results = str_replace('koma nol','',$results);
+  $results = strtr($results,array('nol nol nol nol nol'=>''));
+  $results = strtr($results,array('nol nol nol nol nol'=>''));
+  $results = strtr($results,array('nol nol nol'=>''));
+  $results = strtr($results,array('nol nol nol'=>''));
+  $results = strtr($results,array('nol nol'=>''));
+  $results = strtr($results,array('koma nol'=>''));
   return ucwords($results);
 }
 function to_word($number) {
@@ -291,18 +299,13 @@ function findstatusbyuser($workflow) {
 		return 0;
 	}
 }
-function GetUserID() {
-  $dependency = new CDbCacheDependency("select max(updatedate) from useraccess");
-	return Yii::app()->db->cache(1000, $dependency)->createCommand("select useraccessid 
-				from useraccess 
-				where lower (username) = '" . Yii::app()->user->id . "'")->queryScalar();
-}
 function getwfbefstat($workflow) {
   $dependency = new CDbCacheDependency("select max(updatedate) from workflow a
-  inner join wfgroup b on b.workflowid = a.workflowid
-  inner join groupaccess c on c.groupaccessid = b.groupaccessid
-  inner join usergroup d on d.groupaccessid = c.groupaccessid
-  inner join useraccess e on e.useraccessid = d.useraccessid");	
+		inner join wfgroup b on b.workflowid = a.workflowid
+		inner join groupaccess c on c.groupaccessid = b.groupaccessid
+		inner join usergroup d on d.groupaccessid = c.groupaccessid
+		inner join useraccess e on e.useraccessid = d.useraccessid
+		where upper(a.wfname) = upper('".$workflow."') and upper(e.username)=upper('".Yii::app()->user->name."')");	
   $status = Yii::app()->db->cache(1000, $dependency)->createCommand("select wfbefstat
 		from workflow a
 		inner join wfgroup b on b.workflowid = a.workflowid
@@ -340,10 +343,10 @@ function GetUserPC(){
 	return $username.','.$ippublic.','.$iplocal.','.$lat.','.$lng;
 }
 function GetCompanyCode($id) {
-	return Yii::app()->db->cache(1000, $dependency)->createCommand("
+	return Yii::app()->db->createCommand('
 		select companycode
 		from company 
-		where companyid = " . $id)->queryScalar();
+		where companyid = ' . $id)->queryScalar();
 }
 function getUserFavs() {
   $dependency = new CDbCacheDependency("select max(a.updatedate) 
@@ -441,14 +444,17 @@ function getUserObjectWfValues($menuobject='company',$workflow='appso') {
 	return $cid;
 }
 function getUserRecordStatus($wfname) {
-	$sql = "select distinct b.wfbefstat
+	$sql = 'select distinct b.wfbefstat
 				from workflow a
 				inner join wfgroup b on b.workflowid = a.workflowid
 				inner join usergroup d on d.groupaccessid = b.groupaccessid
 				inner join useraccess e on e.useraccessid = d.useraccessid
-				where a.wfname = '".$wfname."' and e.username = '" . Yii::app()->user->name . "'";
+				where a.wfname = :wfname and e.username = :user';
 	$cid = '';
-	$datas = Yii::app()->db->cache(1000, $dependency)->createCommand($sql)->queryAll();
+	$comm = Yii::app()->db->createCommand($sql);
+	$comm->bindvalue(':wfname',$wfname,PDO::PARAM_STR);
+	$comm->bindvalue(':user',Yii::app()->user->name,PDO::PARAM_STR);
+	$datas = $comm->queryAll();
 	foreach ($datas as $data) {
 		if ($cid == '') {
 			$cid = $data['wfbefstat'];
@@ -460,10 +466,14 @@ function getUserRecordStatus($wfname) {
 	return $cid;
 }
 function findstatusname($workflowname,$recordstatus) {
-	$status = Yii::app()->db->cache(1000, $dependency)->createCommand("select wfstatusname
+	$sql = 'select wfstatusname
 		from wfstatus a
 		inner join workflow b on b.workflowid = a.workflowid
-		where b.wfname = '".$workflowname."' and a.wfstat = ".$recordstatus)->queryScalar();
+		where b.wfname = :wfname and a.wfstat = :wfstat';
+	$comm = Yii::app()->db->createCommand($sql);
+	$comm->bindvalue(':wfname',$workflowname,PDO::PARAM_STR);
+	$comm->bindvalue(':wfstat',$recordstatus,PDO::PARAM_STR);
+	$status = $comm->queryScalar();
 	if ($status != '') {
 		return $status;
 	}
@@ -473,33 +483,29 @@ function findstatusname($workflowname,$recordstatus) {
 }
 function getcurrencyid() {
 	$a = 0;
-	$connection=Yii::app()->db;
 	$sql = 'select currencyid from company limit 1';
-	$command=$connection->cache(1000, $dependency)->createCommand($sql);
+	$command=Yii::app()->db->createCommand($sql);
 	$a = $command->queryscalar();
 	return $a;
 }
 function getcity() {
 	$a = 0;
-	$connection=Yii::app()->db;
-	$sql = 'select cityname from company a left join city b on b.cityid = a.cityid limit 1';
-	$command=$connection->cache(1000, $dependency)->createCommand($sql);
+	$sql = 'select cityname from company a join city b on b.cityid = a.cityid limit 1';
+	$command=Yii::app()->db->createCommand($sql);
 	$a = $command->queryscalar();
 	return $a;
 }
 function getcurrencyname() {
 	$a = 0;
-	$connection=Yii::app()->db;
-	$sql = 'select currencyname from company a left join currency b on b.currencyid = a.currencyid limit 1';
-	$command=$connection->cache(1000, $dependency)->createCommand($sql);
+	$sql = 'select currencyname from company a join currency b on b.currencyid = a.currencyid limit 1';
+	$command=Yii::app()->db->createCommand($sql);
 	$a = $command->queryscalar();
 	return $a;
 }
 function getcurrencysymbol() {
 	$a = 0;
-	$connection=Yii::app()->db;
-	$sql = 'select symbol from company a left join currency b on b.currencyid = a.currencyid limit 1';
-	$command=$connection->cache(1000, $dependency)->createCommand($sql);
+	$sql = 'select symbol from company a join currency b on b.currencyid = a.currencyid limit 1';
+	$command=Yii::app()->db->createCommand($sql);
 	$a = $command->queryscalar();
 	return $a;
 }
@@ -512,12 +518,6 @@ function CheckEmptyUser() {
 	}
 	Yii::app()->end();
 }
-function SendSpExec($spexec) {
-	$sql = "insert into spexec (spexec,spstartdate,spenddate,useraccess,recordstatus)";
-	Yii::app()->db->cache(1000, $dependency)->createCommand($sql)->execute();
-	$sql = "select last_insert_id()";
-	return Yii::app()->db->cache(1000, $dependency)->createCommand($sql)->queryscalar();
-}
 function GetStatusColor($wfname) {
 	$sql = "
 		select backcolor,fontcolor,wfstat
@@ -525,7 +525,7 @@ function GetStatusColor($wfname) {
 		join wfstatus b on b.workflowid = a.workflowid 
 		where a.wfname = '".$wfname."'
 	";
-	$cmd = Yii::app()->db->cache(1000, $dependency)->createCommand($sql)->queryAll();
+	$cmd = Yii::app()->db->createCommand($sql)->queryAll();
 	$s = '';
 	foreach ($cmd as $data) {
 		if ($s == '') {
@@ -554,7 +554,7 @@ function GetSearchText($paramtype=[],$param,$default='',$datatype='string') {
 		}
 	}
 	if ($datatype=='string') {
-		$s = '%'.str_replace(' ','%',trim($s)).'%';
+		$s = '%'.strtr(trim($s),array(' '=>'%')).'%';
 	}
 	return $s;
 }
@@ -567,7 +567,7 @@ function GetAllWfStatus($wfname) {
 		from wfstatus a 
 		join workflow b on b.workflowid = a.workflowid 
 		where b.wfname = '".$wfname."'";
-	$dataReader = Yii::app()->db->cache(1000, $dependency)->createCommand($sql)->queryAll();
+	$dataReader = Yii::app()->db->createCommand($sql)->queryAll();
 	$s = '<option value="">All Status</option>';
 	foreach($dataReader as $data) {
 		$s .= '<option value="'.$data['wfstat'].'">'.$data['wfstatusname'].'</option>';
@@ -594,7 +594,7 @@ function PrintPDF($reportname,$dataprint){
 	if (strpos($data,'PDF') != 0) {        
 		header('Cache-Control: public');
 		header('Content-type: application/pdf');
-		header('Content-Disposition: inline; filename="'.$menuname.'.pdf"');
+		header('Content-Disposition: inline; filename="'.$reportname.'.pdf"');
 		header('Content-Length: '.strlen($data));
 	} 
 	echo $data;
@@ -605,11 +605,25 @@ function PrintXLS($reportname,$dataprint){
 	$dataprint['titlereport']=GetCatalog($reportname);
 	$dataprint['titlecompany']=Yii::app()->params['title'];
 	$dataprint['titleuser']=getcatalog('printby').' '.Yii::app()->user->id;
-	$url = Yii::app()->params['baseUrlReport']."/".$reportname.".xls?".http_build_query($dataprint);
+	$url = Yii::app()->params['baseUrlReport']."/".$reportname.".xlsx?".http_build_query($dataprint);
 	$data = GetRemoteData($url);
 	header('Cache-Control: public');
 	header('Content-type: application/vnd.ms-excel');
-	header('Content-Disposition: inline; filename="'.$reportname.'.xls"');
+	header('Content-Disposition: inline; filename="'.$reportname.'.xlsx"');
+	header('Content-Length: '.strlen($data));
+	echo $data;
+}
+function PrintDoc($reportname,$dataprint){
+	$dataprint['j_username']=Yii::app()->params['ReportServerUser'];
+	$dataprint['j_password']=Yii::app()->params['ReportServerPass'];
+	$dataprint['titlereport']=GetCatalog($reportname);
+	$dataprint['titlecompany']=Yii::app()->params['title'];
+	$dataprint['titleuser']=getcatalog('printby').' '.Yii::app()->user->id;
+	$url = Yii::app()->params['baseUrlReport']."/".$reportname.".docx?".http_build_query($dataprint);
+	$data = GetRemoteData($url);
+	header('Cache-Control: public');
+	header('Content-type: application/vnd.ms-word');
+	header('Content-Disposition: inline; filename="'.$reportname.'.docx"');
 	header('Content-Length: '.strlen($data));
 	echo $data;
 }
@@ -668,4 +682,14 @@ function CreateCode($menuname) {
 function GetParamValue($paramname) {
   $sql = "select paramvalue from parameter where paramname = '".$paramname."'";
   return Yii::app()->db->createCommand($sql)->queryScalar();
+}
+function GetAllCatalog() {
+	$sql = 'SELECT catalogname,catalogval
+		FROM catalogsys a 
+		JOIN language b ON b.languageid = a.languageid 
+		JOIN useraccess c ON c.languageid = b.languageid
+		WHERE c.username = :user';
+	$comm = Yii::app()->db->createCommand($sql);
+	$comm->bindvalue(':user',Yii::app()->user->id,PDO::PARAM_STR);
+	return $comm->queryAll();
 }

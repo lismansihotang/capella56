@@ -8,10 +8,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/city/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/city/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/city/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/city/downdoc'),
 	'columns'=>"
 		{
 			field:'cityid',
-			title:'".GetCatalog('cityid')."',
+			title:localStorage.getItem('catalogcityid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -19,7 +20,7 @@
 		}},
 		{
 			field:'provinceid',
-			title:'". GetCatalog('province') ."',
+			title:localStorage.getItem('catalogprovince'),
 			editor:{
 				type:'combogrid',
 				options:{
@@ -31,10 +32,10 @@
 						url:'". $this->createUrl('province/index',array('grid'=>true,'combo'=>true)) ."',
 						fitColumns:true,
 						required:true,
-						loadMsg: '". GetCatalog('pleasewait')."',
+						loadMsg: localStorage.getItem('catalogpleasewait'),
 						columns:[[
-							{field:'provinceid',title:'". GetCatalog('provinceid')."',width:'80px'},
-							{field:'provincename',title:'". GetCatalog('provincename')."',width:'250px'},
+							{field:'provinceid',title:localStorage.getItem('catalogprovinceid'),width:'80px'},
+							{field:'provincename',title:localStorage.getItem('catalogprovincename'),width:'250px'},
 						]]
 				}	
 			},
@@ -45,7 +46,7 @@
 		}},
 		{
 			field:'citycode',
-			title:'".GetCatalog('citycode')."',
+			title:localStorage.getItem('catalogcitycode'),
 			editor:'numberbox',
 			width:'100px',
 			sortable: true,
@@ -54,7 +55,7 @@
 		}},
 		{
 			field:'cityname',
-			title:'".GetCatalog('cityname')."',
+			title:localStorage.getItem('catalogcityname'),
 			editor:'text',
 			width:'150px',
 			sortable: true,
@@ -63,14 +64,14 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus')."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'80px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 				return '';
 				}

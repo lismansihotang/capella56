@@ -10,7 +10,7 @@ class SalesController extends Controller {
 	}
 	public function search()
 	{
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$plant = isset ($_POST['plant']) ? $_POST['plant'] : '';
 		$sales = isset ($_POST['sales']) ? $_POST['sales'] : '';
 		$plantid = isset ($_POST['plantid']) ? $_POST['plantid'] : '';
@@ -179,17 +179,78 @@ class SalesController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
-	protected function actionDataPrint() {
-		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('salesid');
-		$this->dataprint['titlefullname'] = GetCatalog('sales');
-		$this->dataprint['titleplantcode'] = GetCatalog('plantcode');
-		$this->dataprint['titlelimitsample'] = GetCatalog('limitsample');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['sales'] = GetSearchText(array('GET'),'sales');
-    $this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
-  }
+	public function actionDownPDF() {
+	  parent::actionDownload();
+	  $sql = "select salesid,employeeid,b.fullname as sales, plantid,c.plantcode,limitsample`
+						from sales a 
+						left join employee b on b.employeeid = a.employeeid 
+						left join plant c on b.plantid = a.plantid 
+						";
+		$salesid = filter_input(INPUT_GET,'salesid');
+		$sales = filter_input(INPUT_GET,'sales');
+		$plantcode = filter_input(INPUT_GET,'plantcode');
+		$sql .= " where coalesce(a.salesid,'') like '%".$salesid."%' 
+			and coalesce(b.fullname,'') like '%".$sales."%'
+			and coalesce(c.plantcode,'') like '%".$plantcode."%'
+			";
+		if ($_GET['id'] !== '')  {
+				$sql = $sql . " and a.salesid in (".$_GET['id'].")";
+		}
+		$sql = $sql . " order by plantcode asc ";
+		$command=$this->connection->createCommand($sql);
+		$dataReader=$command->queryAll();
+		$this->pdf->title=GetCatalog('sales');
+		$this->pdf->AddPage('P');
+		$this->pdf->colalign = array('L','L','L','L');
+		$this->pdf->colheader = array(GetCatalog('salesid'),
+																	GetCatalog('sales'),
+																	GetCatalog('plantcode'),
+																	GetCatalog('limitsample'));
+		$this->pdf->setwidths(array(15,55,100,20));
+		$this->pdf->Rowheader();
+		$this->pdf->coldetailalign = array('L','L','L','L');
+		foreach($dataReader as $row1) {
+		  $this->pdf->row(array($row1['salesid'],$row1['sales'],$row1['plantcode'],$row1['limitsample']));
+		}
+		$this->pdf->Output();
+	}
+	public function actionDownXls() {
+		$this->menuname='sales';
+		parent::actionDownxls();
+		$sql = "select salesid,employeeid,b.fullname as sales, plantid,c.plantcode,limitsample`
+						from sales a 
+						left join employee b on b.employeeid = a.employeeid 
+						left join plant c on b.plantid = a.plantid 
+						";
+		$salesid = filter_input(INPUT_GET,'salesid');
+		$sales = filter_input(INPUT_GET,'sales');
+		$plantcode = filter_input(INPUT_GET,'plantcode');
+		$sql .= " where coalesce(a.salesid,'') like '%".$salesid."%' 
+			and coalesce(b.fullname,'') like '%".$sales."%'
+			and coalesce(c.plantcode,'') like '%".$plantcode."%'
+			";
+		if ($_GET['id'] !== '')  {
+				$sql = $sql . " and a.salesid in (".$_GET['id'].")";
+		}
+		$sql = $sql . " order by plantcode asc ";
+		$dataReader=Yii::app()->db->createCommand($sql)->queryAll();
+		$i=2;		
+		$this->phpExcel->setActiveSheetIndex(0)
+			->setCellValueByColumnAndRow(0,2,GetCatalog('salesid'))
+			->setCellValueByColumnAndRow(1,2,GetCatalog('plantcode'))
+			->setCellValueByColumnAndRow(2,2,GetCatalog('sales'))
+			->setCellValueByColumnAndRow(3,2,GetCatalog('limitsample'));
+		foreach($dataReader as $row1) {
+			$this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i+1, $row1['salesid'])
+				->setCellValueByColumnAndRow(1, $i+1, $row1['plantcode'])
+				->setCellValueByColumnAndRow(2, $i+1, $row1['sales'])
+				->setCellValueByColumnAndRow(3, $i+1, $row1['limitsample']);
+			$i+=1;
+		}
+		$this->getFooterXLS($this->phpExcel);	
+	}
 }

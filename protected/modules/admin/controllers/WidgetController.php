@@ -9,7 +9,7 @@ class WidgetController extends Controller {
 			$this->renderPartial('index', array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$widgetid			 = GetSearchText(array('POST','Q'),'widgetid');
 		$widgetname		 = GetSearchText(array('POST','Q'),'widgetname');
 		$widgettitle		 = GetSearchText(array('POST','Q'),'widgettitle');
@@ -126,7 +126,7 @@ class WidgetController extends Controller {
 						$widgetby,$description,$widgeturl,$moduleid,$recordstatus));
 				}
 				$transaction->commit();
-				GetMessage(false, 'insertsuccess');
+				GetMessage(false, getcatalog('insertsuccess'));
 			} catch (CDbException $e) {
 				$transaction->rollBack();
 				GetMessage(true,implode($e->errorInfo));
@@ -141,7 +141,7 @@ class WidgetController extends Controller {
 			$this->ModifyData($connection,array((isset($_POST['widgetid'])?$_POST['widgetid']:''),$_POST['widgetname'],$_POST['widgettitle'],$_POST['widgetversion'],
 				$_POST['widgetby'],$_POST['description'],$_POST['widgeturl'],$_POST['moduleid'],$_POST['recordstatus']));
 			$transaction->commit();
-			GetMessage(false, 'insertsuccess');
+			GetMessage(false, getcatalog('insertsuccess'));
 		} catch (CDbException $e) {
 			$transaction->rollBack();
 			GetMessage(true,implode($e->errorInfo));
@@ -168,12 +168,20 @@ class WidgetController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('widgetid');
+		$this->dataprint['widgetname'] = GetSearchText(array('GET'),'widgetname');
+		$this->dataprint['widgettitle'] = GetSearchText(array('GET'),'widgettitle');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'widgetid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlewidgetname'] = GetCatalog('widgetname');
 		$this->dataprint['titlewidgettitle'] = GetCatalog('widgettitle');
 		$this->dataprint['titlewidgetversion'] = GetCatalog('widgetversion');
@@ -182,8 +190,6 @@ class WidgetController extends Controller {
 		$this->dataprint['titlewidgeturl'] = GetCatalog('widgeturl');
 		$this->dataprint['titlemodulename'] = GetCatalog('modulename');
 		$this->dataprint['titleinstalldate'] = GetCatalog('installdate');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['widgetname'] = GetSearchText(array('GET'),'widgetname');
-    $this->dataprint['widgettitle'] = GetSearchText(array('GET'),'widgettitle');
+		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
   }
 }

@@ -9,7 +9,7 @@ class MesinController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$mesinid = GetSearchText(array('POST','Q'),'mesinid');
 		$plantid = GetSearchText(array('POST','GET'),'plantid',0,'int');
 		$slocid = GetSearchText(array('POST','Q','GET'),'slocid',0,'int');
@@ -55,9 +55,9 @@ class MesinController extends Controller {
 					or (coalesce(s.sloccode,'') like :sloccode) 
 					or (coalesce(t.namamesin,'') like :namamesin) 
 					or (coalesce(t.kodemesin,'') like :kodemesin) 
-						or (coalesce(t.buatan,'') like :buatan) or (coalesce(t.tahunoperasional,'') like :tahun)) 
-						and t.plantid = ".$plantid."
-						and t.recordstatus=1",
+						or (coalesce(t.buatan,'') like :buatan) or (coalesce(t.tahunoperasional,'') like :tahun))". 
+						(($plantid != '')?" and t.plantid = ".$plantid:'').
+						" and t.recordstatus=1",
 						array(':tahun'=>$tahun,':mesinid'=>$mesinid,':plantcode'=>$plantcode,':sloccode'=>$sloccode,':namamesin'=>$namamesin,':kodemesin'=>$kodemesin,':buatan'=>$buatan))
 					->queryScalar();
 			} 
@@ -122,9 +122,9 @@ class MesinController extends Controller {
 					or (coalesce(s.sloccode,'') like :sloccode) 
 					or (coalesce(t.namamesin,'') like :namamesin) 
 					or (coalesce(t.kodemesin,'') like :kodemesin) 
-						or (coalesce(t.buatan,'') like :buatan) or (coalesce(t.tahunoperasional,'') like :tahun)) 
-						and t.plantid = ".$plantid."
-						and t.recordstatus=1",
+						or (coalesce(t.buatan,'') like :buatan) or (coalesce(t.tahunoperasional,'') like :tahun))". 
+						(($plantid != '')?" and t.plantid = ".$plantid:'').
+						" and t.recordstatus=1",
 						array(':tahun'=>$tahun,':mesinid'=>$mesinid,':plantcode'=>$plantcode,':sloccode'=>$sloccode,':namamesin'=>$namamesin,':kodemesin'=>$kodemesin,':buatan'=>$buatan))
 					->order($sort.' '.$order)->queryAll();
 			} 
@@ -310,25 +310,30 @@ class MesinController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('mesinid');
-		$this->dataprint['titleplantcode'] = GetCatalog('plantcode');
-		$this->dataprint['titlesloccode'] = GetCatalog('sloccode');
+		$this->dataprint['kodemesin'] = GetSearchText(array('GET'),'kodemesin');
+		$this->dataprint['namamesin'] = GetSearchText(array('GET'),'namamesin');
+		$this->dataprint['sloccode'] = GetSearchText(array('GET'),'sloccode');
+		$this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
+		$this->dataprint['buatan'] = GetSearchText(array('GET'),'buatan');
+		$this->dataprint['tahun'] = GetSearchText(array('GET'),'tahun');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'mesinid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlekodemesin'] = GetCatalog('kodemesin');
 		$this->dataprint['titlenamamesin'] = GetCatalog('namamesin');
+		$this->dataprint['titlesloccode'] = GetCatalog('sloccode');
+		$this->dataprint['titleplantcode'] = GetCatalog('plantcode');
 		$this->dataprint['titlebuatan'] = GetCatalog('buatan');
 		$this->dataprint['titletahun'] = GetCatalog('tahun');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
-    $this->dataprint['sloccode'] = GetSearchText(array('GET'),'sloccode');
-    $this->dataprint['kodemesin'] = GetSearchText(array('GET'),'kodemesin');
-    $this->dataprint['namamesin'] = GetSearchText(array('GET'),'namamesin');
-    $this->dataprint['buatan'] = GetSearchText(array('GET'),'buatan');
-    $this->dataprint['tahun'] = GetSearchText(array('GET'),'tahun');
   }
 }

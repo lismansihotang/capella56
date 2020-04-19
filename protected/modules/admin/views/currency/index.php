@@ -8,10 +8,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/currency/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/currency/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/currency/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/currency/downdoc'),
 	'columns'=>"
 		{
 			field:'currencyid',
-			title:'".GetCatalog('currencyid')."',
+			title:localStorage.getItem('catalogcurrencyid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -19,7 +20,7 @@
 		}},
 		{
 			field:'countryid',
-			title:'". GetCatalog('country') ."',
+			title:localStorage.getItem('catalogcountry'),
 			editor:{
 				type:'combogrid',
 				options:{
@@ -33,9 +34,9 @@
 						required:true,
 						loadMsg: '". GetCatalog('pleasewait')."',
 						columns:[[
-							{field:'countryid',title:'".GetCatalog('countryid')."',width:'50px'},
-							{field:'countrycode',title:'".GetCatalog('countrycode')."',width:'100px'},
-							{field:'countryname',title:'".GetCatalog('countryname')."',width:'200px'},
+							{field:'countryid',title:localStorage.getItem('catalogcountryid'),width:'50px'},
+							{field:'countrycode',title:localStorage.getItem('catalogcountrycode'),width:'100px'},
+							{field:'countryname',title:localStorage.getItem('catalogcountryname'),width:'200px'},
 						]]
 				}	
 			},
@@ -46,7 +47,7 @@
 		}},
 		{
 			field:'currencyname',
-			title:'".GetCatalog('currency')."',
+			title:localStorage.getItem('catalogcurrency'),
 			sortable: true,
 			editor:'text',
 			width:'250px',
@@ -56,7 +57,7 @@
 		},
 		{
 			field:'symbol',
-			title:'".GetCatalog('symbol')."',
+			title:localStorage.getItem('catalogsymbol'),
 			editor:'text',
 			width:'80px',
 			sortable: true,
@@ -65,7 +66,7 @@
 		}},
 		{
 			field:'i18n',
-			title:'".GetCatalog('i18n')."',
+			title:localStorage.getItem('catalogi18n'),
 			editor:'text',
 			width:'80px',
 			sortable: true,
@@ -74,14 +75,14 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus')."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}

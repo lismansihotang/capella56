@@ -12,7 +12,7 @@ class UnitofmeasureController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$unitofmeasureid = GetSearchText(array('POST','Q'),'unitofmeasureid');
 		$uomcode = GetSearchText(array('POST','Q'),'uomcode');
 		$description = GetSearchText(array('POST','Q'),'description');
@@ -71,7 +71,7 @@ class UnitofmeasureController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchproductplant() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$unitofmeasureid = GetSearchText(array('POST','Q'),'unitofmeasureid');
 		$uomcode = GetSearchText(array('POST','Q'),'uomcode');
 		$productid = GetSearchText(array('POST','Q'),'productid');
@@ -193,12 +193,17 @@ class UnitofmeasureController extends Controller {
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('unitofmeasureid');
+		$this->dataprint['uomcode'] = GetSearchText(array('GET'),'uomcode');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'unitofmeasureid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titleuomcode'] = GetCatalog('uomcode');
 		$this->dataprint['titledescription'] = GetCatalog('description');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['uomcode'] = GetSearchText(array('GET'),'uomcode');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
   }
 }

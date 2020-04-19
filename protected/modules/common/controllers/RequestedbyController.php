@@ -9,7 +9,7 @@ class RequestedbyController extends Controller {
       $this->renderPartial('index', array());
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $requestedbyid = GetSearchText(array('POST','Q'),'requestedbyid');
     $requestedbycode = GetSearchText(array('POST','Q'),'requestedbycode');
     $description     = GetSearchText(array('POST','Q'),'description');
@@ -116,12 +116,17 @@ class RequestedbyController extends Controller {
   }
   protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('requestedbyid');
+		$this->dataprint['requestedbycode'] = GetSearchText(array('GET'),'requestedbycode');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'requestedbyid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlerequestedbycode'] = GetCatalog('requestedbycode');
 		$this->dataprint['titledescription'] = GetCatalog('description');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['requestedbycode'] = GetSearchText(array('GET'),'requestedbycode');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
   }
 }

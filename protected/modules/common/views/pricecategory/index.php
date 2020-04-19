@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/pricecategory/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/pricecategory/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/pricecategory/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/pricecategory/downdoc'),
 	'columns'=>"
 		{
 			field:'pricecategoryid',
@@ -20,7 +21,7 @@
 		{
 			field:'categoryname',
 			title:'". GetCatalog('categoryname') ."',
-			width:'250px',
+			width:'300px',
 			editor:'text',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -35,7 +36,7 @@
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"". Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+					return '<img src=\"". Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 				} else {
 					return '';
 				}

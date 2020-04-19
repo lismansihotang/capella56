@@ -9,7 +9,7 @@ class CityController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$cityid = GetSearchText(array('POST','Q'),'cityid');
 		$provincename = GetSearchText(array('POST','Q'),'provincename');
 		$citycode = GetSearchText(array('POST','Q'),'citycode');
@@ -160,21 +160,26 @@ class CityController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-    $this->dataprint['titleid'] = GetCatalog('cityid');
-    $this->dataprint['titlecitycode'] = GetCatalog('citycode');
-    $this->dataprint['titlecityname'] = GetCatalog('cityname');
-    $this->dataprint['titleprovincecode'] = GetCatalog('provincecode');
-    $this->dataprint['titleprovincename'] = GetCatalog('provincename');
-    $this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['citycode'] = GetSearchText(array('GET'),'citycode');
-    $this->dataprint['cityname'] = GetSearchText(array('GET'),'cityname');
-    $this->dataprint['provincecode'] = GetSearchText(array('GET'),'provincecode');
-    $this->dataprint['provincename'] = GetSearchText(array('GET'),'provincename');
+		$this->dataprint['provincecode'] = GetSearchText(array('GET'),'provincecode');
+		$this->dataprint['provincename'] = GetSearchText(array('GET'),'provincename');
+		$this->dataprint['citycode'] = GetSearchText(array('GET'),'citycode');
+		$this->dataprint['cityname'] = GetSearchText(array('GET'),'cityname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'provinceid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
+		$this->dataprint['titleprovincecode'] = GetCatalog('provincecode');
+		$this->dataprint['titleprovincename'] = GetCatalog('provincename');
+		$this->dataprint['titlecitycode'] = GetCatalog('citycode');
+		$this->dataprint['titlecityname'] = GetCatalog('cityname');
+		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
   }
 }

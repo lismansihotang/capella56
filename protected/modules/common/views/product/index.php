@@ -9,6 +9,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/product/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/product/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/product/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/product/downdoc'),
 	'columns'=>"
 		{
 			field:'productid',
@@ -64,7 +65,7 @@
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
-				return formatnumber(value);
+				return formatnumber('',value);
 		}},
 		{
 			field:'width',
@@ -72,7 +73,7 @@
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
-				return formatnumber(value);
+				return formatnumber('',value);
 		}},
 		{
 			field:'length',
@@ -80,7 +81,7 @@
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
-				return formatnumber(value);
+				return formatnumber('',value);
 		}},
 		{
 			field:'qty1',
@@ -255,15 +256,21 @@
 			</tr>
 			<tr>
 				<td>".GetCatalog('thickness')."</td>
-				<td><input class='easyui-numberbox' id='product-thickness' name='product-thickness' data-options=\"required:true,width:'300px'\"></input></td>
+				<td><input class='easyui-numberbox' id='product-thickness' name='product-thickness' data-options=\"required:true,width:'300px',precision:4,
+				decimalSeparator:',',
+				groupSeparator:'.'\"></input></td>
 			</tr>			
 			<tr>
 				<td>".GetCatalog('width')."</td>
-				<td><input class='easyui-numberbox' id='product-width' name='product-width' data-options=\"required:true,width:'300px'\"></input></td>
+				<td><input class='easyui-numberbox' id='product-width' name='product-width' data-options=\"required:true,width:'300px',precision:4,
+				decimalSeparator:',',
+				groupSeparator:'.'\"></input></td>
 			</tr>			
 			<tr>
 				<td>".GetCatalog('length')."</td>
-				<td><input class='easyui-numberbox' id='product-length' name='product-length' data-options=\"required:true,width:'300px'\"></input></td>
+				<td><input class='easyui-numberbox' id='product-length' name='product-length' data-options=\"required:true,width:'300px',precision:4,
+				decimalSeparator:',',
+				groupSeparator:'.'\"></input></td>
 			</tr>			
 			<tr>
 				<td>".GetCatalog('productpic')."</td>
@@ -283,7 +290,9 @@
       </tr>
       <tr>
         <td>".GetCatalog('qty1')."</td>
-        <td><input class='easyui-numberbox' id='product-qty1' name='product-qty1' data-options=\"required:true,width:'300px'\"></input></td>
+        <td><input class='easyui-numberbox' id='product-qty1' name='product-qty1' data-options=\"required:true,width:'300px',precision:4,
+				decimalSeparator:',',
+				groupSeparator:'.'\"></input></td>
       </tr>			
       <tr>
 				<td>".GetCatalog('uom1')."</td>
@@ -309,7 +318,7 @@
         <td><input class='easyui-numberbox' id='product-qty2' name='product-qty2' data-options=\"required:true,width:'300px'\"></input></td>
       </tr>			
       <tr>
-				<td>".GetCatalog('uom1')."</td>
+				<td>".GetCatalog('uom2')."</td>
 				<td><select class='easyui-combogrid' id='product-uom2' name='product-uom2' style='width:300px' data-options=\"
 						panelWidth:'500px',
 						mode : 'remote',
@@ -422,7 +431,7 @@
 					field:'productplantid',
 					title:'". GetCatalog('productplantid') ."',
 					sortable: true,
-					width:'50px',
+					width:'80px',
 					formatter: function(value,row,index){
 						return value;
         }},
@@ -485,6 +494,146 @@
 							return '';
 						}
 				}}
+			"
+      ),
+		array(
+			'id'=>'productsales',
+			'idfield'=>'productsalesid',
+			'urlsub'=>Yii::app()->createUrl('common/product/indexproductsales',array('grid'=>true)),
+			'url'=>Yii::app()->createUrl('common/product/indexproductsales',array('grid'=>true)),
+			'saveurl'=>Yii::app()->createUrl('common/product/saveproductsales'),
+			'updateurl'=>Yii::app()->createUrl('common/product/saveproductsales'),
+			'destroyurl'=>Yii::app()->createUrl('common/product/purgeproductsales'),
+			'subs'=>"
+				{field:'productsalesid',title:'".GetCatalog('productsalesid')."',width:'120px'},
+				{field:'currencyid',title:'".GetCatalog('currency')."',width:'120px'},
+				{field:'currencyvalue',title:'".GetCatalog('currencyvalue')."',width:'150px'},
+				{field:'pricecategoryid',title:'".GetCatalog('pricecategory')."',width:'200px'},
+				{field:'uomid',title:'".GetCatalog('uom')."',width:'200px'},
+				{field:'issource',title:'".GetCatalog('issource')."',width:'200px',formatter: function(value,row,index){
+					if (value == 1){
+						return '<img src=\"". Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+					} else {
+						return '';
+					}
+				}},
+			",
+			'columns'=>"
+			{
+				field:'productsalesid',
+				title:'". GetCatalog('productsalesid') ."',
+				sortable: true,
+				width:'80px',
+				formatter: function(value,row,index){
+					return value;
+			}},
+			{
+				field:'productid',
+				title:'". GetCatalog('productname') ."',
+				width:'50px',
+				hidden:true,
+				sortable: true,
+				formatter: function(value,row,index){
+					return value;
+			}},
+		{
+			field:'currencyid',
+			title:'". GetCatalog('currency') ."',
+			width:'100px',
+			editor:{
+				type:'combogrid',
+				options:{
+					panelWidth:'500px',
+					mode : 'remote',
+					method:'get',
+					idField:'currencyid',
+					textField:'currencyname',
+					url:'". Yii::app()->createUrl('admin/currency/index',array('grid'=>true,'combo'=>true)) ."',
+					fitColumns:true,
+					required:true,
+					loadMsg: '". GetCatalog('pleasewait')."',
+					columns:[[
+						{field:'currencyid',title:'". GetCatalog('currencyid')."',width:'50px'},
+						{field:'currencyname',title:'". GetCatalog('currencyname')."',width:'200px'},
+					]]
+				}	
+			},
+			sortable: true,
+			formatter: function(value,row,index){
+				return row.currencyname;
+		}},
+		{
+			field:'currencyvalue',
+			title:'". GetCatalog('currencyvalue') ."',
+			width:'150px',
+			editor:{
+				type:'numberbox',
+				options:{
+					precision:2,
+					decimalSeparator:',',
+					groupSeparator:'.',
+					required:true,
+				}
+			},
+			align: 'right',
+			sortable: true,
+			formatter: function(value,row,index){
+			return formatnumber('',value);
+		}},
+		{
+			field:'pricecategoryid',
+			title:'". GetCatalog('pricecategory') ."',
+			pagination:true,
+			width:'150px',
+			editor:{
+				type:'combogrid',
+				options:{
+					panelWidth:'500px',
+					mode : 'remote',
+					method:'get',
+					idField:'pricecategoryid',
+					textField:'categoryname',
+					url:'". Yii::app()->createUrl('common/pricecategory/index',array('grid'=>true,'combo'=>true)) ."',
+					fitColumns:true,
+					required:true,
+					loadMsg: '". GetCatalog('pleasewait')."',
+					columns:[[
+						{field:'pricecategoryid',title:'". GetCatalog('pricecategoryid')."',width:'50px'},
+						{field:'categoryname',title:'". GetCatalog('categoryname')."',width:'200px'},
+					]]
+				}	
+			},
+			sortable: true,
+			formatter: function(value,row,index){
+				return row.categoryname;
+		}},
+		{
+			field:'uomid',
+			title:'". GetCatalog('uom') ."',
+			pagination:true,
+			width:'100px',
+			editor:{
+				type:'combogrid',
+				options:{
+					panelWidth:'500px',
+					mode : 'remote',
+					method:'get',
+					idField:'unitofmeasureid',
+					textField:'uomcode',
+					url:'". Yii::app()->createUrl('common/unitofmeasure/index',array('grid'=>true,'combo'=>true)) ."',
+					fitColumns:true,
+					required:true,
+					loadMsg: '". GetCatalog('pleasewait')."',
+					columns:[[
+						{field:'unitofmeasureid',title:'". GetCatalog('unitofmeasureid')."',width:'50px'},
+						{field:'uomcode',title:'". GetCatalog('uomcode')."',width:'200px'},
+					]]
+				}	
+			},
+			sortable: true,
+			formatter: function(value,row,index){
+				return row.uomcode;
+		}}
 			"
       ),
 	)

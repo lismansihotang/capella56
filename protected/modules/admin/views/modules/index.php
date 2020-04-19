@@ -8,10 +8,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/modules/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/modules/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/modules/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/modules/downdoc'),
 	'columns'=>"
 		{
 		field:'moduleid',
-		title:'".GetCatalog('moduleid')."',
+		title:localStorage.getItem('catalogmoduleid'),
 		sortable: true,
 		width:'50px',
 		formatter: function(value,row,index){
@@ -19,7 +20,7 @@
 	}},
 	{
 		field:'modulename',
-		title:'".GetCatalog('modulename')."',
+		title:localStorage.getItem('catalogmodulename'),
 		editor:'text',
 		width:'100px',
 		sortable: true,
@@ -28,7 +29,7 @@
 	}},
 	{
 		field:'moduledesc',
-		title:'".GetCatalog('moduledesc')."',
+		title:localStorage.getItem('catalogmoduledesc'),
 		editor:'text',
 		width:'150px',
 		sortable: true,
@@ -37,7 +38,7 @@
 	}},
 	{
 		field:'moduleicon',
-		title:'".GetCatalog('moduleicon')."',
+		title:localStorage.getItem('catalogmoduleicon'),
 		editor:'text',
 		width:'150px',
 		sortable: true,
@@ -46,28 +47,28 @@
 	}},
 	{
 		field:'isinstall',
-		title:'".GetCatalog('isinstall')."',
+		title:localStorage.getItem('catalogisinstall'),
 		editor:{type:'checkbox',options:{on:'1',off:'0'}},
 		align:'center',
 		width:'70px',
 		sortable: true,
 		formatter: function(value,row,index){
 			if (value == 1){
-				return '<img src=\"".Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+				return '<img src=\"".Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 			} else {
 				return '';
 			}
 	}},
 	{
 		field:'recordstatus',
-		title:'".GetCatalog('recordstatus')."',
+		title:localStorage.getItem('catalogrecordstatus'),
 		align:'center',
 		width:'50px',
 		editor:{type:'checkbox',options:{on:'1',off:'0'}},
 		sortable: true,
 		formatter: function(value,row,index){
 			if (value == 1){
-				return '<img src=\"".Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+				return '<img src=\"".Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 			} else {
 				return '';
 			}

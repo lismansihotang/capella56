@@ -8,7 +8,7 @@ class TaxController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$taxid = isset ($_POST['taxid']) ? $_POST['taxid'] : '';
 		$taxcode = isset ($_POST['taxcode']) ? $_POST['taxcode'] : '';
 		$taxvalue = isset ($_POST['taxvalue']) ? $_POST['taxvalue'] : '';
@@ -151,7 +151,7 @@ class TaxController extends Controller {
 		}
 	}
 	public function actionSave() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		if(!Yii::app()->request->isPostRequest)
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 		$connection=Yii::app()->db;
@@ -167,7 +167,7 @@ class TaxController extends Controller {
 		}
 	}
 	public function actionPurge() {
-		header("Content-Type: application/json");		
+		header('Content-Type: application/json');		
 		if (isset($_POST['id'])) {
 			$id=$_POST['id'];
 			$connection=Yii::app()->db;
@@ -192,14 +192,19 @@ class TaxController extends Controller {
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('taxid');
+		$this->dataprint['taxcode'] = GetSearchText(array('GET'),'taxcode');
+		$this->dataprint['taxvalue'] = GetSearchText(array('GET'),'taxvalue');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'taxid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titletaxcode'] = GetCatalog('taxcode');
 		$this->dataprint['titletaxvalue'] = GetCatalog('taxvalue');
 		$this->dataprint['titledescription'] = GetCatalog('description');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['taxcode'] = GetSearchText(array('GET'),'taxcode');
-    $this->dataprint['taxvalue'] = GetSearchText(array('GET'),'taxvalue');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
   }
 }

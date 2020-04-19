@@ -9,7 +9,7 @@ class SalesareaController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$salesareaid = GetSearchText(array('POST','Q'),'salesareaid');
 		$areaname = GetSearchText(array('POST','Q'),'areaname');
 		$page = GetSearchText(array('POST','GET'),'page',1,'int');
@@ -144,15 +144,20 @@ class SalesareaController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('salesareaid');
+		$this->dataprint['areaname'] = GetSearchText(array('GET'),'areaname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'salesareaid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titleareaname'] = GetCatalog('areaname');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['areaname'] = GetSearchText(array('GET'),'areaname');
   }
 }

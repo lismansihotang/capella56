@@ -10,10 +10,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/translog/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/translog/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/translog/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/translog/downdoc'),
 	'columns'=>"
 		{
 			field:'translogid',
-			title:'".GetCatalog('translogid') ."',
+			title:localStorage.getItem('catalogtranslogid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -21,7 +22,7 @@
 		}},
 		{
 			field:'username',
-			title:'".GetCatalog('username') ."',
+			title:localStorage.getItem('catalogusername'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -29,7 +30,7 @@
 		}},
 		{
 			field:'ippublic',
-			title:'".GetCatalog('ippublic') ."',
+			title:localStorage.getItem('catalogippublic'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -37,7 +38,7 @@
 		}},
 		{
 			field:'iplocal',
-			title:'".GetCatalog('iplocal') ."',
+			title:localStorage.getItem('catalogiplocal'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -45,7 +46,7 @@
 		}},
 		{
 			field:'createddate',
-			title:'".GetCatalog('createddate') ."',
+			title:localStorage.getItem('catalogcreateddate'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -53,7 +54,7 @@
 		}},
 		{
 			field:'useraction',
-			title:'".GetCatalog('useraction') ."',
+			title:localStorage.getItem('cataloguseraction'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -61,21 +62,21 @@
 		}},
 		{
 			field:'newdata',
-			title:'".GetCatalog('newdata') ."',
+			title:localStorage.getItem('catalognewdata'),
 			sortable: true,
 			formatter: function(value,row,index){
 				return value;
 		}},
 		{
 		field:'olddata',
-		title:'".GetCatalog('olddata') ."',
+		title:localStorage.getItem('catalogolddata'),
 		sortable: true,
 		formatter: function(value,row,index){
 								return value;
 							}},
 		{
 		field:'menuname',
-		title:'".GetCatalog('menuname') ."',
+		title:localStorage.getItem('catalogmenuname'),
 		width:'100px',
 		sortable: true,
 		formatter: function(value,row,index){
@@ -83,7 +84,7 @@
 							}},
 		{
 		field:'tableid',
-		title:'".GetCatalog('tableid') ."',
+		title:localStorage.getItem('catalogtableid'),
 		width:'50px',
 		sortable: true,
 		formatter: function(value,row,index){

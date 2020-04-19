@@ -10,7 +10,7 @@ class ProcessprdController extends Controller {
 	}
 	public function search()
 	{
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$processprdid = isset ($_POST['processprdid']) ? $_POST['processprdid'] : '';
 		$processprdname = isset ($_POST['processprdname']) ? $_POST['processprdname'] : '';
 		$processprdid = isset ($_GET['q']) ? $_GET['q'] : $processprdid;
@@ -154,15 +154,67 @@ class ProcessprdController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
-	protected function actionDataPrint() {
-		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('processprdid');
-		$this->dataprint['titleprocessprdname'] = GetCatalog('processprdname');
-		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['processprdname'] = GetSearchText(array('GET'),'processprdname');
-  }
+	public function actionDownPDF() {
+	  parent::actionDownload();
+	  $sql = "select processprdid, processprdname,
+						case when recordstatus = 1 then 'Yes' else 'No' end as recordstatus
+						from processprd a ";
+		$processprdid = filter_input(INPUT_GET,'processprdid');
+		$processprdname = filter_input(INPUT_GET,'processprdname');
+		$sql .= " where coalesce(a.processprdid,'') like '%".$processprdid."%' 
+			and coalesce(a.processprdname,'') like '%".$processprdname."%'
+			";
+		if ($_GET['id'] !== '')  {
+				$sql = $sql . " and a.processprdid in (".$_GET['id'].")";
+		}
+		$sql = $sql . " order by processprdname asc ";
+		$command=$this->connection->createCommand($sql);
+		$dataReader=$command->queryAll();
+		$this->pdf->title=GetCatalog('processprd');
+		$this->pdf->AddPage('P');
+		$this->pdf->colalign = array('L','L','L','L');
+		$this->pdf->colheader = array(GetCatalog('processprdid'),
+																	GetCatalog('processprdname'),
+																	GetCatalog('recordstatus'));
+		$this->pdf->setwidths(array(15,55,100,20));
+		$this->pdf->Rowheader();
+		$this->pdf->coldetailalign = array('L','L','L','L');
+		foreach($dataReader as $row1) {
+		  $this->pdf->row(array($row1['processprdid'],$row1['processprdname'],$row1['recordstatus']));
+		}
+		$this->pdf->Output();
+	}
+	public function actionDownXls() {
+		$this->menuname='processprd';
+		parent::actionDownxls();
+		$sql = "select processprdid, processprdname,
+						case when recordstatus = 1 then 'Yes' else 'No' end as recordstatus
+						from processprd a ";
+		$processprdid = filter_input(INPUT_GET,'processprdid');
+		$processprdname = filter_input(INPUT_GET,'processprdname');
+		$sql .= " where coalesce(a.processprdid,'') like '%".$processprdid."%' 
+			and coalesce(a.processprdname,'') like '%".$processprdname."%'
+			";
+		if ($_GET['id'] !== '')  {
+				$sql = $sql . " and a.processprdid in (".$_GET['id'].")";
+		}
+		$sql = $sql . " order by processprdname asc ";
+		$dataReader=Yii::app()->db->createCommand($sql)->queryAll();
+		$i=1;		
+		$this->phpExcel->setActiveSheetIndex(0)
+			->setCellValueByColumnAndRow(0,2,GetCatalog('processprdid'))
+			->setCellValueByColumnAndRow(1,2,GetCatalog('processprdname'))
+			->setCellValueByColumnAndRow(2,2,GetCatalog('recordstatus'));
+		foreach($dataReader as $row1) {
+			$this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i+1, $row1['processprdid'])
+				->setCellValueByColumnAndRow(1, $i+1, $row1['processprdname'])
+				->setCellValueByColumnAndRow(2, $i+1, $row1['recordstatus']);
+			$i+=1;
+		}
+		$this->getFooterXLS($this->phpExcel);	
+	}
 }

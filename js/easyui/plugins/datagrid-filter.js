@@ -152,7 +152,7 @@
 		filterPosition: 'bottom',
 		remoteFilter: false,
 		showFilterBar: true,
-		filterDelay: 400,
+		filterDelay: 200,
 		filterRules: [],
 		// specify whether the filtered records need to match ALL or ANY of the applied filters
 		filterMatchingType: 'all',	// possible values: 'all','any'

@@ -9,7 +9,7 @@ class MaterialtypeController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$materialtypeid = GetSearchText(array('POST','Q'),'materialtypeid');
 		$materialtypecode = GetSearchText(array('POST','Q'),'materialtypecode');
 		$description = GetSearchText(array('POST','Q'),'description');
@@ -165,18 +165,23 @@ class MaterialtypeController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('materialtypeid');
+		$this->dataprint['materialtypecode'] = GetSearchText(array('GET'),'materialtypecode');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'materialtypeid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlematerialtypecode'] = GetCatalog('materialtypecode');
 		$this->dataprint['titledescription'] = GetCatalog('description');
-		$this->dataprint['titlefg'] = GetCatalog('fg');
+		$this->dataprint['titlefg'] = GetCatalog('isfg');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['materialtypecode'] = GetSearchText(array('GET'),'materialtypecode');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
   }
 }

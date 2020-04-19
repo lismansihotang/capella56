@@ -9,6 +9,7 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/workflow/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/workflow/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/workflow/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/workflow/downdoc'),
 	'rowstyler'=>"
 		if (row.jumlah == 0) {
 			return 'background-color:red;color:#fff;';
@@ -17,7 +18,7 @@
 	'columns'=>"
 		{
 			field:'workflowid',
-			title:'".GetCatalog('workflowid')."',
+			title:localStorage.getItem('catalogworkflowid'),
 			sortable: true,
 			width:'80px',
 			formatter: function(value,row,index){
@@ -25,7 +26,7 @@
 		}},
 		{
 			field:'wfname',
-			title:'".GetCatalog('wfname')."',
+			title:localStorage.getItem('catalogwfname'),
 			width:'200px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -33,7 +34,7 @@
 		}},
 		{
 			field:'wfdesc',
-			title:'".GetCatalog('wfdesc')."',
+			title:localStorage.getItem('catalogwfdesc'),
 			width:'300px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -41,7 +42,7 @@
 		}},
 		{
 			field:'wfminstat',
-			title:'".GetCatalog('wfminstat')."',
+			title:localStorage.getItem('catalogwfminstat'),
 			editor:'text',
 			width:'80px',
 			sortable: true,
@@ -50,7 +51,7 @@
 		}},
 		{
 			field:'wfmaxstat',
-			title:'".GetCatalog('wfmaxstat')."',
+			title:localStorage.getItem('catalogwfmaxstat'),
 			editor:'text',
 			width:'80px',
 			sortable: true,
@@ -59,13 +60,13 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus')."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'80px',
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 				} else {
 					return '';
 				}
@@ -123,14 +124,14 @@
 			'updateurl'=>Yii::app()->createUrl('admin/workflow/savewfgroup'),
 			'destroyurl'=>Yii::app()->createUrl('admin/workflow/purgewfgroup'),
 			'subs'=>"
-				{field:'groupname',title:'".GetCatalog('groupname')."',width:'200px'},
-				{field:'wfbefstat',title:'".GetCatalog('wfbefstat')."',width:'150px'},
-				{field:'wfrecstat',title:'".GetCatalog('wfrecstat')."',width:'150px'},
+				{field:'groupname',title:localStorage.getItem('cataloggroupname'),width:'200px'},
+				{field:'wfbefstat',title:localStorage.getItem('catalogwfbefstat'),width:'150px'},
+				{field:'wfrecstat',title:localStorage.getItem('catalogwfrecstat'),width:'150px'},
 			",
 			'columns'=>"
 				{
 					field:'wfgroupid',
-					title:'".GetCatalog('wfgroupid') ."',
+					title:localStorage.getItem('catalogwfgroupid'),
 					sortable: true,
 					width:'80px',
 					formatter: function(value,row,index){
@@ -138,7 +139,7 @@
 				}},
 				{
 					field:'workflowid',
-					title:'".GetCatalog('workflowid') ."',
+					title:localStorage.getItem('catalogworkflowid'),
 					sortable: true,
 					hidden: true,
 					width:'80px',
@@ -147,7 +148,7 @@
 				}},
 				{
 					field:'groupaccessid',
-					title:'".GetCatalog('groupaccess') ."',
+					title:localStorage.getItem('cataloggroupaccess'),
 					editor:{
 						type:'combogrid',
 						options:{
@@ -159,10 +160,10 @@
 								url:'".$this->createUrl('groupaccess/index',array('grid'=>true,'combo'=>true)) ."',
 								fitColumns:true,
 								required:true,
-								loadMsg: '".GetCatalog('pleasewait')."',
+								loadMsg: localStorage.getItem('catalogpleasewait'),
 								columns:[[
-									{field:'groupaccessid',title:'".GetCatalog('groupaccessid')."',width:'50px'},
-									{field:'groupname',title:'".GetCatalog('groupname')."',width:'250px'},
+									{field:'groupaccessid',title:localStorage.getItem('cataloggroupaccessid'),width:'50px'},
+									{field:'groupname',title:localStorage.getItem('cataloggroupname'),width:'250px'},
 								]]
 						}	
 					},
@@ -173,7 +174,7 @@
 				}},
 				{
 					field:'wfbefstat',
-					title:'".GetCatalog('wfbefstat') ."',
+					title:localStorage.getItem('catalogwfbefstat'),
 					editor:'numberbox',
 					width:'150px',
 					sortable: true,
@@ -182,7 +183,7 @@
 				}},
 				{
 					field:'wfrecstat',
-					title:'".GetCatalog('wfrecstat') ."',
+					title:localStorage.getItem('catalogwfrecstat'),
 					editor:'numberbox',
 					width:'150px',
 					sortable: true,
@@ -199,15 +200,15 @@
 			'updateurl'=>Yii::app()->createUrl('admin/workflow/savewfstatus'),
 			'destroyurl'=>Yii::app()->createUrl('admin/workflow/purgewfstatus'),
 			'subs'=>"
-				{field:'wfstat',title:'".GetCatalog('wfstat')."',width:'150px'},
-				{field:'wfstatusname',title:'".GetCatalog('wfstatusname')."',width:'250px'},
-				{field:'backcolor',title:'".GetCatalog('backcolor')."',width:'250px'},
-				{field:'fontcolor',title:'".GetCatalog('fontcolor')."',width:'250px'},
+				{field:'wfstat',title:localStorage.getItem('catalogwfstat'),width:'150px'},
+				{field:'wfstatusname',title:localStorage.getItem('catalogwfstatusname'),width:'250px'},
+				{field:'backcolor',title:localStorage.getItem('catalogbackcolor'),width:'250px'},
+				{field:'fontcolor',title:localStorage.getItem('catalogfontcolor'),width:'250px'},
 			",
 			'columns'=>"
 				{
 					field:'wfstatusid',
-					title:'".GetCatalog('wfgroupid') ."',
+					title:localStorage.getItem('catalogwfgroupid'),
 					sortable: true,
 					width:'80px',
 					formatter: function(value,row,index){
@@ -215,7 +216,7 @@
 				}},
 				{
 					field:'workflowid',
-					title:'".GetCatalog('workflowid') ."',
+					title:localStorage.getItem('catalogworkflowid'),
 					sortable: true,
 					hidden: true,
 					width:'80px',
@@ -224,7 +225,7 @@
 				}},
 				{
 					field:'wfstat',
-					title:'".GetCatalog('wfstat') ."',
+					title:localStorage.getItem('catalogwfstat'),
 					editor:{
 						type: 'numberbox',
 						options: {
@@ -238,7 +239,7 @@
 				}},
 				{
 					field:'wfstatusname',
-					title:'".GetCatalog('wfstatusname') ."',
+					title:localStorage.getItem('catalogwfstatusname'),
 					editor:{
 						type: 'textbox',
 						options: {
@@ -252,7 +253,7 @@
 				}},	
 				{
 					field:'backcolor',
-					title:'".GetCatalog('backcolor') ."',
+					title:localStorage.getItem('catalogbackcolor'),
 					editor: {
 						type: 'textbox',
 						options:{
@@ -266,7 +267,7 @@
 				}},	
 				{
 					field:'fontcolor',
-					title:'".GetCatalog('fontcolor') ."',
+					title:localStorage.getItem('catalogfontcolor'),
 					editor: {
 						type: 'textbox',
 						options:{

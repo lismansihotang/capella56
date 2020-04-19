@@ -132,20 +132,19 @@
 			return row.recordstatusname;
 		}},",
 	'addload'=>"
-    $('#poheader-podate').datebox({
-      value: (new Date().toString('dd-MMM-yyyy'))
-    });	
-    $('#poheader-isjasa-value').val(0);
-    $('#poheader-currencyrate').numberbox('setValue',1);
-    $('#poheader-currencyid').combogrid('setValue',40);
-    $('#poheader-paymentmethodid').combogrid('setValue',4);
-  ",
-	'searchfield'=> array ('poheaderid','plantcode','podate','pono','supplier','prno','requestedby','headernote','productname','recordstatus'),
+		$('#poheader-podate').datebox({
+			value: (new Date().toString('dd-MMM-yyyy'))
+		});	",
+	'searchfield'=> array ('poheaderid','plantcode','podate','pono','supplier','prno','requestedby','headernote','productcode','productname','recordstatus'),
 	'headerform'=> "
 		<table cellpadding='5'>
 			<tr>
+				<td>".GetCatalog('pono')."</td>
+				<td><input class='easyui-textbox' id='poheader-pono' name='poheader-pono' data-options=''></input></td>
 				<td>".GetCatalog('podate')."</td>
 				<td><input class='easyui-datebox' id='poheader-podate' name='poheader-podate' data-options='formatter:dateformatter,required:true,parser:dateparser'></input></td>
+			</tr>
+			<tr>
 				<td>".getCatalog('plant')."</td>
 				<td><select class='easyui-combogrid' id='poheader-plantid' name='poheader-plantid' style='width:150px' data-options=\"
 								panelWidth: '500px',
@@ -292,11 +291,21 @@
 						$('#tabdetails-poheader').tabs('enableTab',2);
 						$('#tabdetails-poheader').tabs('enableTab',3);
 						$('#poheader-isjasa-value').val(1);
+						$('#adddetail-poheader-podetail').linkbutton('disable');
+						$('#savedetail-poheader-podetail').linkbutton('disable');
+						$('#canceldetail-poheader-podetail').linkbutton('disable');
+						$('#purgedetail-poheader-podetail').linkbutton('disable');
+						$('#dg-poheader-podetail').edatagrid('disableEditing');
 					} else {
 						$('#tabdetails-poheader').tabs('enableTab',1);
-						$('#tabdetails-poheader').tabs('disableTab',2);
+						$('#tabdetails-poheader').tabs('enableTab',2);
 						$('#tabdetails-poheader').tabs('disableTab',3);
 						$('#poheader-isjasa-value').val(0);
+						$('#adddetail-poheader-podetail').linkbutton('enable');
+						$('#savedetail-poheader-podetail').linkbutton('enable');
+						$('#canceldetail-poheader-podetail').linkbutton('enable');
+						$('#purgedetail-poheader-podetail').linkbutton('enable');
+						$('#dg-poheader-podetail').edatagrid('enableEditing');
 					}
 					$('#tabdetails-poheader').tabs('select',0);
 				}
@@ -309,6 +318,12 @@
 				<td><input class='easyui-textbox' id='poheader-headernote' name='poheader-headernote' data-options='multiline:true' style='width:300px;height:100px'></input></td>
 			</tr>
 		</table>
+	",
+	'addload'=>"
+		$('#poheader-podate').datebox({
+			value: (new Date().toString('dd-MMM-yyyy'))
+		});	
+		$('#poheader-isjasa-value').val(0);
 	",
 	'addonscripts'=>"
 		function purgepoalldetail(\$id) {
@@ -432,7 +447,8 @@
 			'subs'=>"
 				{field:'prno',title:'".GetCatalog('prno') ."',width:'150px'},
 				{field:'materialtypecode',title:'".GetCatalog('materialtypecode') ."',width:'150px'},
-				{field:'productname',title:'".GetCatalog('productname') ."',width:'350px'},
+				{field:'productcode',title:'".GetCatalog('productcode') ."',width:'150px'},
+				{field:'productname',title:'".GetCatalog('productname') ."',width:'450px'},
 				{field:'qtystock',title:'".GetCatalog('qtystock') ."',formatter: function(value,row,index){
 					if (row.stockcount == '1') {
 					return '<div style=\"background-color:cyan\">'+formatnumber('',value)+'</div>';
@@ -572,7 +588,6 @@
 								var prheaderid = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'prheaderid'});
 								var qty = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'qty'});
 								var qty2 = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'qty2'});
-								var qty3 = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'qty3'});
 								var uomid = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'uomid'});
 								var uom2id = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'uom2id'});
 								var slocid = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'slocid'});
@@ -587,14 +602,12 @@
 									{
 										$(prheaderid.target).textbox('setValue',data.prheaderid);
 										$(productid.target).combogrid('setValue',data.productid);
-										$(qty.target).numberbox('setValue',data.qty1);
+										$(qty.target).numberbox('setValue',data.qty);
 										$(qty2.target).numberbox('setValue',data.qty2);
-										$(qty3.target).numberbox('setValue',data.qty3);
 										$(requestedbyid.target).combogrid('setValue',data.requestedbyid);
 										$(slocid.target).combogrid('setValue',data.slocfromid);
 										$(uomid.target).combogrid('setValue',data.uomid);
 										$(uom2id.target).combogrid('setValue',data.uom2id);
-										$(uom3id.target).combogrid('setValue',data.uom3id);
 										$(arrivedate.target).datebox('setValue',data.reqdate);
 									} ,
 									'cache':false});
@@ -660,15 +673,28 @@
 								var uom2id = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'uom2id'});
 								var stdqty = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'stdqty'});
 								var stdqty2 = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'stdqty2'});
-								jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/indexproductplant',array('grid'=>true,'getdata'=>true)) ."',
-									'data':{'productid':$(productid.target).combogrid('getValue')},
+								var price = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'price'});
+								var slocid = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'slocid'});
+								jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/getproductplant') ."',
+									'data':{'productid':$(productid.target).combogrid('getValue'),'issource':1},
 									'type':'post','dataType':'json',
 									'success':function(data)
 									{
+										$(slocid.target).combogrid('setValue',data.slocid);
 										$(uomid.target).combogrid('setValue',data.uom1);
 										$(uom2id.target).combogrid('setValue',data.uom2);
 										$(stdqty.target).numberbox('setValue',data.qty1);
 										$(stdqty2.target).numberbox('setValue',data.qty2);
+									} ,
+									'cache':false});
+								jQuery.ajax({'url':'".Yii::app()->createUrl('purchasing/purchinforec/getprice') ."',
+									'data':{'productid':$(productid.target).combogrid('getValue'),
+									'addressbookid':$('#poheader-addressbookid').combogrid('getValue')
+									},
+									'type':'post','dataType':'json',
+									'success':function(data)
+									{
+										$(price.target).numberbox('setValue',data.currencyvalue);
 									} ,
 									'cache':false});
 							},
@@ -677,7 +703,8 @@
 							columns:[[
 								{field:'productid',title:'".getCatalog('productid')."',width:'50px'},
 								{field:'materialtypecode',title:'".getCatalog('materialtypecode')."',width:'150px'},
-								{field:'productname',title:'".getCatalog('productname')."',width:'850px'},
+								{field:'productcode',title:'".getCatalog('productcode')."',width:'150px'},
+								{field:'productname',title:'".getCatalog('productname')."',width:'450px'},
 							]]
 						}	
 					},
@@ -706,10 +733,8 @@
 								var productname = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'productname'});
 								var stdqty = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'stdqty'});
 								var stdqty2 = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'stdqty2'});
-                var qty2 = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'qty2'});			
-                if ($(stdqty.target).numberbox('getValue') != 0) {					
-                  $(qty2.target).numberbox('setValue',$(stdqty2.target).numberbox('getValue') * (newValue / $(stdqty.target).numberbox('getValue')));
-                }
+								var qty2 = $('#dg-poheader-podetail').datagrid('getEditor', {index: index, field:'qty2'});								
+								$(qty2.target).numberbox('setValue',$(stdqty2.target).numberbox('getValue') * (newValue / $(stdqty.target).numberbox('getValue')));
 							}
 						}
 					},
@@ -757,6 +782,7 @@
 							decimalSeparator:',',
 							groupSeparator:'.',
 							value:0,
+							required:true,
 						}
 					},
 					sortable: true,
@@ -778,6 +804,7 @@
 							textField:'uomcode',
 							url:'".Yii::app()->createUrl('common/unitofmeasure/index',array('grid'=>true,'combo'=>true)) ."',
 							fitColumns:true,
+							required:true,
 							loadMsg: '".GetCatalog('pleasewait')."',
 							columns:[[
 								{field:'unitofmeasureid',title:'".GetCatalog('unitofmeasureid')."',width:'50px'},
@@ -1134,7 +1161,7 @@
 								var index = parseInt(tr.attr('datagrid-row-index'));
 								var productid = $('#dg-poheader-pojasa').datagrid('getEditor', {index: index, field:'productid'});
 								var uomid = $('#dg-poheader-pojasa').datagrid('getEditor', {index: index, field:'uomid'})
-								jQuery.ajax({'url':'".Yii::app()->createUrl('common/productplant/index',array('grid'=>true,'getdata'=>true)) ."',
+								jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/getproductplant') ."',
 									'data':{'productid':$(productid.target).combogrid('getValue')},
 									'type':'post','dataType':'json',
 									'success':function(data)
@@ -1364,11 +1391,6 @@
 						return formatnumber('',value);
 					},width:'100px'},
 				{field:'uom3code',titl21e:'".GetCatalog('uom3code') ."',width:'150px'},
-				{field:'qty4',title:'".GetCatalog('qty4') ."',
-					formatter: function(value,row,index){
-						return formatnumber('',value);
-					},width:'100px'},
-				{field:'uom4code',title:'".GetCatalog('uom4code') ."',width:'150px'},
 				{field:'description',title:'".GetCatalog('description') ."',width:'300px'},
 			",
 			'columns'=>"
@@ -1418,6 +1440,15 @@
 					}
 				},
 				{
+					field:'productcode',
+					title:'".getCatalog('productcode') ."',
+					width:'150px',
+					sortable: true,
+					formatter: function(value,row,index){
+										return row.productcode;
+					}
+				},
+				{
 					field:'productid',
 					title:'".getCatalog('productname') ."',
 					editor:{
@@ -1440,7 +1471,7 @@
 							]]
 						}	
 					},
-					width:'150px',
+					width:'450px',
 					sortable: true,
 					formatter: function(value,row,index){
 										return row.productname;
@@ -1588,52 +1619,6 @@
 					sortable: true,
 					formatter: function(value,row,index){
 										return row.uom3code;
-					}
-				},
-				{
-					field:'qty4',
-					title:'".GetCatalog('qty4') ."',
-					width:'100px',
-					editor: {
-						type: 'numberbox',
-						options:{
-							precision:4,
-							decimalSeparator:',',
-							groupSeparator:'.',
-							value:0,
-						}
-					},
-					sortable: true,
-					formatter: function(value,row,index){
-											return formatnumber('',value);
-					}
-				},
-				{
-					field:'uom4id',
-					title:'".GetCatalog('uom4code') ."',
-					editor:{
-						type:'combogrid',
-						options:{
-							panelWidth:'500px',
-							mode : 'remote',
-							method:'get',
-							readonly:true,
-							hasDownArrow:false,
-							idField:'unitofmeasureid',
-							textField:'uomcode',
-							url:'".Yii::app()->createUrl('common/unitofmeasure/index',array('grid'=>true,'combo'=>true)) ."',
-							fitColumns:true,
-							loadMsg: '".GetCatalog('pleasewait')."',
-							columns:[[
-								{field:'unitofmeasureid',title:'".GetCatalog('unitofmeasureid')."',width:'50px'},
-								{field:'uomcode',title:'".GetCatalog('uomcode')."',width:'150px'},
-							]]
-						}	
-					},
-					width:'100px',
-					sortable: true,
-					formatter: function(value,row,index){
-										return row.uom4code;
 					}
 				},
 				{

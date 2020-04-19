@@ -92,7 +92,7 @@ class ProductoutputController extends Controller {
     }
   }
 	public function searchfgoperator() {
-		header("Content-Type: application/json");			
+		header('Content-Type: application/json');			
 		$productoutputfgid = GetSearchText(array('GET'),'productoutputfgid',0,'int');
 		$productname = GetSearchText(array('Q'),'productname');
 		$namamesin = GetSearchText(array('Q'),'namamesin');
@@ -139,7 +139,7 @@ class ProductoutputController extends Controller {
 		return CJSON::encode($result);
 	}
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $productoutputid 				= GetSearchText(array('POST','Q'),'productoutputid','','int');
     $productoutputfgid 				= GetSearchText(array('POST','GET'),'productoutputfgid',0,'int');
     $productoutputdetailid 				= GetSearchText(array('POST','GET'),'productoutputdetailid',0,'int');
@@ -187,7 +187,7 @@ class ProductoutputController extends Controller {
 				and t.plantid = ".$plantid." 
 				and t.productoutputid in (select zz.productoutputid 
 					from productoutputfg zz 
-					where zz.qty > zz.qtyres)"
+					where zz.ists = 1)"
 					,
 				array(
         ':productoutputid' => '%' . $productoutputid . '%',
@@ -267,7 +267,7 @@ class ProductoutputController extends Controller {
 				and t.plantid = ".$plantid." 
 				and t.productoutputid in (select zz.productoutputid 
 					from productoutputfg zz 
-					where zz.qty > zz.qtyres)
+					where zz.ists = 1)
 				",
 				array(
         ':productoutputid' => '%' . $productoutputid . '%',
@@ -358,7 +358,7 @@ class ProductoutputController extends Controller {
     return CJSON::encode($result);
 	}
   public function actionSearchfg() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -516,7 +516,7 @@ class ProductoutputController extends Controller {
     echo CJSON::encode($result);
   }
   public function actionSearchdetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -621,7 +621,7 @@ class ProductoutputController extends Controller {
     echo CJSON::encode($result);
   }
 	public function actionSearchwaste() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -701,7 +701,7 @@ class ProductoutputController extends Controller {
     echo CJSON::encode($result);
   }
 	public function actionSearchoperator() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -758,7 +758,7 @@ class ProductoutputController extends Controller {
     echo CJSON::encode($result);
   }
 	public function actionSearchjurnal() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -859,7 +859,7 @@ class ProductoutputController extends Controller {
 		}
   }
   public function actionSavefg() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -906,7 +906,7 @@ class ProductoutputController extends Controller {
 		}
   }
   public function actionsavedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -950,7 +950,7 @@ class ProductoutputController extends Controller {
 		}
   }
 	public function actionsavewaste() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -993,7 +993,7 @@ class ProductoutputController extends Controller {
   }
 	public function actionSaveoperator()
   {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1070,7 +1070,7 @@ class ProductoutputController extends Controller {
     }
   }
 	public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1093,7 +1093,7 @@ class ProductoutputController extends Controller {
     }
   }
   public function actionPurgedetailfg() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1118,7 +1118,7 @@ class ProductoutputController extends Controller {
 	
 	public function actionPurgedetail()
   {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1142,7 +1142,7 @@ class ProductoutputController extends Controller {
   }
 	public function actionPurgewaste()
   {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1187,42 +1187,331 @@ class ProductoutputController extends Controller {
     } else {
       GetMessage(true, getcatalog('chooseone'));
     }
+  }
+ public function actionDownPDF()
+  {
+    parent::actionDownload();
+		$sql = "select a.*,b.productplanno,b.productplandate
+      from productoutput a 
+	join productplan b on b.productplanid = a.productplanid ";
+    if ($_GET['id'] !== '') {
+      $sql = $sql . "where a.productoutputid in (" . $_GET['id'] . ")";
+		}
+    $command          = $this->connection->createCommand($sql);
+    $dataReader       = $command->queryAll();
+	  $this->pdf->title = GetCatalog('productoutput');
+	 $this->pdf->AddPage('L', array(
+      210,
+      330
+    ));    
+    foreach($dataReader as $row)  {
+			$this->pdf->SetFont('Arial', '', 9);
+      $this->pdf->text(15, $this->pdf->gety() + 5, 'No Output ');
+      $this->pdf->text(50, $this->pdf->gety() + 5, ': ' . $row['productoutputno']);
+      $this->pdf->text(120, $this->pdf->gety() + 5, 'No Plan ');
+      $this->pdf->text(140, $this->pdf->gety() + 5, ': ' . $row['productplanno']);
+      $this->pdf->text(15, $this->pdf->gety() + 10, 'Tgl Output ');
+      $this->pdf->text(50, $this->pdf->gety() + 10, ': ' . date(Yii::app()->params['dateviewfromdb'], strtotime($row['productoutputdate'])));
+      $this->pdf->text(120, $this->pdf->gety() + 10, 'Tgl Plan ');
+      $this->pdf->text(140, $this->pdf->gety() + 10, ': ' . date(Yii::app()->params['dateviewfromdb'], strtotime($row['productplandate'])));
+      $sql1        = "SELECT t.*,a.productcode,a.productname,d.processprdname,e.sloccode,e.description as slocdesc,c.kodemesin,c.namamesin,f.fullname,h.description as rak,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uomid) as uomcode,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom2id) as uom2code,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom4id) as uom4code
+					FROM productoutputfg t
+					LEFT JOIN  productoutput g ON g.productoutputid = t.productoutputid
+					LEFT JOIN  product a ON a.productid = t.productid
+					LEFT JOIN  mesin c ON c.mesinid = t.mesinid
+					LEFT JOIN  processprd d ON d.processprdid = t.processprdid
+					LEFT JOIN  sloc e  ON e.slocid = t.slocid
+					LEFT JOIN  employee f  ON f.employeeid = t.employeeid
+					LEFT JOIN  storagebin h  ON h.storagebinid = t.storagebinid
+        where t.productoutputid = " . $row['productoutputid'];
+      $command1    = $this->connection->createCommand($sql1);
+      $dataReader1 = $command1->queryAll();
+      $i=0;
+      $this->pdf->sety($this->pdf->gety()+20);
+      foreach($dataReader1 as $row1) {
+        $i=$i+1;
+				$this->pdf->SetFontSize(8);
+				$this->pdf->text(10,$this->pdf->gety(),'FG');
+				$this->pdf->text(10,$this->pdf->gety()+5,'Product');$this->pdf->text(25,$this->pdf->gety()+5,': '.$row1['productname']);
+				$this->pdf->text(10,$this->pdf->gety()+10,'Qty');$this->pdf->text(25,$this->pdf->gety()+10,': '.Yii::app()->format->formatNumber($row1['qty']).'   '.$row1['uomcode']);
+				$this->pdf->text(10,$this->pdf->gety()+15,'Qty2');$this->pdf->text(25,$this->pdf->gety()+15,': '.Yii::app()->format->formatNumber($row1['qty2']).'   '.$row1['uom2code']);
+				$this->pdf->text(10,$this->pdf->gety()+20,'Qty3');$this->pdf->text(25,$this->pdf->gety()+20,': '.Yii::app()->format->formatNumber($row1['qty3']).'   '.$row1['uom3code']);
+				$this->pdf->text(10,$this->pdf->gety()+25,'Qty4');$this->pdf->text(25,$this->pdf->gety()+25,': '.Yii::app()->format->formatNumber($row1['qty4']).'   '.$row1['uom4code']);
+				$this->pdf->text(105,$this->pdf->gety()+10,'Gudang');$this->pdf->text(120,$this->pdf->gety()+10,': '.$row1['sloccode']);
+				$this->pdf->text(105,$this->pdf->gety()+15,'RAK');$this->pdf->text(120,$this->pdf->gety()+15,': '.$row1['rak']);
+				$this->pdf->text(10,$this->pdf->gety()+40,'Keterangan');$this->pdf->text(25,$this->pdf->gety()+40,': '.$row1['description']);
+				$this->pdf->text(105,$this->pdf->gety()+25,'Proses');$this->pdf->text(120,$this->pdf->gety()+25,': '.$row1['processprdname']);
+				$this->pdf->text(105,$this->pdf->gety()+20,'Mesin');$this->pdf->text(120,$this->pdf->gety()+20,': '.$row1['kodemesin']);
+				$this->pdf->text(105,$this->pdf->gety()+30,'Efektivitas');$this->pdf->text(120,$this->pdf->gety()+30,': '.$row1['efektivitas'].' '.'Menit');
+				$this->pdf->text(105,$this->pdf->gety()+35,'SPV');$this->pdf->text(120,$this->pdf->gety()+35,': '.$row1['fullname']);
+				$this->pdf->text(10,$this->pdf->gety()+30,'Angkatan');$this->pdf->text(25,$this->pdf->gety()+30,': '.$row1['angkatan']);
+				$this->pdf->text(10,$this->pdf->gety()+35,'Shift');$this->pdf->text(25,$this->pdf->gety()+35,': '.$row1['shift']);
+				$this->pdf->sety($this->pdf->gety()+30);
+				$sql2 = "							select b.productname,
+								sum(a.qty) as qty,
+								sum(a.qty2) as qty2,
+								sum(a.qty3) as qty3,
+								sum(a.qty4) as qty4,
+								c.uomcode,
+								f.uomcode as uom2code,
+								g.uomcode as uom3code,
+								h.uomcode as uom4code,
+								a.description,d.bomversion,
+							(select sloccode from sloc d where d.slocid = a.slocfromid) as fromsloccode,
+							(select description from sloc d where d.slocid = a.slocfromid) as fromslocdesc,
+							(select sloccode from sloc d where d.slocid = a.sloctoid) as tosloccode,	
+							(select description from sloc d where d.slocid = a.sloctoid) as toslocdesc			
+							from productoutputdetail a
+							left join product b on b.productid = a.productid
+							left join unitofmeasure c on c.unitofmeasureid = a.uomid
+							left join unitofmeasure f on f.unitofmeasureid = a.uom2id
+							left join unitofmeasure g on g.unitofmeasureid = a.uom3id
+							left join unitofmeasure h on h.unitofmeasureid = a.uom4id
+							left join billofmaterial d on d.bomid = a.bomid
+							where b.isstock = 1 and productoutputid = ".$row['productoutputid']." and productoutputfgid = ".$row1['productoutputfgid']."   
+							group by b.productname ";
+				$command2    = $this->connection->createCommand($sql2);
+				$dataReader2 = $command2->queryAll();
+				$this->pdf->text(10,$this->pdf->gety()+15,'RM');
+				$this->pdf->sety($this->pdf->gety()+17);
+				$this->pdf->colalign = array('C','C','C','C','C','C','C','C','C','C','C','C','C');
+				$this->pdf->setwidths(array(8,70,24,12,24,13,24,12,24,12,24,24,40));
+				$this->pdf->colheader = array('No','Items','Qty','Unit','Qty2','Unit2','Qty3','Unit3','Qty4','Unit4','GD Asal','GD Tujuan','Remark');
+				$this->pdf->RowHeader();
+				$this->pdf->coldetailalign = array('L','L','R','L','R','L','R','L','R','L','L','L','L');
+				$j=0;
+				foreach($dataReader2 as $row2) {
+					$j=$j+1;
+					$this->pdf->row(array($j,$row2['productname'],
+							Yii::app()->format->formatNumber($row2['qty']),
+							$row2['uomcode'],
+							Yii::app()->format->formatNumber($row2['qty2']),
+							$row2['uom2code'],
+							Yii::app()->format->formatNumber($row2['qty3']),
+							$row2['uom3code'],
+							Yii::app()->format->formatNumber($row2['qty4']),
+							$row2['uom4code'],
+							$row2['fromsloccode'],
+							$row2['tosloccode'],
+							$row2['bomversion'].''.$row2['description']));
+				}
+				$sql2 = "				select b.productname,
+								sum(a.qty) as qty,
+								sum(a.qty2) as qty2,
+								sum(a.qty3) as qty3,
+								sum(a.qty4) as qty4,
+								c.uomcode,
+								f.uomcode as uom2code,
+								g.uomcode as uom3code,
+								h.uomcode as uom4code,
+								a.itemnote,
+							(select sloccode from sloc d where d.slocid = a.slocid) as sloccode,
+							(select description from sloc d where d.slocid = a.slocid) as slocdesc,	
+							(select description from storagebin d where d.storagebinid = a.storagebinid) as rak							
+							from productoutputwaste a
+							left join product b on b.productid = a.productid
+							left join unitofmeasure c on c.unitofmeasureid = a.uomid
+							left join unitofmeasure f on f.unitofmeasureid = a.uom2id
+							left join unitofmeasure g on g.unitofmeasureid = a.uom3id
+							left join unitofmeasure h on h.unitofmeasureid = a.uom4id
+							where b.isstock = 1 and productoutputid = ".$row['productoutputid']." and productoutputfgid = ".$row1['productoutputfgid']."   
+							group by b.productname ";
+				$command2    = $this->connection->createCommand($sql2);
+				$dataReader2 = $command2->queryAll();
+				$this->pdf->CheckPageBreak(5);
+				$this->pdf->sety($this->pdf->gety()+10);
+				$this->pdf->text(10,$this->pdf->gety(),'WASTE / AVALAN');
+				$this->pdf->sety($this->pdf->gety()+5);
+				$this->pdf->colalign = array('C','C','C','C','C','C','C','C','C','C','C','C','C');
+				$this->pdf->setwidths(array(8,70,24,12,24,13,24,12,24,12,24,24,40));
+				$this->pdf->colheader = array('No','Items','Qty','Unit','Qty2','Unit2','Qty3','Unit3','Qty4','Unit4','Gudang','Rak','Remark');
+				$this->pdf->RowHeader();
+				$this->pdf->coldetailalign = array('L','L','R','L','R','L','R','L','R','L','L','L','L');
+				$j=0;
+				foreach($dataReader2 as $row2) {
+					$j=$j+1;
+					$this->pdf->row(array($j,$row2['productname'],
+							Yii::app()->format->formatNumber($row2['qty']),
+							$row2['uomcode'],
+							Yii::app()->format->formatNumber($row2['qty2']),
+							$row2['uom2code'],
+							Yii::app()->format->formatNumber($row2['qty3']),
+							$row2['uom3code'],
+							Yii::app()->format->formatNumber($row2['qty4']),
+							$row2['uom4code'],
+							$row2['sloccode'],
+							$row2['rak'],$row2['itemnote']));
+				}
+				$sql2 = "select a.productoutputemployeeid,b.fullname,a.description,a.productoutputfgid
+											from productoutputemployee a
+											left join employee b on b.employeeid = a.employeeid
+							where a.productoutputid = ".$row['productoutputid']."
+							group by a.productoutputemployeeid ";
+				$command2    = $this->connection->createCommand($sql2);
+				$dataReader2 = $command2->queryAll();
+				$this->pdf->sety($this->pdf->gety()+5);
+				$this->pdf->text(10,$this->pdf->gety(),'Operator');
+				$this->pdf->sety($this->pdf->gety()+5);
+				$this->pdf->colalign = array('C','C','C','C');
+				$this->pdf->setwidths(array(8,13,55,35));
+				$this->pdf->colheader = array('No','ID FG','Operator','Keterangan');
+				$this->pdf->RowHeader();
+				$this->pdf->coldetailalign = array('L','L','L','L');
+				$j=0;
+				foreach($dataReader2 as $row2) {
+					$j=$j+1;
+					$this->pdf->row(array($j,
+					$row2['productoutputfgid'],$row2['fullname'],
+							$row2['description']));
+				}
+				$this->pdf->CheckPageBreak(20);
+				$this->pdf->sety($this->pdf->gety()+15);
+				$this->pdf->text(20,$this->pdf->gety()+5,'Approved By');$this->pdf->text(150,$this->pdf->gety()+5,'Proposed By');
+				$this->pdf->text(20,$this->pdf->gety()+20,'____________ ');$this->pdf->text(150,$this->pdf->gety()+20,'____________');
+				$this->pdf->AddPage('L', array(
+					210,
+					330
+				));    
+      }
+		}
+	  $this->pdf->Output();
 	}
-	protected function actionDataPrint() {
-		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('productplanid');
-		$this->dataprint['titleproductplanno'] = GetCatalog('productplanno');
-		$this->dataprint['titleplantcode'] = GetCatalog('plantcode');
-		$this->dataprint['titleproductplandate'] = GetCatalog('productplandate');
-		$this->dataprint['titlesono'] = GetCatalog('sono');
-		$this->dataprint['titlesodate'] = GetCatalog('sodate');
-		$this->dataprint['titlepocustno'] = GetCatalog('pocustno');
-		$this->dataprint['titlefullname'] = GetCatalog('customer');
-		$this->dataprint['titledescription'] = GetCatalog('description');
-		$this->dataprint['titlehasilproses'] = GetCatalog('hasilproses');
-		$this->dataprint['titleproductname'] = GetCatalog('productname');
-		$this->dataprint['titleproductcode'] = GetCatalog('productcode');
-		$this->dataprint['titleqty'] = GetCatalog('qty');
-		$this->dataprint['titleqty2'] = GetCatalog('qty2');
-		$this->dataprint['titleqty3'] = GetCatalog('qty3');
-		$this->dataprint['titleqty4'] = GetCatalog('qty4');
-		$this->dataprint['titleuomcode'] = GetCatalog('uomcode');
-		$this->dataprint['titleuom2code'] = GetCatalog('uom2code');
-		$this->dataprint['titleuom3code'] = GetCatalog('uom3code');
-		$this->dataprint['titleuom4code'] = GetCatalog('uom4code');
-		$this->dataprint['titlefromsloccode'] = GetCatalog('slocfrom');
-		$this->dataprint['titletosloccode'] = GetCatalog('slocprocess');
-		$this->dataprint['titlekodemesin'] = GetCatalog('kodemesin');
-		$this->dataprint['titleprocessprdname'] = GetCatalog('processprdname');
-		$this->dataprint['titlebomversion'] = GetCatalog('bomversion');
-		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['productoutputno'] = GetSearchText(array('GET'),'productoutputno');
-    $this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
-    $this->dataprint['productoutputdate'] = GetSearchText(array('GET'),'productoutputdate');
-    $this->dataprint['sono'] = GetSearchText(array('GET'),'sono');
-    $this->dataprint['sodate'] = GetSearchText(array('GET'),'sodate');
-    $this->dataprint['pocustno'] = GetSearchText(array('GET'),'pocustno');
-    $this->dataprint['customer'] = GetSearchText(array('GET'),'customer');
+	public function actionDownxls() {
+    $this->menuname = 'productoutputlist';
+    parent::actionDownxls();
+    $productoutputid = GetSearchText(array('POST','GET','Q'),'productoutputid');
+		$plantcode   = GetSearchText(array('POST','GET','Q'),'plantcode');
+		$productplanno   = GetSearchText(array('POST','GET','Q'),'productplanno');
+    $productoutputdate     = GetSearchText(array('POST','GET','Q'),'productoutputdate');
+    $productoutputno = GetSearchText(array('POST','GET','Q'),'productoutputno');
+    $headernote = GetSearchText(array('POST','GET','Q'),'headernote');
+		$sql = "select a.*,b.productplanno,b.productplandate,n.plantcode,m.sloccode,e.productname,f.uomcode,g.uomcode as uom2code,z.fullname,
+			h.uomcode as uom3code,i.uomcode as uom4code,d.qty,d.qty2,d.qty3,d.qty4,o.productplanno as oklanjut,j.bomversion,
+			d.description as fgdesc,p.processprdname,l.kodemesin,d.outputdate,s.uomcode as uomdetail,t.uomcode as uom2detail,
+			u.uomcode as uom3detail,v.uomcode as uom4detail,r.productname as productjasa,q.qty as qtydetail,q.qty2 as qty2detail,q.qty3 as qty3detail,
+			q.qty4 as qty4detail,w.bomversion as bomdetail,q.description as descdetail,x.sloccode as sloctodetail,y.sloccode as slocfromdetail,
+			d.shift,d.efektivitas,d.angkatan,z.fullname,zz.description as storagebinto,ss.description as storagebinname,
+			bb.productname as productwaste,bf.uomcode as uomwaste,bg.uomcode as uom2waste,
+			bh.uomcode as uom3waste,bi.uomcode as uom4waste,bb.qty as qtywaste,bb.qty2 as qty2waste,bb.qty3 as qty3waste,bb.qty4 as qty4waste,
+			bb.sloccode as slocwaste,ba.description as storagebinwaste,bb.itemnote as wastenote, da.fullname as employeename, da.oldnik, ca.description as operatornote
+      from productoutput a 
+			left join productplan b on b.productplanid = a.productplanid 
+			left join soheader c on c.soheaderid = b.soheaderid
+			left join addressbook z on z.addressbookid = c.addressbookid 
+			left join productoutputfg d on d.productoutputid = a.productoutputid 
+			left join product e on e.productid = d.productid 
+			left join unitofmeasure f on f.unitofmeasureid = d.uomid 
+			left join unitofmeasure g on g.unitofmeasureid = d.uom2id 
+			left join unitofmeasure h on h.unitofmeasureid = d.uom3id 
+			left join unitofmeasure i on i.unitofmeasureid = d.uom4id
+			left join billofmaterial j on j.bomid = d.bomid 
+			left join processprd k on k.processprdid = d.processprdid 
+			left join mesin l on l.mesinid = d.mesinid 
+			left join sloc m on m.slocid = d.slocid 
+			left join plant n on n.plantid = a.plantid 
+			left join productplan o on o.productplanid = b.parentplanid 
+			left join processprd p on p.processprdid = k.processprdid  
+			left join productoutputdetail q on q.productoutputid = d.productoutputid 
+			left join product r on r.productid = q.productid 
+			left join unitofmeasure s on s.unitofmeasureid = q.uomid 
+			left join unitofmeasure t on t.unitofmeasureid = q.uom2id 
+			left join unitofmeasure u on u.unitofmeasureid = q.uom3id 
+			left join unitofmeasure v on v.unitofmeasureid = q.uom4id 
+			left join billofmaterial w on w.bomid = q.bomid 
+			left join sloc x on x.slocid = q.sloctoid 
+			left join sloc y on y.slocid = q.slocfromid 
+			left join storagebin zz on zz.storagebinid = q.storagebintoid
+			left join storagebin ss on ss.storagebinid = d.storagebinid
+			left join productoutputwaste bb on bb.productoutputfgid = d.productoutputfgid
+			left join unitofmeasure bf on bf.unitofmeasureid = bb.uomid 
+			left join unitofmeasure bg on bg.unitofmeasureid = bb.uom2id 
+			left join unitofmeasure bh on bh.unitofmeasureid = bb.uom3id 
+			left join unitofmeasure bi on bi.unitofmeasureid = bb.uom4id
+			left join storagebin ba on ba.storagebinid = bb.storagebinid
+			left join productoutputemployee ca on ca.productoutputfgid = d.productoutputfgid
+			left join employee da on da.employeeid = ca.employeeid
+		";
+		$sql .= " where coalesce(a.productoutputid,'') like '".$productoutputid."' 
+			and coalesce(n.plantcode,'') like '".$plantcode."' 
+			and coalesce(b.productplanno,'') like '".$productplanno."' 
+			and coalesce(a.productoutputdate,'') like '".$productoutputdate."' 
+			and coalesce(a.productoutputno,'') like '".$productoutputno."' 
+			and coalesce(a.headernote,'') like '".$headernote."'"
+		;
+		if ($_GET['id'] !== '') {
+      $sql = $sql . " and a.productoutputid in (" . $_GET['id'] . ")";
+    }
+    $dataReader = Yii::app()->db->createCommand($sql)->queryAll();
+    $i          = 3;$nourut=0;$oldbom='';
+    foreach ($dataReader as $row) {
+			if ($oldbom != $row['productoutputid']) {
+				$nourut+=1;
+				$oldbom = $row['productoutputid'];
+			}
+			$this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i, $nourut)
+				->setCellValueByColumnAndRow(1, $i, $row['plantcode'])
+				->setCellValueByColumnAndRow(2, $i, date(Yii::app()->params['dateviewfromdb'], strtotime($row['productoutputdate'])))
+				->setCellValueByColumnAndRow(3, $i, $row['productoutputno'])
+				->setCellValueByColumnAndRow(4, $i, $row['productplanno'])
+				->setCellValueByColumnAndRow(5, $i, $row['oklanjut'])
+				->setCellValueByColumnAndRow(6, $i, $row['sono'])
+				->setCellValueByColumnAndRow(7, $i, $row['fullname'])
+				->setCellValueByColumnAndRow(8, $i, $row['headernote'])
+				->setCellValueByColumnAndRow(10, $i, $row['productname'])
+				->setCellValueByColumnAndRow(11, $i, Yii::app()->format->formatNumber($row['qty']))
+				->setCellValueByColumnAndRow(12, $i, $row['uomcode'])
+				->setCellValueByColumnAndRow(13, $i, Yii::app()->format->formatNumber($row['qty2']))
+				->setCellValueByColumnAndRow(14, $i, $row['uom2code'])
+				->setCellValueByColumnAndRow(15, $i, Yii::app()->format->formatNumber($row['qty3']))
+				->setCellValueByColumnAndRow(16, $i, $row['uom3code'])
+				->setCellValueByColumnAndRow(17, $i, Yii::app()->format->formatNumber($row['qty4']))
+				->setCellValueByColumnAndRow(18, $i, $row['uom4code'])
+				->setCellValueByColumnAndRow(19, $i, $row['bomversion'])
+				->setCellValueByColumnAndRow(20, $i, $row['processprdname'])
+				->setCellValueByColumnAndRow(21, $i, $row['kodemesin'])
+				->setCellValueByColumnAndRow(22, $i, $row['sloccode'])
+				->setCellValueByColumnAndRow(23, $i, $row['storagebinname'])
+				->setCellValueByColumnAndRow(24, $i, $row['shift'])
+				->setCellValueByColumnAndRow(25, $i, $row['efektivitas'])
+				->setCellValueByColumnAndRow(26, $i, $row['angkatan'])
+				->setCellValueByColumnAndRow(27, $i, $row['fgdesc'])
+				->setCellValueByColumnAndRow(28, $i, $row['productjasa'])
+				->setCellValueByColumnAndRow(29, $i, Yii::app()->format->formatNumber($row['qtydetail']))
+				->setCellValueByColumnAndRow(30, $i, $row['uomdetail'])
+				->setCellValueByColumnAndRow(31, $i, Yii::app()->format->formatNumber($row['qty2detail']))
+				->setCellValueByColumnAndRow(32, $i, $row['uom2detail'])
+				->setCellValueByColumnAndRow(33, $i, Yii::app()->format->formatNumber($row['qty3detail']))
+				->setCellValueByColumnAndRow(34, $i, $row['uom3detail'])
+				->setCellValueByColumnAndRow(35, $i, Yii::app()->format->formatNumber($row['qty4detail']))
+				->setCellValueByColumnAndRow(36, $i, $row['uom4detail'])
+				->setCellValueByColumnAndRow(37, $i, $row['bomdetail'])
+				->setCellValueByColumnAndRow(38, $i, $row['sloctodetail'])
+				->setCellValueByColumnAndRow(39, $i, $row['slocfromdetail'])
+				->setCellValueByColumnAndRow(40, $i, $row['storagebinwaste'])
+				->setCellValueByColumnAndRow(41, $i, $row['storagebinto'])
+				->setCellValueByColumnAndRow(42, $i, $row['productwaste'])
+				->setCellValueByColumnAndRow(43, $i, Yii::app()->format->formatNumber($row['qtywaste']))
+				->setCellValueByColumnAndRow(44, $i, $row['uomwaste'])
+				->setCellValueByColumnAndRow(45, $i, Yii::app()->format->formatNumber($row['qty2waste']))
+				->setCellValueByColumnAndRow(46, $i, $row['uom2waste'])
+				->setCellValueByColumnAndRow(47, $i, Yii::app()->format->formatNumber($row['qty3waste']))
+				->setCellValueByColumnAndRow(48, $i, $row['uom3waste'])
+				->setCellValueByColumnAndRow(49, $i, Yii::app()->format->formatNumber($row['qty4waste']))
+				->setCellValueByColumnAndRow(50, $i, $row['uom4waste'])
+				->setCellValueByColumnAndRow(51, $i, $row['slocwaste'])
+				->setCellValueByColumnAndRow(52, $i, $row['storagebinwaste'])
+				->setCellValueByColumnAndRow(53, $i, $row['wastenote'])
+				->setCellValueByColumnAndRow(54, $i, $row['employeename'])
+				->setCellValueByColumnAndRow(55, $i, $row['oldnik'])
+				->setCellValueByColumnAndRow(56, $i, $row['operatornote'])
+			;
+			$i++;
+    }
+    $this->getFooterXLS($this->phpExcel);
   }
 }

@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/salesarea/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/salesarea/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/salesarea/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/salesarea/downdoc'),
 	'columns'=>"
 		{
 			field:'salesareaid',
@@ -36,7 +37,7 @@
 			sortable:'true',
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}

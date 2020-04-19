@@ -9,7 +9,7 @@ class FamethodController extends Controller {
       $this->renderPartial('index', array());
   }
 	public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $famethodid   = isset($_POST['famethodid']) ? $_POST['famethodid'] : '';
     $methodname = isset($_POST['methodname']) ? $_POST['methodname'] : '';
     $famethodid   = isset($_GET['q']) ? $_GET['q'] : $famethodid;

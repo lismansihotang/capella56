@@ -31,20 +31,35 @@ class ReportinventoryController extends Controller {
 				case 3 :
 					$this->KartuStokBarang($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
 					break;
-				case 5 :
+				case 4 :
 					$this->RekapStokBarang($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
 					break;
-				case 7 :
-					$this->RekapStokBarangDenganRak($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
-					break;
-				case 8 :
+				case 5 :
 					$this->RincianSuratJalanPerDokumen($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
 					break;
-				case 11 :
+        case 6 :
+          $this->DaftarSuratJalan($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
+          break;  
+        case 7 :
+          $this->RincianTransferGudangKeluarPerDokumen($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
+          break;
+        case 8 :
+          $this->RincianTransferGudangMasukPerDokumen($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
+          break;
+        case 9 :
+          $this->DaftarSuratPenyerahanHasilJadi($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
+          break;
+        case 10 :
+          $this->DaftarSuratPenyerahanBB($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
+          break;
+        case 11 :
 					$this->RincianReturJualPerDokumen($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
 					break;
 				case 14 :
 					$this->RincianTerimaBarangPerDokumen($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
+					break;
+				case 15 :
+					$this->DaftarLPB($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
 					break;
 				case 17 :
 					$this->RincianReturBeliPerDokumen($_GET['companyid'],$_GET['plantid'], $_GET['sloc'], $_GET['storagebin'], $_GET['sales'], $_GET['product'], $_GET['salesarea'], $_GET['startdate'], $_GET['enddate']);
@@ -195,17 +210,15 @@ class ReportinventoryController extends Controller {
       $sql1        = "select *,(".$row['awal']."+beli+returjual+trfin+produksi+jual+returbeli+trfout+pemakaian+koreksi+konversiin+konversiout) as saldo
 				from
 					(select referenceno as dokumen,transdate as tanggal,slocid,
-						case when (instr(referenceno,'GR') > 0) then qty else 0 end as beli,
+						case when (instr(referenceno,'LPB') > 0) then qty else 0 end as beli,
 						case when (instr(referenceno,'GIR') > 0) then qty else 0 end as returjual, 
 						case when (instr(referenceno,'TFS') > 0) and (qty > 0) then qty else 0 end as trfin, 
 						case when (instr(referenceno,'OP') > 0) and (qty > 0) then qty else 0 end as produksi,
 						case when instr(referenceno,'SJ') > 0 then qty else 0 end as jual,
 						case when instr(referenceno,'GRR') > 0 then qty else 0 end as returbeli,
 						case when (instr(referenceno,'TFS') > 0) and (qty < 0) then qty else 0 end as trfout,
-						case when (instr(referenceno,'OP') > 0) and (qty < 0) then qty else 0 end as pemakaian,
-						case when instr(referenceno,'TSO') > 0 then qty else 0 end as koreksi,
-						case when (instr(referenceno,'konversi') > 0) and (qty > 0) then qty else 0 end as konversiin,
-						case when (instr(referenceno,'konversi') > 0) and (qty < 0) then qty else 0 end as konversiout
+						case when (instr(referenceno,'OP/') > 0) and (qty < 0) then qty else 0 end as pemakaian,
+						case when instr(referenceno,'TSO') > 0 then qty else 0 end as koreksi
 					from
 					(select a.referenceno,a.transdate,a.qty,a.slocid
 						from productstockdet a
@@ -612,7 +625,7 @@ class ReportinventoryController extends Controller {
       $sql1        = "select distinct productid,productname,materialgroupcode,uomcode,slocid,sloccode from
 				(select productid,productname,materialgroupcode,uomcode,awal,dokumen,tanggal,slocid,sloccode,masuk,keluar,(awal+masuk+keluar) as saldo
 				from
-				(select productid,productname,materialgroupcode,uomcode,awal,dokumen,tanggal,slocid,sloccode,(beli+returjual+trfin+produksi+konversiin+opnamemasuk) as masuk,(jual+returbeli+trfout+pemakaian+konversiout+opnamekeluar) as keluar
+				(select productid,productname,materialgroupcode,uomcode,awal,dokumen,tanggal,slocid,sloccode,(beli+returjual+trfin+produksi+opnamemasuk) as masuk,(jual+returbeli+trfout+pemakaian+opnamekeluar) as keluar
 				from
 				(select productid,productname,materialgroupcode,uomcode,referenceno as dokumen, transdate as tanggal,slocid,sloccode,awal,
 				case when instr(referenceno,'LPB') > 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
@@ -623,8 +636,6 @@ class ReportinventoryController extends Controller {
 				'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty > 0) then qty else 0 end as trfin,
 				case when (instr(referenceno,'OP') > 0) and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
 				'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty > 0) then qty else 0 end as produksi,
-				case when (instr(referenceno,'konversi') > 0) and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
-				'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty > 0) then qty else 0 end as konversiin,
 				case when instr(referenceno,'SJ') > 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
 				'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') then qty else 0 end as jual,
 				case when instr(referenceno,'GRR') > 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
@@ -633,8 +644,6 @@ class ReportinventoryController extends Controller {
 				'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty < 0) then qty else 0 end as trfout,
 				case when (instr(referenceno,'OP') > 0) and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
 				'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty < 0) then qty else 0 end as pemakaian,
-				case when (instr(referenceno,'konversi') > 0) and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
-				'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty < 0) then qty else 0 end as konversiout,
 				case when instr(referenceno,'TSO') > 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
 				'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') then qty else 0 end as opnamemasuk,
 				case when instr(referenceno,'TSO') < 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
@@ -674,7 +683,7 @@ class ReportinventoryController extends Controller {
         $this->pdf->text(10, $this->pdf->gety() + 15, 'Grup Material : '.$row1['materialgroupcode']);
         $sql2        = "select awal,dokumen,tanggal,masuk,keluar,(awal+masuk+keluar) as saldo
                         from
-                        (select awal,dokumen,tanggal,(beli+returjual+trfin+produksi+konversiin+opnamemasuk) as masuk,(jual+returbeli+trfout+pemakaian+konversiout+opnamekeluar) as keluar
+                        (select awal,dokumen,tanggal,(beli+returjual+trfin+produksi+opnamemasuk) as masuk,(jual+returbeli+trfout+pemakaian+opnamekeluar) as keluar
                         from
                         (select referenceno as dokumen, transdate as tanggal,slocid,awal,
                         case when instr(referenceno,'LPB') > 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
@@ -685,8 +694,6 @@ class ReportinventoryController extends Controller {
 												'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty > 0) then qty else 0 end as trfin,
                         case when (instr(referenceno,'OP') > 0) and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
 												'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty > 0) then qty else 0 end as produksi,
-												case when (instr(referenceno,'konversi') > 0) and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
-												'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty > 0) then qty else 0 end as konversiin,
                         case when instr(referenceno,'SJ') > 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
 												'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') then qty else 0 end as jual,
                         case when instr(referenceno,'GRR') > 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
@@ -695,8 +702,6 @@ class ReportinventoryController extends Controller {
 												'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty < 0) then qty else 0 end as trfout,
                         case when (instr(referenceno,'OP') > 0) and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
 												'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty < 0) then qty else 0 end as pemakaian,
-												case when (instr(referenceno,'konversi') > 0) and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
-												'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') and (qty < 0) then qty else 0 end as konversiout,
                        case when instr(referenceno,'TSO') > 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
 												'" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "') then qty else 0 end as opnamemasuk,
 												case when instr(referenceno,'TSO') < 0 and (z.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and 
@@ -1511,6 +1516,408 @@ class ReportinventoryController extends Controller {
     }
     $this->pdf->Output();
   }
+  public function DaftarSuratJalan($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $startdate, $enddate) {
+    parent::actionDownload();
+    $sql        = "SELECT  a.gino,a.gidate,a.plantcode,a.customername,e.addressname,a.pocustno,b.sono,
+      a.suppliername AS expedisi,a.nomobil,a.sopir,a.headernote,d.productcode,d.productname,c.qty,f.uomcode,
+      c.qty2,g.uomcode AS uom2code,c.itemnote,c.qty3, j.uomcode as uom3code,c.qty4,k.uomcode as uom4code
+      FROM giheader a 
+      JOIN soheader b ON b.soheaderid = a.soheaderid 
+      LEFT JOIN address e ON e.addressid = b.addresstoid
+      LEFT JOIN gidetail c ON c.giheaderid = a.giheaderid 
+      LEFT JOIN product d ON d.productid = c.productid 
+      LEFT JOIN unitofmeasure f ON f.unitofmeasureid = c.uomid
+      LEFT JOIN unitofmeasure g ON g.unitofmeasureid = c.uom2id
+      left join plant h on h.plantid = a.plantid 
+      left join sloc i on i.slocid = c.slocid 
+      left join unitofmeasure j on j.unitofmeasureid = c.uom3id 
+      left join unitofmeasure k on k.unitofmeasureid = c.uom4id 
+      WHERE a.gino is not null 
+        and a.recordstatus = 3 
+        and h.companyid = " . $companyid . " 
+        and i.plantid = " . $plantid . " 
+        and d.productid in (select x.productid 
+        from productplant x join product xx on xx.productid = x.productid 
+        where xx.productname like '%" . $product . "%'  
+        and x.slocid = i.slocid)
+        and i.sloccode like '%" . $sloc . "%'  
+        and a.gidate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'";
+    $command    = $this->connection->createCommand($sql);
+    $dataReader = $command->queryAll();
+    $this->pdf->companyid = $companyid;
+    $this->pdf->title    = 'Daftar Surat Jalan';
+    $this->pdf->subtitle = 'Dari Tgl :' . date(Yii::app()->params['dateviewfromdb'], strtotime($startdate)) . ' s/d ' . date(Yii::app()->params['dateviewfromdb'], strtotime($enddate));
+    $this->pdf->AddPage('L','A3');
+    $this->pdf->sety($this->pdf->gety() + 10);
+    $this->pdf->setFont('Arial', 'B', 8);
+    $this->pdf->colalign = array(
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C'
+    );
+    $this->pdf->setwidths(array(
+      10,
+      13,
+      30,
+      20,
+      30,
+      50,
+      30,
+      25,
+      25,
+      50,
+      22,
+      22,
+      22,
+      22,
+      40
+    ));
+    $this->pdf->colheader = array(
+      'No',
+      'Plant',
+      'SP',
+      'Tgl',
+      'Pelanggan',
+      'Alamat Kirim',
+      'OS',
+      'PO Cust',
+      'Kode Produk',
+      'Nama Barang',
+      'Qty',
+      'Qty 2',
+      'Qty 3',
+      'Qty 4',
+      'Keterangan'
+    );
+    $this->pdf->RowHeader();
+    $this->pdf->coldetailalign = array(
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'R',
+      'R',
+      'R',
+      'R',
+      'L'
+    );
+    $this->pdf->setFont('Arial', '', 8);
+    $i=0;
+    foreach ($dataReader as $row) {
+      $i += 1;
+      $this->pdf->row(array(
+        $i,
+        $row['plantcode'],
+        $row['gino'],
+        date(Yii::app()->params['dateviewfromdb'], strtotime($row['gidate'])),
+        $row['customername'],
+        $row['addressname'],
+        $row['sono'],
+        $row['pocustno'],
+        $row['productcode'],
+        $row['productname'],
+        Yii::app()->format->formatNumber($row['qty']).' '.$row['uomcode'],
+        Yii::app()->format->formatNumber($row['qty2']).' '.$row['uom2code'],
+        Yii::app()->format->formatNumber($row['qty3']).' '.$row['uom3code'],
+        Yii::app()->format->formatNumber($row['qty4']).' '.$row['uom4code'],
+        $row['itemnote']
+      ));
+    }
+    $this->pdf->checkPageBreak(20);
+    $this->pdf->sety($this->pdf->gety() + 10);
+    $this->pdf->Output();
+  }
+  public function DaftarSuratPenyerahanHasilJadi($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $startdate, $enddate) {
+    parent::actionDownload();
+    $sql        = "SELECT a.transstockno,b.plantcode,a.transstockdate,d.productoutputno,e.productplanno,f.fullname,
+    h.productcode,h.productname,g.qty,i.uomcode,g.qty2,j.uomcode AS uom2code,g.qty3,k.uomcode AS uom3code, 
+    g.qty4,l.uomcode AS uom4code,g.itemnote
+    FROM transstock a 
+    LEFT JOIN plant b ON b.plantid = a.plantid 
+    LEFT JOIN sloc c ON c.slocid = a.sloctoid
+    LEFT JOIN productoutput d ON d.productoutputid = a.productoutputid 
+    LEFT JOIN productplan e ON e.productplanid = d.productplanid 
+    LEFT JOIN addressbook f ON f.addressbookid = e.addressbookid
+    LEFT JOIN transstockdet g ON g.transstockid = a.transstockid 
+    LEFT JOIN product h ON h.productid = g.productid
+    LEFT JOIN unitofmeasure i ON i.unitofmeasureid = g.uomid 
+    LEFT JOIN unitofmeasure j ON j.unitofmeasureid = g.uom2id
+    LEFT JOIN unitofmeasure k ON k.unitofmeasureid = g.uom3id
+    LEFT JOIN unitofmeasure l ON l.unitofmeasureid = g.uom4id
+    WHERE a.transstocktypeid = 1
+      and a.transstockno is not null 
+      and a.recordstatus = 5 
+      and b.companyid = " . $companyid . " 
+      and b.plantid = " . $plantid . " 
+      and g.productid in (select x.productid 
+      from productplant x join product xx on xx.productid = x.productid 
+      where xx.productname like '%" . $product . "%'  
+      and x.slocid = c.slocid)
+      and c.sloccode like '%" . $sloc . "%'  
+      and a.transstockdate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'";
+    $command    = $this->connection->createCommand($sql);
+    $dataReader = $command->queryAll();
+    $this->pdf->companyid = $companyid;
+    $this->pdf->title    = 'Daftar Surat Penyerahan Hasil Jadi';
+    $this->pdf->subtitle = 'Dari Tgl :' . date(Yii::app()->params['dateviewfromdb'], strtotime($startdate)) . ' s/d ' . date(Yii::app()->params['dateviewfromdb'], strtotime($enddate));
+    $this->pdf->AddPage('L','A3');
+    $this->pdf->sety($this->pdf->gety() + 10);
+    $this->pdf->setFont('Arial', 'B', 8);
+    $this->pdf->colalign = array(
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C'
+    );
+    $this->pdf->setwidths(array(
+      10,
+      13,
+      35,
+      20,
+      30,
+      30,
+      40,
+      25,
+      60,
+      25,
+      25,
+      25,
+      25,
+      40
+    ));
+    $this->pdf->colheader = array(
+      'No',
+      'Plant',
+      'No Transfer',
+      'Tgl',
+      'OK',
+      'Produksi',
+      'Pelanggan',
+      'Kode Produk',
+      'Nama Barang',
+      'Qty',
+      'Qty 2',
+      'Qty 3',
+      'Qty 4',
+      'Keterangan'
+    );
+    $this->pdf->RowHeader();
+    $this->pdf->coldetailalign = array(
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'R',
+      'R',
+      'R',
+      'R',
+      'L'
+    );
+    $this->pdf->setFont('Arial', '', 8);
+    $i=0;
+    foreach ($dataReader as $row) {
+      $i += 1;
+      $this->pdf->row(array(
+        $i,
+        $row['plantcode'],
+        $row['transstockno'],
+        date(Yii::app()->params['dateviewfromdb'], strtotime($row['transstockdate'])),
+        $row['productplanno'],
+        $row['productoutputno'],
+        $row['fullname'],
+        $row['productcode'],
+        $row['productname'],
+        Yii::app()->format->formatNumber($row['qty']).' '.$row['uomcode'],
+        Yii::app()->format->formatNumber($row['qty2']).' '.$row['uom2code'],
+        Yii::app()->format->formatNumber($row['qty3']).' '.$row['uom3code'],
+        Yii::app()->format->formatNumber($row['qty4']).' '.$row['uom4code'],
+        $row['itemnote']
+      ));
+    }
+    $this->pdf->checkPageBreak(20);
+    $this->pdf->sety($this->pdf->gety() + 10);
+    $this->pdf->Output();
+  }
+  public function DaftarSuratPenyerahanBB($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $startdate, $enddate) {
+    parent::actionDownload();
+    $sql        = "SELECT a.transstockno,b.plantcode,a.transstockdate,e.productplanno,f.fullname,
+    h.productcode,h.productname,g.qty,i.uomcode,g.qty2,j.uomcode AS uom2code,g.qty3,
+    k.uomcode AS uom3code, 
+    g.qty4,l.uomcode AS uom4code,g.itemnote,c.sloccode,m.sono,n.sloccode as sloctocode 
+    FROM transstock a 
+    LEFT JOIN plant b ON b.plantid = a.plantid 
+    LEFT JOIN sloc c ON c.slocid = a.slocfromid
+    LEFT JOIN formrequest d ON d.formrequestid = a.formrequestid
+    LEFT JOIN productplan e ON e.productplanid = d.productplanid 
+    LEFT JOIN soheader m ON m.soheaderid = e.soheaderid 
+    LEFT JOIN addressbook f ON f.addressbookid = e.addressbookid
+    LEFT JOIN transstockdet g ON g.transstockid = a.transstockid 
+    LEFT JOIN product h ON h.productid = g.productid
+    LEFT JOIN unitofmeasure i ON i.unitofmeasureid = g.uomid 
+    LEFT JOIN unitofmeasure j ON j.unitofmeasureid = g.uom2id
+    LEFT JOIN unitofmeasure k ON k.unitofmeasureid = g.uom3id
+    LEFT JOIN unitofmeasure l ON l.unitofmeasureid = g.uom4id
+    left join sloc n on n.slocid = a.sloctoid 
+    WHERE a.transstocktypeid = 0
+      and a.transstockno is not null 
+      and a.recordstatus = 5 
+      and b.companyid = " . $companyid . " 
+      and b.plantid = " . $plantid . " 
+      and g.productid in (select x.productid 
+      from productplant x join product xx on xx.productid = x.productid 
+      where xx.productname like '%" . $product . "%'  
+      and x.slocid = c.slocid)
+      and c.sloccode like '%" . $sloc . "%'  
+      and a.transstockdate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'";
+    $command    = $this->connection->createCommand($sql);
+    $dataReader = $command->queryAll();
+    $this->pdf->companyid = $companyid;
+    $this->pdf->title    = 'Daftar Surat Penyerahan Bahan Baku';
+    $this->pdf->subtitle = 'Dari Tgl :' . date(Yii::app()->params['dateviewfromdb'], strtotime($startdate)) . ' s/d ' . date(Yii::app()->params['dateviewfromdb'], strtotime($enddate));
+    $this->pdf->AddPage('L','A3');
+    $this->pdf->sety($this->pdf->gety() + 10);
+    $this->pdf->setFont('Arial', 'B', 8);
+    $this->pdf->colalign = array(
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C'
+    );
+    $this->pdf->setwidths(array(
+      10,
+      12,
+      30,
+      20,
+      30,
+      30,
+      40,
+      20,
+      20,
+      60,
+      23,
+      23,
+      23,
+      23,
+      40
+    ));
+    $this->pdf->colheader = array(
+      'No',
+      'Plant',
+      'No Transfer',
+      'Tgl',
+      'No OK',
+      'No OS',
+      'Pelanggan',
+      'Bagian',
+      'Kode Produk',
+      'Nama Barang',
+      'Qty',
+      'Qty 2',
+      'Qty 3',
+      'Qty 4',
+      'Keterangan'
+    );
+    $this->pdf->RowHeader();
+    $this->pdf->coldetailalign = array(
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'R',
+      'R',
+      'R',
+      'R',
+      'L'
+    );
+    $this->pdf->setFont('Arial', '', 8);
+    $i=0;
+    foreach ($dataReader as $row) {
+      $i += 1;
+      $this->pdf->row(array(
+        $i,
+        $row['plantcode'],
+        $row['transstockno'],
+        date(Yii::app()->params['dateviewfromdb'], strtotime($row['transstockdate'])),
+        $row['productplanno'],
+        $row['sono'],
+        $row['fullname'],
+        $row['sloctocode'],
+        $row['productcode'],
+        $row['productname'],
+        Yii::app()->format->formatNumber($row['qty']).' '.$row['uomcode'],
+        Yii::app()->format->formatNumber($row['qty2']).' '.$row['uom2code'],
+        Yii::app()->format->formatNumber($row['qty3']).' '.$row['uom3code'],
+        Yii::app()->format->formatNumber($row['qty4']).' '.$row['uom4code'],
+        $row['itemnote']
+      ));
+    }
+    $this->pdf->checkPageBreak(20);
+    $this->pdf->sety($this->pdf->gety() + 10);
+    $this->pdf->Output();
+  }
 	public function RincianReturJualPerDokumen($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $startdate, $enddate) {
     parent::actionDownload();
     $sql        = "select distinct zd.gireturid,zd.gireturno,zg.fullname as customer,c.fullname as sales,zd.gireturdate,zi.areaname,zb.gino 
@@ -1749,6 +2156,134 @@ class ReportinventoryController extends Controller {
       ));
       $this->pdf->checkPageBreak(20);
     }
+    $this->pdf->Output();
+  }
+  public function DaftarLPB($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $startdate, $enddate) {
+    parent::actionDownload();
+    $sql        = "SELECT a.grdate,a.grno,a.sjsupplier,b.pono,c.fullname,e.productcode,e.productname,d.qty,d.qty2,
+    d.qty3,d.qty4,f.uomcode,g.uomcode AS uom2code, h.uomcode AS uom3code,i.uomcode AS uom4code,d.itemnote,k.plantcode
+    FROM grheader a  
+    LEFT JOIN poheader b ON b.poheaderid = a.poheaderid
+    LEFT JOIN addressbook c ON c.addressbookid = b.addressbookid
+    LEFT JOIN grdetail d ON d.grheaderid = a.grheaderid
+    LEFT JOIN product e ON e.productid = d.productid
+    LEFT JOIN unitofmeasure f ON f.unitofmeasureid = d.uomid
+    LEFT JOIN unitofmeasure g ON g.unitofmeasureid = d.uom2id
+    LEFT JOIN unitofmeasure h ON h.unitofmeasureid = d.uom3id
+    LEFT JOIN unitofmeasure i ON i.unitofmeasureid = d.uom4id
+    left join sloc j on j.slocid = d.slocid 
+    left join plant k on k.plantid = a.plantid 
+    WHERE a.grno is not null 
+      and a.recordstatus = 3 
+      and k.companyid = " . $companyid . " 
+      and k.plantid = " . $plantid . " 
+      and e.productid in (select x.productid 
+      from productplant x join product xx on xx.productid = x.productid 
+      where xx.productname like '%" . $product . "%'  
+      and x.slocid = j.slocid)
+      and j.sloccode like '%" . $sloc . "%'  
+      and a.grdate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'";
+    $command    = $this->connection->createCommand($sql);
+    $dataReader = $command->queryAll();
+    $this->pdf->companyid = $companyid;
+    $this->pdf->title    = 'Daftar Laporan Penerimaan Barang';
+    $this->pdf->subtitle = 'Dari Tgl :' . date(Yii::app()->params['dateviewfromdb'], strtotime($startdate)) . ' s/d ' . date(Yii::app()->params['dateviewfromdb'], strtotime($enddate));
+    $this->pdf->AddPage('L','A3');
+    $this->pdf->sety($this->pdf->gety() + 10);
+    $this->pdf->setFont('Arial', 'B', 8);
+    $this->pdf->colalign = array(
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C',
+      'C'
+    );
+    $this->pdf->setwidths(array(
+      10,
+      13,
+      35,
+      20,
+      30,
+      30,
+      40,
+      25,
+      60,
+      23,
+      23,
+      23,
+      23,
+      50
+    ));
+    $this->pdf->colheader = array(
+      'No',
+      'Plant',
+      'LPB',
+      'Tgl',
+      'No PO',
+      'Supplier',
+      'SJ Supplier',
+      'Kode Produk',
+      'Nama Barang',
+      'Qty',
+      'Qty 2',
+      'Qty 3',
+      'Qty 4',
+      'Keterangan'
+    );
+    $this->pdf->RowHeader();
+    $this->pdf->coldetailalign = array(
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'L',
+      'R',
+      'R',
+      'R',
+      'R',
+      'L'
+    );
+    $this->pdf->setFont('Arial', '', 8);
+    $i=0;
+    foreach ($dataReader as $row) {
+      $i += 1;
+      $this->pdf->row(array(
+        $i,
+        $row['plantcode'],
+        $row['grno'],
+        date(Yii::app()->params['dateviewfromdb'], strtotime($row['grdate'])),
+        $row['pono'],
+        $row['fullname'],
+        $row['sjsupplier'],
+        $row['productcode'],
+        $row['productname'],
+        Yii::app()->format->formatNumber($row['qty']).' '.$row['uomcode'],
+        Yii::app()->format->formatNumber($row['qty2']).' '.$row['uom2code'],
+        Yii::app()->format->formatNumber($row['qty3']).' '.$row['uom3code'],
+        Yii::app()->format->formatNumber($row['qty4']).' '.$row['uom4code'],
+        $row['itemnote']
+      ));
+    }
+    $this->pdf->checkPageBreak(20);
+    $this->pdf->sety($this->pdf->gety() + 10);
     $this->pdf->Output();
   }
 	public function RincianReturBeliPerDokumen($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $startdate, $enddate) {
@@ -2726,9 +3261,11 @@ class ReportinventoryController extends Controller {
     $sql        = "SELECT a.prno,a.prheaderid,a.prdate,a.description,a.recordstatus,statusname
 			FROM prheader a 
 			left join plant b on b.plantid = a.plantid 
+      left join sloc c on c.slocid = a.slocfromid 
 			WHERE a.recordstatus BETWEEN 1 AND 2
 						and b.companyid =  " . $companyid . "
-						and b.plantid =  " . $plantid . "
+            and b.plantid =  " . $plantid . "
+            and coalesce(c.sloccode,'') like '%".$sloc."%' 
 						order by a.prdate,a.prheaderid
 						";
     $command    = $this->connection->createCommand($sql);
@@ -3230,7 +3767,7 @@ class ReportinventoryController extends Controller {
                 FROM sloc xa
                 JOIN plant xb ON xb.plantid = xa.plantid
                 JOIN company xc ON xc.companyid = xb.companyid
-                WHERE xb.plantid = ".$plantid." AND xa.slocid = zz.slocfromid)
+                WHERE xb.plantid = ".$plantid." and coalesce(xa.sloccode,'') like '%".$sloc."%' AND xa.slocid = zz.slocfromid)
             ORDER BY formrequestid DESC";
     $command    = $this->connection->createCommand($sql);
     $dataReader = $command->queryAll();
@@ -3304,7 +3841,7 @@ class ReportinventoryController extends Controller {
 		$this->pdf->isrepeat = 1;
 		$sql = "
 		SELECT n.plantcode,a.prno,a.prdate,d.pono,d.podate,g.grno,g.grdate,e.productname,b.qty AS qtyfpp,c.qty AS qtypo,
-			f.qty AS qtygr,a.statusname,h.uomcode,i.uomcode as uom2code,j.uomcode as uom3code,k.uomcode as uom4code,l.fullname as supplier
+			f.qty AS qtygr,a.statusname,h.uomcode,i.uomcode as uom2code,j.uomcode as uom3code,k.uomcode as uom4code,l.fullname as supplier,c.arrivedate
 			FROM prheader a
 			left JOIN prraw b ON b.prheaderid = a.prheaderid
 			LEFT JOIN podetail c ON c.prrawid = b.prrawid AND c.productid = b.productid
@@ -3328,7 +3865,7 @@ class ReportinventoryController extends Controller {
 			(($pono != '')? " and coalesce(d.pono,'') like '%".$pono."%'":'');
 		$sql1 = "
 			SELECT k.plantcode,a.prno,a.prdate,d.pono,d.podate,g.grno,g.grdate,e.productname,b.qty AS qtyfpp,c.qty AS qtypo,
-			f.qty AS qtygr,a.statusname,h.uomcode,'','','',i.fullname as supplier
+			f.qty AS qtygr,a.statusname,h.uomcode,'','','',i.fullname as supplier,c.reqdate
 			FROM prheader a
 			left JOIN prjasa b ON b.prheaderid = a.prheaderid
 			LEFT JOIN pojasa c ON c.prjasaid = b.prjasaid AND c.productid = b.productid
@@ -3342,8 +3879,8 @@ class ReportinventoryController extends Controller {
 			left join plant k on k.plantid = j.plantid
 			WHERE a.prdate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
 			and a.plantid = ".$plantid.
-			(($addressbook != '')? " and l.fullname = '".$addressbook."'":'').
-			(($sloc != '')? " and coalesce(m.sloccode,'') = '".$sloc."'":'').
+			(($addressbook != '')? " and i.fullname = '".$addressbook."'":'').
+			(($sloc != '')? " and coalesce(j.sloccode,'') = '".$sloc."'":'').
 			(($product != '')? " and coalesce(e.productname,'') = '".$product."'":'').
 			(($prno != '')? " and coalesce(a.prno,'') like '%".$prno."%'":'').
 			(($pono != '')? " and coalesce(d.pono,'') like '%".$pono."%'":'');
@@ -3389,6 +3926,7 @@ class ReportinventoryController extends Controller {
 			25,
 			30,
 			30,
+			30,
 			25,
 			200,
 			25,
@@ -3404,6 +3942,7 @@ class ReportinventoryController extends Controller {
 			'Tgl FPP',
 			'NO PO',
 			'Tgl PO',
+			'Tgl Dtg',
 			'Supplier',
 			'No LPB',
 			'Tgl LPB',
@@ -3417,6 +3956,7 @@ class ReportinventoryController extends Controller {
 		$this->pdf->RowHeader();        
 		$i=1;
 		$this->pdf->coldetailalign = array(
+			'L',
 			'L',
 			'L',
 			'L',
@@ -3443,13 +3983,14 @@ class ReportinventoryController extends Controller {
 				($row['prdate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['prdate'])),
 				$row['pono'],
 				($row['podate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['podate'])),
+				($row['arrivedate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['arrivedate'])),
 				$row['supplier'],
 				$row['grno'],
 				($row['grdate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['grdate'])),
 				$row['productname'],
-				Yii::app()->format->formatCurrency($row['qtyfpp']),
-				Yii::app()->format->formatCurrency($row['qtypo']),
-				Yii::app()->format->formatCurrency($row['qtygr']),
+				Yii::app()->format->formatNumber($row['qtyfpp']),
+				Yii::app()->format->formatNumber($row['qtypo']),
+				Yii::app()->format->formatNumber($row['qtygr']),
 				$row['uomcode'],
 				$row['statusname'],
 			));
@@ -3463,6 +4004,7 @@ class ReportinventoryController extends Controller {
 				($row['prdate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['prdate'])),
 				$row['pono'],
 				($row['podate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['podate'])),
+				($row['reqdate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['reqdate'])),
 				$row['supplier'],
 				$row['grno'],
 				($row['grdate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['grdate'])),
@@ -3499,8 +4041,20 @@ class ReportinventoryController extends Controller {
 				case 3:
 					$this->KartuStokBarangXls($_GET['companyid'],$_GET['plantid'],$_GET['sloc'],$_GET['storagebin'],$_GET['sales'],$_GET['product'],$_GET['salesarea'],$_GET['prno'],$_GET['pono'],$_GET['startdate'],$_GET['enddate']);
 					break;
-				case 5:
+				case 4:
 					$this->RekapStokBarangXls($_GET['companyid'],$_GET['plantid'],$_GET['sloc'],$_GET['storagebin'],$_GET['sales'],$_GET['product'],$_GET['salesarea'],$_GET['prno'],$_GET['pono'],$_GET['startdate'],$_GET['enddate']);
+					break;
+				case 6:
+					$this->DaftarSuratJalanXls($_GET['companyid'],$_GET['plantid'],$_GET['sloc'],$_GET['storagebin'],$_GET['sales'],$_GET['product'],$_GET['salesarea'],$_GET['prno'],$_GET['pono'],$_GET['startdate'],$_GET['enddate']);
+					break;
+				case 9:
+					$this->DaftarSuratPenyerahanHasilJadiXls($_GET['companyid'],$_GET['plantid'],$_GET['sloc'],$_GET['storagebin'],$_GET['sales'],$_GET['product'],$_GET['salesarea'],$_GET['prno'],$_GET['pono'],$_GET['startdate'],$_GET['enddate']);
+					break;
+				case 10:
+					$this->DaftarSuratPenyerahanBBXls($_GET['companyid'],$_GET['plantid'],$_GET['sloc'],$_GET['storagebin'],$_GET['sales'],$_GET['product'],$_GET['salesarea'],$_GET['prno'],$_GET['pono'],$_GET['startdate'],$_GET['enddate']);
+					break;
+				case 15:
+					$this->DaftarLaporanPenerimaanBarangXls($_GET['companyid'],$_GET['plantid'],$_GET['sloc'],$_GET['storagebin'],$_GET['sales'],$_GET['product'],$_GET['salesarea'],$_GET['prno'],$_GET['pono'],$_GET['startdate'],$_GET['enddate']);
 					break;
 				case 40:
 					$this->RekonsiliasiFPPPOLPBXls($_GET['companyid'],$_GET['plantid'],$_GET['sloc'],$_GET['storagebin'],$_GET['sales'],$_GET['product'],$_GET['salesarea'],$_GET['prno'],$_GET['pono'],$_GET['startdate'],$_GET['enddate'],$_GET['addressbook']);
@@ -3513,151 +4067,384 @@ class ReportinventoryController extends Controller {
 	public function RekapStokBarangXls($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $prno, $pono, $startdate, $enddate) {
 		$this->menuname='rekapstokbarang';
     parent::actionDownxls();
-		$sql = "select * from
-														(select materialgroupcode,sloccode, barang,satuan,awal,masuk,keluar,(awal+masuk+keluar) as akhir
-                            from
-                            (select materialgroupcode,sloccode,barang,satuan,awal,(beli+returjual+trfin+produksi+koreksiin+trs) as masuk,(abs(jual)+abs(returbeli)+abs(trfout)+abs(pemakaian)+abs(koreksiout))*-1 as keluar
-                            from
-                            (select w.productname as barang,x.uomcode as satuan,v.sloccode,u.materialgroupcode,
-                            (
-                            select ifnull(sum(aw.qty),0) 
-                            from productstockdet aw
-                            where aw.productid = t.productid and
-                            aw.transdate < '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and
-                            aw.slocid = t.slocid
-                            ) as awal,
-                            (
-                            select ifnull(sum(c.qty),0) 
-                            from productstockdet c
-                            where c.productid = t.productid and
-                            c.referenceno like 'GR%' and
-                            c.slocid = t.slocid and
-                            c.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as beli,
-                            (
-                            select ifnull(sum(d.qty),0) 
-                            from productstockdet d
-                            where d.productid = t.productid and
-                            d.referenceno like 'GIR%' and
-                            d.slocid = t.slocid and
-                            d.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as returjual,
-                            (
-                            select ifnull(sum(e.qty),0) 
-                            from productstockdet e
-                            where e.productid = t.productid and
-                            e.referenceno like 'TFS%' and
-                            e.qty > 0 and
-                            e.slocid = t.slocid and
-                            e.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as trfin,
-														(
-														select ifnull(sum(ee.qty),0) 
-                            from productstockdet ee
-                            where ee.productid = t.productid and
-                            ee.referenceno like 'TRS%' and
-                            ee.qty > 0 and
-                            ee.slocid = t.slocid and
-                            ee.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as trs,
-                            (
-                            select ifnull(sum(f.qty),0) 
-                            from productstockdet f
-                            where f.productid = t.productid and
-                            f.referenceno like 'OP%' and
-                            f.qty > 0 and
-                            f.slocid = t.slocid and
-                            f.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as produksi,
-                            (
-                            select ifnull(sum(g.qty),0) 
-                            from productstockdet g
-                            where g.productid = t.productid and
-                            g.referenceno like 'SJ%' and
-                            g.slocid = t.slocid and
-                            g.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as jual,
-                            (
-                            select ifnull(sum(h.qty),0) 
-                            from productstockdet h
-                            where h.productid = t.productid and
-                            h.referenceno like 'GRR%' and
-                            h.slocid = t.slocid and
-                            h.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as returbeli,
-                            (
-                            select ifnull(sum(i.qty),0) 
-                            from productstockdet i
-                            where i.productid = t.productid and
-                            i.referenceno like 'TFS%' and
-                            i.qty < 0 and
-                            i.slocid = t.slocid and
-                            i.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as trfout,
-                            (
-                            select ifnull(sum(j.qty),0) 
-                            from productstockdet j
-                            where j.productid = t.productid and
-                            j.referenceno like 'OP%' and
-                            j.qty < 0 and
-                            j.slocid = t.slocid and
-                            j.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as pemakaian,
-                            (
-                            select ifnull(sum(k.qty),0) 
-                            from productstockdet k
-                            where k.productid = t.productid and
-                            k.referenceno like 'TSO%' and
-                            k.slocid = t.slocid and
-														k.qty < 0 and
-                            k.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as koreksiout,
-														(
-                            select ifnull(sum(kb.qty),0) 
-                            from productstockdet kb
-                            where kb.productid = t.productid and
-                            kb.referenceno like 'TSO%' and
-														kb.qty > 0 and
-                            kb.slocid = t.slocid and
-                            kb.transdate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' 
-                            and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
-                            ) as koreksiin
-                            from productplant t
-							join materialgroup u on u.materialgroupid = t.materialgroupid
-							join sloc v on v.slocid = t.slocid 
-							join product w on w.productid = t.productid 
-							join unitofmeasure x on x.unitofmeasureid = t.uom1 
-              where w.productname like '%" . $product . "%' 
-							and v.sloccode like '%" . $sloc . "%' 
-							and v.plantid = '" . $plantid . "' 
-							order by barang) z) zz )zzz 
-							where awal <> 0 or masuk <> 0 or keluar <> 0 or akhir <> 0 order by barang asc
-			";
+		$sql = "SELECT distinct h.sloccode,b.productcode,b.productname,c.description AS materialtypedesc,
+    (
+    SELECT za.description
+    FROM productplant z
+    LEFT JOIN materialgroup za ON za.materialgroupid = z.materialgroupid 
+    WHERE z.productid = b.productid 
+    LIMIT 1
+    ) AS materialgroupcode,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate < '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "'
+    ) AS qty1awal,
+    d.uomcode,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty2,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate < '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "'
+    ) AS qty2awal,
+    e.uomcode as uom2code,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty3,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate < '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "'
+    ) AS qty3awal,
+    f.uomcode as uom3code,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty3,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate < '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "'
+    ) AS qty4awal,
+    g.uomcode as uom4code,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
+    and zb.qty >= 0
+    ) AS qty1masuk,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty2,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
+    and zb.qty >= 0
+    ) AS qty2masuk,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty3,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
+    and zb.qty >= 0
+    ) AS qty3masuk,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty4,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
+    and zb.qty >= 0
+    ) AS qty4masuk,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
+    and zb.qty < 0
+    ) AS qty1keluar,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty2,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
+    and zb.qty < 0
+    ) AS qty2keluar,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty3,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
+    and zb.qty >= 0
+    ) AS qty3keluar,
+    (
+    SELECT ifnull(sum(ifnull(zb.qty4,0)),0)
+    FROM productstockdet zb
+    WHERE zb.productid = a.productid AND zb.slocid = a.slocid
+    and zb.buydate between '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' and '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
+    and zb.qty < 0
+    ) AS qty4keluar
+    FROM productstockdet a
+    LEFT JOIN product b ON b.productid = a.productid 
+    LEFT JOIN materialtype c ON c.materialtypeid = b.materialtypeid
+    LEFT JOIN unitofmeasure d ON d.unitofmeasureid = a.uomid 
+    LEFT JOIN unitofmeasure e ON e.unitofmeasureid = a.uom2id
+    LEFT JOIN unitofmeasure f ON f.unitofmeasureid = a.uom3id
+    LEFT JOIN unitofmeasure g ON g.unitofmeasureid = a.uom4id
+    left join sloc h on h.slocid = a.slocid 
+    WHERE a.buydate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "' 
+    and h.sloccode like '%".$sloc."%'
+    and h.plantid = ".$plantid;
 		$command=$this->connection->createCommand($sql);
 		$dataReader=$command->queryAll();	
-		$i=2;$ppid = 0;$proses=0;
+    $i=5;
+    $this->phpExcel->setActiveSheetIndex(0)
+    ->setCellValueByColumnAndRow(0, 2, 'Periode: '.$startdate .' s/d '.$enddate);
 		foreach($dataReader as $row){
 			$this->phpExcel->setActiveSheetIndex(0)
-				->setCellValueByColumnAndRow(0, $i+1, $i-1)
+				->setCellValueByColumnAndRow(0, $i+1, $i-4)
 				->setCellValueByColumnAndRow(1, $i+1, $row['sloccode'])
-				->setCellValueByColumnAndRow(2, $i+1, $row['materialgroupcode'])
-				->setCellValueByColumnAndRow(3, $i+1, $row['barang'])
-				->setCellValueByColumnAndRow(4, $i+1, $row['satuan'])
-				->setCellValueByColumnAndRow(5, $i+1, $row['awal'])
-				->setCellValueByColumnAndRow(6, $i+1, $row['masuk'])
-				->setCellValueByColumnAndRow(7, $i+1, $row['keluar'])
-				->setCellValueByColumnAndRow(8, $i+1, $row['akhir'])
+				->setCellValueByColumnAndRow(2, $i+1, $row['productcode'])
+				->setCellValueByColumnAndRow(3, $i+1, $row['materialgroupcode'])
+				->setCellValueByColumnAndRow(4, $i+1, $row['productname'])
+				->setCellValueByColumnAndRow(5, $i+1, $row['qty1awal'])
+				->setCellValueByColumnAndRow(6, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(7, $i+1, $row['qty2awal'])
+				->setCellValueByColumnAndRow(8, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(9, $i+1, $row['qty3awal'])
+				->setCellValueByColumnAndRow(10, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(11, $i+1, $row['qty4awal'])
+				->setCellValueByColumnAndRow(12, $i+1, $row['uom4code'])
+				->setCellValueByColumnAndRow(13, $i+1, $row['qty1masuk'])
+				->setCellValueByColumnAndRow(14, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(15, $i+1, $row['qty2masuk'])
+				->setCellValueByColumnAndRow(16, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(17, $i+1, $row['qty3masuk'])
+				->setCellValueByColumnAndRow(18, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(19, $i+1, $row['qty4masuk'])
+				->setCellValueByColumnAndRow(20, $i+1, $row['uom4code'])
+				->setCellValueByColumnAndRow(21, $i+1, $row['qty1keluar'])
+				->setCellValueByColumnAndRow(22, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(23, $i+1, $row['qty2keluar'])
+				->setCellValueByColumnAndRow(24, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(25, $i+1, $row['qty3keluar'])
+				->setCellValueByColumnAndRow(26, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(27, $i+1, $row['qty4keluar'])
+				->setCellValueByColumnAndRow(28, $i+1, $row['uom4code'])
+				->setCellValueByColumnAndRow(29, $i+1, $row['qty1awal']+$row['qty1masuk']+$row['qty1keluar'])
+				->setCellValueByColumnAndRow(30, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(31, $i+1, $row['qty2awal']+$row['qty2masuk']+$row['qty2keluar'])
+				->setCellValueByColumnAndRow(32, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(33, $i+1, $row['qty3awal']+$row['qty3masuk']+$row['qty3keluar'])
+				->setCellValueByColumnAndRow(34, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(35, $i+1, $row['qty4awal']+$row['qty4masuk']+$row['qty4keluar'])
+				->setCellValueByColumnAndRow(36, $i+1, $row['uom4code'])
 			;
+			$i++;
+		}
+		$this->getFooterXLS($this->phpExcel);
+	}
+	public function DaftarSuratJalanXls($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $prno, $pono, $startdate, $enddate) {
+		$this->menuname='suratpengantar';
+    parent::actionDownxls();
+		$sql        = "SELECT  a.gino,a.gidate,a.plantcode,a.customername,e.addressname,a.pocustno,b.sono,
+      a.suppliername AS expedisi,a.nomobil,a.sopir,a.headernote,d.productcode,d.productname,c.qty,f.uomcode,
+      c.qty2,g.uomcode AS uom2code,c.itemnote,c.qty3,j.uomcode as uom3code, c.qty4, k.uomcode as uom4code
+      FROM giheader a 
+      JOIN soheader b ON b.soheaderid = a.soheaderid 
+      LEFT JOIN address e ON e.addressid = b.addresstoid
+      LEFT JOIN gidetail c ON c.giheaderid = a.giheaderid 
+      LEFT JOIN product d ON d.productid = c.productid 
+      LEFT JOIN unitofmeasure f ON f.unitofmeasureid = c.uomid
+      LEFT JOIN unitofmeasure g ON g.unitofmeasureid = c.uom2id
+      left join plant h on h.plantid = a.plantid 
+      left join sloc i on i.slocid = c.slocid 
+      LEFT JOIN unitofmeasure j ON j.unitofmeasureid = c.uom3id
+      LEFT JOIN unitofmeasure k ON k.unitofmeasureid = c.uom4id
+      WHERE a.gino is not null 
+        and a.recordstatus = 3 
+        and h.companyid = " . $companyid . " 
+        and i.plantid = " . $plantid . " 
+        and d.productid in (select x.productid 
+        from productplant x join product xx on xx.productid = x.productid 
+        where xx.productname like '%" . $product . "%'  
+        and x.slocid = i.slocid)
+        and i.sloccode like '%" . $sloc . "%'  
+        and a.gidate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'";
+		$command=$this->connection->createCommand($sql);
+		$dataReader=$command->queryAll();	
+		$i=3;
+		foreach($dataReader as $row){
+			$this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i+1, $i-2)
+				->setCellValueByColumnAndRow(1, $i+1, $row['plantcode'])
+				->setCellValueByColumnAndRow(2, $i+1, $row['gino'])
+				->setCellValueByColumnAndRow(3, $i+1, date(Yii::app()->params['dateviewfromdb'], strtotime($row['gidate'])))
+				->setCellValueByColumnAndRow(4, $i+1, $row['customername'])
+				->setCellValueByColumnAndRow(5, $i+1, $row['addressname'])
+				->setCellValueByColumnAndRow(6, $i+1, $row['sono'])
+				->setCellValueByColumnAndRow(7, $i+1, $row['pocustno'])
+				->setCellValueByColumnAndRow(8, $i+1, $row['productcode'])
+				->setCellValueByColumnAndRow(9, $i+1, $row['productname'])
+				->setCellValueByColumnAndRow(10, $i+1, $row['qty'])
+				->setCellValueByColumnAndRow(11, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(12, $i+1, $row['qty2'])
+				->setCellValueByColumnAndRow(13, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(14, $i+1, $row['qty3'])
+				->setCellValueByColumnAndRow(15, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(16, $i+1, $row['qty4'])
+				->setCellValueByColumnAndRow(17, $i+1, $row['uom4code'])
+        ->setCellValueByColumnAndRow(18, $i+1, $row['itemnote'])
+        ;
+			$i++;
+		}
+		$this->getFooterXLS($this->phpExcel);
+  }
+  public function DaftarSuratPenyerahanHasilJadiXls($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $prno, $pono, $startdate, $enddate) {
+		$this->menuname='suratpenyerahanhasiljadi';
+    parent::actionDownxls();
+		$sql        = "SELECT a.transstockno,b.plantcode,a.transstockdate,d.productoutputno,e.productplanno,f.fullname,
+    h.productcode,h.productname,g.qty,i.uomcode,g.qty2,j.uomcode AS uom2code,g.qty3,k.uomcode AS uom3code, 
+    g.qty4,l.uomcode AS uom4code,g.itemnote,m.sloccode as slocfromcode
+    FROM transstock a 
+    LEFT JOIN plant b ON b.plantid = a.plantid 
+    LEFT JOIN sloc c ON c.slocid = a.sloctoid
+    LEFT JOIN productoutput d ON d.productoutputid = a.productoutputid 
+    LEFT JOIN productplan e ON e.productplanid = d.productplanid 
+    LEFT JOIN addressbook f ON f.addressbookid = e.addressbookid
+    LEFT JOIN transstockdet g ON g.transstockid = a.transstockid 
+    LEFT JOIN product h ON h.productid = g.productid
+    LEFT JOIN unitofmeasure i ON i.unitofmeasureid = g.uomid 
+    LEFT JOIN unitofmeasure j ON j.unitofmeasureid = g.uom2id
+    LEFT JOIN unitofmeasure k ON k.unitofmeasureid = g.uom3id
+    LEFT JOIN unitofmeasure l ON l.unitofmeasureid = g.uom4id
+    LEFT JOIN sloc m ON m.slocid = a.slocfromid 
+    WHERE a.transstocktypeid = 1
+      and a.transstockno is not null 
+      and a.recordstatus = 5 
+      and b.companyid = " . $companyid . " 
+      and b.plantid = " . $plantid . " 
+      and g.productid in (select x.productid 
+      from productplant x join product xx on xx.productid = x.productid 
+      where xx.productname like '%" . $product . "%'  
+      and x.slocid = c.slocid)
+      and c.sloccode like '%" . $sloc . "%'  
+      and a.transstockdate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'";
+    $command    = $this->connection->createCommand($sql);
+		$dataReader=$command->queryAll();	
+		$i=3;
+		foreach($dataReader as $row){
+			$this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i+1, $i-2)
+				->setCellValueByColumnAndRow(1, $i+1, $row['plantcode'])
+				->setCellValueByColumnAndRow(2, $i+1, $row['transstockno'])
+				->setCellValueByColumnAndRow(3, $i+1, date(Yii::app()->params['dateviewfromdb'], strtotime($row['transstockdate'])))
+				->setCellValueByColumnAndRow(4, $i+1, $row['productplanno'])
+				->setCellValueByColumnAndRow(5, $i+1, $row['productoutputno'])
+				->setCellValueByColumnAndRow(6, $i+1, $row['fullname'])
+				->setCellValueByColumnAndRow(7, $i+1, $row['slocfromcode'])
+				->setCellValueByColumnAndRow(8, $i+1, $row['productcode'])
+				->setCellValueByColumnAndRow(9, $i+1, $row['productname'])
+				->setCellValueByColumnAndRow(10, $i+1, $row['qty'])
+				->setCellValueByColumnAndRow(11, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(12, $i+1, $row['qty2'])
+				->setCellValueByColumnAndRow(13, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(14, $i+1, $row['qty3'])
+				->setCellValueByColumnAndRow(15, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(16, $i+1, $row['qty4'])
+				->setCellValueByColumnAndRow(17, $i+1, $row['uom4code'])
+        ->setCellValueByColumnAndRow(18, $i+1, $row['itemnote'])
+        ;
+			$i++;
+		}
+		$this->getFooterXLS($this->phpExcel);
+	}
+  public function DaftarSuratPenyerahanBBXls($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $prno, $pono, $startdate, $enddate) {
+		$this->menuname='suratpenyerahanbb';
+    parent::actionDownxls();
+		$sql        = "SELECT a.transstockno,b.plantcode,a.transstockdate,e.productplanno,f.fullname,
+    h.productcode,h.productname,g.qty,i.uomcode,g.qty2,j.uomcode AS uom2code,g.qty3,
+    k.uomcode AS uom3code, 
+    g.qty4,l.uomcode AS uom4code,g.itemnote,c.sloccode,m.sono,n.sloccode as sloctocode
+    FROM transstock a 
+    LEFT JOIN plant b ON b.plantid = a.plantid 
+    LEFT JOIN sloc c ON c.slocid = a.slocfromid
+    LEFT JOIN formrequest d ON d.formrequestid = a.formrequestid
+    LEFT JOIN productplan e ON e.productplanid = d.productplanid 
+    LEFT JOIN soheader m ON m.soheaderid = e.soheaderid 
+    LEFT JOIN addressbook f ON f.addressbookid = e.addressbookid
+    LEFT JOIN transstockdet g ON g.transstockid = a.transstockid 
+    LEFT JOIN product h ON h.productid = g.productid
+    LEFT JOIN unitofmeasure i ON i.unitofmeasureid = g.uomid 
+    LEFT JOIN unitofmeasure j ON j.unitofmeasureid = g.uom2id
+    LEFT JOIN unitofmeasure k ON k.unitofmeasureid = g.uom3id
+    LEFT JOIN unitofmeasure l ON l.unitofmeasureid = g.uom4id
+    left join sloc n on n.slocid = a.sloctoid
+    WHERE a.transstocktypeid = 0
+      and a.transstockno is not null 
+      and a.recordstatus = 5 
+      and b.companyid = " . $companyid . " 
+      and b.plantid = " . $plantid . " 
+      and g.productid in (select x.productid 
+      from productplant x join product xx on xx.productid = x.productid 
+      where xx.productname like '%" . $product . "%'  
+      and x.slocid = c.slocid)
+      and c.sloccode like '%" . $sloc . "%'  
+      and a.transstockdate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'";
+    $command    = $this->connection->createCommand($sql);
+		$dataReader=$command->queryAll();	
+		$i=4;
+		foreach($dataReader as $row){
+			$this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i+1, $i-3)
+				->setCellValueByColumnAndRow(1, $i+1, $row['plantcode'])
+				->setCellValueByColumnAndRow(2, $i+1, $row['transstockno'])
+				->setCellValueByColumnAndRow(3, $i+1, date(Yii::app()->params['dateviewfromdb'], strtotime($row['transstockdate'])))
+				->setCellValueByColumnAndRow(4, $i+1, $row['productplanno'])
+				->setCellValueByColumnAndRow(5, $i+1, $row['sono'])
+				->setCellValueByColumnAndRow(6, $i+1, $row['fullname'])
+				->setCellValueByColumnAndRow(7, $i+1, $row['sloctocode'])
+				->setCellValueByColumnAndRow(8, $i+1, $row['productcode'])
+				->setCellValueByColumnAndRow(9, $i+1, $row['productname'])
+				->setCellValueByColumnAndRow(10, $i+1, $row['qty'])
+				->setCellValueByColumnAndRow(11, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(12, $i+1, $row['qty2'])
+				->setCellValueByColumnAndRow(13, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(14, $i+1, $row['qty3'])
+				->setCellValueByColumnAndRow(15, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(16, $i+1, $row['qty4'])
+				->setCellValueByColumnAndRow(17, $i+1, $row['uom4code'])
+        ->setCellValueByColumnAndRow(18, $i+1, $row['itemnote'])
+        ;
+			$i++;
+		}
+		$this->getFooterXLS($this->phpExcel);
+	}
+  public function DaftarLaporanPenerimaanBarangXls($companyid,$plantid,$sloc, $storagebin, $sales, $product, $salesarea, $prno, $pono, $startdate, $enddate) {
+		$this->menuname='laporanpenerimaanbarang';
+    parent::actionDownxls();
+    $sql        = "SELECT a.grdate,a.grno,a.sjsupplier,b.pono,c.fullname,e.productcode,e.productname,d.qty,d.qty2,
+    d.qty3,d.qty4,f.uomcode,g.uomcode AS uom2code, h.uomcode AS uom3code,i.uomcode AS uom4code,d.itemnote,k.plantcode
+    FROM grheader a  
+    LEFT JOIN poheader b ON b.poheaderid = a.poheaderid
+    LEFT JOIN addressbook c ON c.addressbookid = b.addressbookid
+    LEFT JOIN grdetail d ON d.grheaderid = a.grheaderid
+    LEFT JOIN product e ON e.productid = d.productid
+    LEFT JOIN unitofmeasure f ON f.unitofmeasureid = d.uomid
+    LEFT JOIN unitofmeasure g ON g.unitofmeasureid = d.uom2id
+    LEFT JOIN unitofmeasure h ON h.unitofmeasureid = d.uom3id
+    LEFT JOIN unitofmeasure i ON i.unitofmeasureid = d.uom4id
+    left join sloc j on j.slocid = d.slocid 
+    left join plant k on k.plantid = a.plantid 
+    WHERE a.grno is not null 
+      and a.recordstatus = 3 
+      and k.companyid = " . $companyid . " 
+      and k.plantid = " . $plantid . " 
+      and e.productid in (select x.productid 
+      from productplant x join product xx on xx.productid = x.productid 
+      where xx.productname like '%" . $product . "%'  
+      and x.slocid = j.slocid)
+      and j.sloccode like '%" . $sloc . "%'  
+      and a.grdate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'";
+    $command    = $this->connection->createCommand($sql);
+		$dataReader=$command->queryAll();	
+		$i=4;
+		foreach($dataReader as $row){
+			$this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i+1, $i-3)
+				->setCellValueByColumnAndRow(1, $i+1, $row['plantcode'])
+				->setCellValueByColumnAndRow(2, $i+1, $row['grno'])
+				->setCellValueByColumnAndRow(3, $i+1, date(Yii::app()->params['dateviewfromdb'], strtotime($row['grdate'])))
+				->setCellValueByColumnAndRow(4, $i+1, $row['pono'])
+				->setCellValueByColumnAndRow(5, $i+1, $row['fullname'])
+				->setCellValueByColumnAndRow(6, $i+1, $row['sjsupplier'])
+				->setCellValueByColumnAndRow(7, $i+1, $row['productcode'])
+				->setCellValueByColumnAndRow(8, $i+1, $row['productname'])
+				->setCellValueByColumnAndRow(9, $i+1, $row['qty'])
+				->setCellValueByColumnAndRow(10, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(11, $i+1, $row['qty2'])
+				->setCellValueByColumnAndRow(12, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(13, $i+1, $row['qty3'])
+				->setCellValueByColumnAndRow(14, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(15, $i+1, $row['qty4'])
+				->setCellValueByColumnAndRow(16, $i+1, $row['uom4code'])
+        ->setCellValueByColumnAndRow(17, $i+1, $row['itemnote'])
+        ;
 			$i++;
 		}
 		$this->getFooterXLS($this->phpExcel);
@@ -3674,7 +4461,7 @@ class ReportinventoryController extends Controller {
 			join materialgroup za on za.materialgroupid = z.materialgroupid
 			where z.productid = e.productid 
 			limit 1
-			) as materialgroupcode
+			) as materialgroupcode,c.arrivedate
 			FROM prheader a
 			left JOIN prraw b ON b.prheaderid = a.prheaderid
 			LEFT JOIN podetail c ON c.prrawid = b.prrawid AND c.productid = b.productid
@@ -3705,7 +4492,7 @@ class ReportinventoryController extends Controller {
 			join materialgroup za on za.materialgroupid = z.materialgroupid
 			where z.productid = e.productid 
 			limit 1
-			) as materialgroupcode
+			) as materialgroupcode,c.reqdate 
 			FROM prheader a
 			left JOIN prjasa b ON b.prheaderid = a.prheaderid
 			LEFT JOIN pojasa c ON c.prjasaid = b.prjasaid AND c.productid = b.productid
@@ -3719,8 +4506,8 @@ class ReportinventoryController extends Controller {
 			left join plant k on k.plantid = j.plantid
 			WHERE a.prdate BETWEEN '" . date(Yii::app()->params['datetodb'], strtotime($startdate)) . "' AND '" . date(Yii::app()->params['datetodb'], strtotime($enddate)) . "'
 			and a.plantid = ".$plantid.
-			(($addressbook != '')? " and l.fullname = '".$addressbook."'":'').
-			(($sloc != '')? " and coalesce(m.sloccode,'') = '".$sloc."'":'').
+			(($addressbook != '')? " and i.fullname = '".$addressbook."'":'').
+			(($sloc != '')? " and coalesce(j.sloccode,'') = '".$sloc."'":'').
 			(($product != '')? " and coalesce(e.productname,'') = '".$product."'":'').
 			(($prno != '')? " and coalesce(a.prno,'') like '%".$prno."%'":'').
 			(($pono != '')? " and coalesce(d.pono,'') like '%".$pono."%'":'');
@@ -3737,16 +4524,17 @@ class ReportinventoryController extends Controller {
 				->setCellValueByColumnAndRow(3, $i+1, ($row['prdate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['prdate'])))
 				->setCellValueByColumnAndRow(4, $i+1, $row['pono'])
 				->setCellValueByColumnAndRow(5, $i+1, ($row['podate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['podate'])))
-				->setCellValueByColumnAndRow(6, $i+1, $row['supplier'])
-				->setCellValueByColumnAndRow(7, $i+1, $row['grno'])
-				->setCellValueByColumnAndRow(8, $i+1,($row['grdate'] == null)?'': date(Yii::app()->params['dateviewfromdb'], strtotime($row['grdate'])))
-				->setCellValueByColumnAndRow(9, $i+1, $row['materialgroupcode'])
-				->setCellValueByColumnAndRow(10, $i+1, $row['productname'])
-				->setCellValueByColumnAndRow(11, $i+1, $row['qtyfpp'])
-				->setCellValueByColumnAndRow(12, $i+1, $row['qtypo'])
-				->setCellValueByColumnAndRow(13, $i+1, $row['qtygr'])
-				->setCellValueByColumnAndRow(14, $i+1, $row['uomcode'])
-				->setCellValueByColumnAndRow(15, $i+1, $row['statusname'])
+				->setCellValueByColumnAndRow(6, $i+1, ($row['arrivedate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['arrivedate'])))
+				->setCellValueByColumnAndRow(7, $i+1, $row['supplier'])
+				->setCellValueByColumnAndRow(8, $i+1, $row['grno'])
+				->setCellValueByColumnAndRow(9, $i+1,($row['grdate'] == null)?'': date(Yii::app()->params['dateviewfromdb'], strtotime($row['grdate'])))
+				->setCellValueByColumnAndRow(10, $i+1, $row['materialgroupcode'])
+				->setCellValueByColumnAndRow(11, $i+1, $row['productname'])
+				->setCellValueByColumnAndRow(12, $i+1, $row['qtyfpp'])
+				->setCellValueByColumnAndRow(13, $i+1, $row['qtypo'])
+				->setCellValueByColumnAndRow(14, $i+1, $row['qtygr'])
+				->setCellValueByColumnAndRow(15, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(16, $i+1, $row['statusname'])
 			;
 			$i++;
 		}
@@ -3758,16 +4546,17 @@ class ReportinventoryController extends Controller {
 				->setCellValueByColumnAndRow(3, $i+1, ($row['prdate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['prdate'])))
 				->setCellValueByColumnAndRow(4, $i+1, $row['pono'])
 				->setCellValueByColumnAndRow(5, $i+1, ($row['podate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['podate'])))
-				->setCellValueByColumnAndRow(6, $i+1, $row['supplier'])
-				->setCellValueByColumnAndRow(7, $i+1, $row['grno'])
-				->setCellValueByColumnAndRow(8, $i+1,($row['grdate'] == null)?'': date(Yii::app()->params['dateviewfromdb'], strtotime($row['grdate'])))
-				->setCellValueByColumnAndRow(9, $i+1, $row['materialgroupcode'])
-				->setCellValueByColumnAndRow(10, $i+1, $row['productname'])
-				->setCellValueByColumnAndRow(11, $i+1, $row['qtyfpp'])
-				->setCellValueByColumnAndRow(12, $i+1, $row['qtypo'])
-				->setCellValueByColumnAndRow(13, $i+1, $row['qtygr'])
-				->setCellValueByColumnAndRow(14, $i+1, $row['uomcode'])
-				->setCellValueByColumnAndRow(15, $i+1, $row['statusname'])
+				->setCellValueByColumnAndRow(6, $i+1, ($row['reqdate'] == null)?'':date(Yii::app()->params['dateviewfromdb'], strtotime($row['reqdate'])))
+				->setCellValueByColumnAndRow(7, $i+1, $row['supplier'])
+				->setCellValueByColumnAndRow(8, $i+1, $row['grno'])
+				->setCellValueByColumnAndRow(9, $i+1,($row['grdate'] == null)?'': date(Yii::app()->params['dateviewfromdb'], strtotime($row['grdate'])))
+				->setCellValueByColumnAndRow(10, $i+1, $row['materialgroupcode'])
+				->setCellValueByColumnAndRow(11, $i+1, $row['productname'])
+				->setCellValueByColumnAndRow(12, $i+1, $row['qtyfpp'])
+				->setCellValueByColumnAndRow(13, $i+1, $row['qtypo'])
+				->setCellValueByColumnAndRow(14, $i+1, $row['qtygr'])
+				->setCellValueByColumnAndRow(15, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(16, $i+1, $row['statusname'])
 			;
 			$i++;
 		}

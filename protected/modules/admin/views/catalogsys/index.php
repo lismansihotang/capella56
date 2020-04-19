@@ -8,10 +8,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/catalogsys/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/catalogsys/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/catalogsys/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/catalogsys/downdoc'),
 	'columns'=>"
 		{
 		field:'catalogsysid',
-		title:'".GetCatalog('catalogsysid')."',
+		title:localStorage.getItem('catalogcatalogsysid'),
 		sortable: true,
 		width:'80px',
 		formatter: function(value,row,index){
@@ -19,7 +20,7 @@
 	}},
 	{
 		field:'languageid',
-		title:'".GetCatalog('language')."',
+		title:localStorage.getItem('cataloglanguage'),
 		editor:{
 			type:'combogrid',
 			options:{
@@ -31,10 +32,10 @@
 				url:'".$this->createUrl('language/index',array('grid'=>true,'combo'=>true))."',
 				fitColumns:true,
 				required:true,
-				loadMsg: '".GetCatalog('pleasewait')."',
+				loadMsg: localStorage.getItem('catalogpleasewait'),
 				columns:[[
-					{field:'languageid',title:'".GetCatalog('languageid')."',width:'50px'},
-					{field:'languagename',title:'".GetCatalog('languagename')."',width:'200px'},
+					{field:'languageid',title:localStorage.getItem('cataloglanguageid'),width:'50px'},
+					{field:'languagename',title:localStorage.getItem('cataloglanguagename'),width:'200px'},
 				]]
 			}	
 		},
@@ -45,9 +46,9 @@
 	}},
 	{
 		field:'catalogname',
-		title:'".GetCatalog('catalogname')."',
+		title:localStorage.getItem('catalogcatalogname'),
 		editor: {
-			type:'validatebox',
+			type:'text',
 			options:{
 				required:true
 			}
@@ -59,9 +60,9 @@
 	}},
 	{
 		field:'catalogval',
-		title:'".GetCatalog('catalogval')."',
+		title:localStorage.getItem('catalogcatalogval'),
 		editor: {
-			type:'validatebox',
+			type:'text',
 			options:{
 				required:true
 			}

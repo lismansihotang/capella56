@@ -33,10 +33,10 @@ return array(
       'caseSensitive'=>false,  
 		),
 		'db'=>array(
-			'connectionString' => 'mysql:port=3306;dbname=capellafive;host=localhost',
+			'connectionString' => 'mysql:port=5000;dbname=capellafive;host=mifsaka.com',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => '',
+			'password' => 'cr4nkc4s3',
 			'charset' => 'utf8',
 			'initSQLs'=>array('set names utf8'),
       'schemaCachingDuration' => 3600,
@@ -80,10 +80,10 @@ return array(
 		'datetimetodb'=>'Y-m-d H:i:s',
 		'title'=>'Capella ERP Indonesia',
 		'baseUrl'=>'https://localhost/capellafive/',
-		'baseUrlReport'=>'http://localhost:8080/jasperserver/rest_v2/reports/reports/capellafive',
+		'baseUrlReport'=>'http://mifsaka.com:8080/jasperserver/rest_v2/reports/reports/capellafive',
 		'ReportServerUser'=>'jasperadmin',
 		'ReportServerPass'=>'jasperadmin',
     'ReportTimeout'=>5,
-    'SysInfoServer'=>'https://localhost/sysinfo/xml.php?plugin=complete&json'
+    'SysInfoServer'=>'http://localhost/sysinfo/xml.php?plugin=complete&json'
 	),
 );

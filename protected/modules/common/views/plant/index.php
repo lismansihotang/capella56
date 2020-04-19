@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/plant/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/plant/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/plant/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/plant/downdoc'),
 	'columns'=>"
 		{
 			field:'plantid',
@@ -64,8 +65,7 @@
 			editor:{
 				type: 'textbox',
 				options: {
-          required: true,
-          multiline:true
+					required: true
 				}
 			},
 			sortable: true,
@@ -113,7 +113,7 @@
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"". Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+					return '<img src=\"". Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 				} else {
 					return '';
 				}

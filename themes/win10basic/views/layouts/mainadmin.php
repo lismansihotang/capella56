@@ -13,11 +13,11 @@
     <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl;?>/css/jquery-ui.min.css">
     <link rel="stylesheet" href="<?php echo Yii::app()->theme->baseUrl;?>/css/easyui.min.css">
     <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl;?>/css/icon.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl;?>/js/fullcalendar/fullcalendar.min.css"/>	
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl;?>/js/clippy/clippy.css" media="all">    
     <link rel="preconnect" href="https://api.ipify.org">
     <script src="<?php echo Yii::app()->request->baseUrl;?>/js/jquery.min.js"></script>
     <script src="<?php echo Yii::app()->request->baseUrl;?>/js/easyui/jquery.easyui.min.all.js"></script>
-    <script src="<?php echo Yii::app()->request->baseUrl;?>/js/clippy/clippy.min.js"></script>
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
   </head>
   <body onload="startup();">
@@ -154,10 +154,18 @@
     </div>
 
     <script>
+      function getCatalog() {
+        localStorage.clear();
+        <?php $menus = getAllCatalog();
+          foreach($menus AS $menu) {  ?>
+            localStorage.setItem("catalog<?php echo $menu['catalogname']?>","<?php echo $menu['catalogval']?>");  
+        <?php }?>
+      }
       function startup(){
         $(".startMenu, .cortanaMenu").hide();
         getColor();
         getBackground();
+        getCatalog();
       }            
       function getColor(){
         var getColor = localStorage.getItem("getColor")
@@ -171,81 +179,62 @@
       }
       function openapp(appname,urlapp,labelapp,iconapp) {
         $(".startMenu, .cortanaMenu").hide();
-        jQuery.ajax({'url':'<?php echo Yii::app()->createUrl('site/getcode')?>',
-          'type':'post',
-          'dataType':'json',
-          'data':{
-            'menuname':appname,
+        openedapp.push(appname);
+        var desktop = document.getElementById("desktop");
+        var newapp = document.createElement("div");
+        newapp.id = appname+"app";
+        desktop.appendChild(newapp);
+        $("#"+appname+"app").window({
+          width:'600px',
+          height:'auto',
+          inline:true,
+          iconCls:iconapp,
+          collapsible:false,
+          shadow:false,
+          doSize:true,
+          top:'10px',
+          inline:true,
+          openAnimation:'fade',
+          closeAnimation:'fade',
+          href:urlapp,
+          //constrain:true,
+          title: labelapp,
+          onOpen: function(){
           },
-          'success':function(data)
-          {
-            if (data.isError == 0) {
-              openedapp.push(appname);
-              var desktop = document.getElementById("desktop");
-              var newapp = document.createElement("div");
-              newapp.id = appname+"app";
-              desktop.appendChild(newapp);
-              $("#"+appname+"app").window({
-                width:'600px',
-                height:'auto',
-                inline:true,
-                iconCls:iconapp,
-                collapsible:false,
-                shadow:false,
-                doSize:true,
-                top:'10px',
-                inline:true,
-                openAnimation:'fade',
-                closeAnimation:'fade',
-                href:urlapp,
-                //constrain:true,
-                title: labelapp,
-                onOpen: function(){
-
-                },
-                onMinimize: function() {
-                  minwindow.push(appname);
-                },
-                onClose:function() {
-                  try {
-                    $('#'+appname+"icon").remove();
-                    for( var i = 0; i < openedapp.length; i++){ 
-                      if ( openedapp[i] === appname) {
-                        delete openedapp[i];
-                      }
-                    }
-                    for( var i = 0; i < minwindow.length; i++){ 
-                      if ( minwindow[i] === appname) {
-                        delete minwindow[i];
-                      }
-                    }
-                  } 
-                  catch(err) {}
-                },
-              });          
-              var ww = $('#'+appname+"app");
-              ww.window('resize',{
-                width: '50%',
-                height: '400px',
-              });   
-              ww.window('center');
-              var icon = document.getElementById("taskbaricon");
-              var newnode = document.createElement("div");
-              newnode.id=appname+"icon";
-              newnode.className="taskbarIcon "+iconapp;
-              newnode.setAttribute("onclick", "bringtofrontapp('"+appname+"')");
-              icon.appendChild(newnode);	
-            }
-            else {
-              show('Pesan',data.msg,data.isError);
-            }
-          }, 
-          'cache':false});
+          onMinimize: function() {
+            minwindow.push(appname);
+          },
+          onClose:function() {
+            try {
+              $('#'+appname+"icon").remove();
+              for( var i = 0; i < openedapp.length; i++){ 
+                if ( openedapp[i] === appname) {
+                  delete openedapp[i];
+                }
+              }
+              for( var i = 0; i < minwindow.length; i++){ 
+                if ( minwindow[i] === appname) {
+                  delete minwindow[i];
+                }
+              }
+            } 
+            catch(err) {}
+          },
+        });          
+        var ww = $('#'+appname+"app");
+        ww.window('resize',{
+          width: '50%',
+          height: '400px',
+        });   
+        ww.window('center');
+        var icon = document.getElementById("taskbaricon");
+        var newnode = document.createElement("div");
+        newnode.id=appname+"icon";
+        newnode.className="taskbarIcon "+iconapp;
+        newnode.setAttribute("onclick", "bringtofrontapp('"+appname+"')");
+        icon.appendChild(newnode);	
       }
-      function menuHandler(item){
-        alert(item.name);
-      }
-      function bringtofrontapp(appname) {
+      async function bringtofrontapp(appname) {
         var bols = false;
         for( var i = 0; i < minwindow.length; i++){ 
           if ( minwindow[i] === appname) {
@@ -272,6 +261,12 @@
         $(".cortanaMenu").fadeOut();
       });
       $(".desktop").click(function(){
+        $(".startMenu, .cortanaMenu").fadeOut();
+      });
+      $(".widgets").click(function(){
+        $(".startMenu, .cortanaMenu").fadeOut();
+      });
+      $(".taskbaricon").click(function(){
         $(".startMenu, .cortanaMenu").fadeOut();
       });
       // Controller for the Date and Time
@@ -577,5 +572,9 @@
         $('#clientlng').val(position.coords.longitude);
       }
     </script>
+    <script src="<?php echo Yii::app()->request->baseUrl;?>/js/clippy/clippy.min.js"></script>
+    <script src="<?php echo Yii::app()->request->baseUrl?>/js/highchart/highcharts.min.all.js"></script>	
+    <script src="<?php echo Yii::app()->request->baseUrl?>/js/fullcalendar/lib/moment.min.js"></script>	
+    <script src="<?php echo Yii::app()->request->baseUrl?>/js/fullcalendar/fullcalendar.min.js"></script>	
   </body>
 </html>

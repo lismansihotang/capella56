@@ -207,7 +207,6 @@
 								'success':function(data)
 								{
 									$('#grheader-addressbookid').combogrid('setValue',data.addressbookid);
-$('#grheader-headernote').textbox('setValue',data.headernote);
 									jQuery.ajax({'url':'".Yii::app()->createUrl('inventory/grheader/generatedetail') ."',
 										'data':{
 											'id':$('#grheader-poheaderid').combogrid('getValue'),
@@ -227,7 +226,7 @@ $('#grheader-headernote').textbox('setValue',data.headernote);
 						},
 						columns: [[
 								{field:'poheaderid',title:'".GetCatalog('poheaderid') ."',width:'50px'},
-								{field:'pono',title:'".GetCatalog('pono') ."',width:'150px'},
+								{field:'pono',title:'".GetCatalog('pono') ."',width:'120px'},
 								{field:'fullname',title:'".GetCatalog('Supplier') ."',width:'300px'},
 						]],
 						fitColumns: true\">
@@ -264,7 +263,7 @@ $('#grheader-headernote').textbox('setValue',data.headernote);
 			</tr>
 			<tr>
 				<td>".GetCatalog('kendaraanno')."</td>
-				<td><input class='easyui-maskedbox' id='grheader-kendaraanno' name='grheader-kendaraanno' data-options=\"required:true,mask:'aa-9999-aaa'\"></input></td>
+				<td><input class='easyui-textbox' id='grheader-kendaraanno' name='grheader-kendaraanno' data-options='required:true'></input></td>
 			</tr>
 			<tr>
 				<td>".GetCatalog('supir')."</td>
@@ -280,7 +279,6 @@ $('#grheader-headernote').textbox('setValue',data.headernote);
 		$('#grheader-grdate').datebox({
 			value: (new Date().toString('dd-MMM-yyyy'))
 		});	
-$('#grheader-plantid').combogrid('setValue',".Yii::app()->user->getDefaultPlant().");
 		$('#grheader-isjasa-value').val(0);
 		$('#grheader-isjasa').checkbox('uncheck');
 		$('#tabdetails-grheader').tabs('enableTab',0);
@@ -380,7 +378,6 @@ $('#grheader-plantid').combogrid('setValue',".Yii::app()->user->getDefaultPlant(
 				{field:'uom3code',titl21e:'".GetCatalog('uom3code') ."',width:'80px'},
 				{field:'sloccode',title:'".GetCatalog('sloccode') ."',width:'150px'},
 				{field:'rak',title:'".GetCatalog('storagebin') ."',width:'150px'},
-				{field:'lotno',title:'".GetCatalog('lotno') ."',width:'150px'},
 				{field:'itemnote',title:'".GetCatalog('itemnote') ."',width:'300px'},
 			",
 			'columns'=>"
@@ -508,7 +505,7 @@ $('#grheader-plantid').combogrid('setValue',".Yii::app()->user->getDefaultPlant(
 									'type':'post','dataType':'json',
 									'success':function(data)
 									{
-										$(stdqty.target).numberbox('setValue',data.qty1);
+										$(stdqty.target).numberbox('setValue',data.qty);
 										$(stdqty2.target).numberbox('setValue',data.qty2);
 										$(stdqty3.target).numberbox('setValue',data.qty3);
 									} ,
@@ -517,6 +514,7 @@ $('#grheader-plantid').combogrid('setValue',".Yii::app()->user->getDefaultPlant(
 							columns:[[
 								{field:'productid',title:'".getCatalog('productid')."',width:'50px'},
 								{field:'materialtypecode',title:'".getCatalog('materialtypecode')."',width:'150px'},
+								{field:'productcode',title:'".getCatalog('productcode')."',width:'150px'},
 								{field:'productname',title:'".getCatalog('productname')."',width:'450px'},
 							]]
 						}	
@@ -720,7 +718,7 @@ $('#grheader-plantid').combogrid('setValue',".Yii::app()->user->getDefaultPlant(
 							method:'get',
 							idField:'storagebinid',
 							textField:'description',
-							url:'".Yii::app()->createUrl('common/sloc/indexstoragebin',array('grid'=>true)) ."',
+							url:'".Yii::app()->createUrl('common/storagebin/indexcombosloc',array('grid'=>true)) ."',
 							onShowPanel: function() {
 								var tr = $(this).closest('tr.datagrid-row');
 								var index = parseInt(tr.attr('datagrid-row-index'));
@@ -912,12 +910,7 @@ $('#grheader-plantid').combogrid('setValue',".Yii::app()->user->getDefaultPlant(
 				{
 					field:'reqdate',
 					title:'".GetCatalog('reqdate')."',
-					editor: {
-						type: 'datebox',
-						options:{
-							
-						}
-					},
+					editor: 'datebox',
 					sortable: true,
 					width:'150px',
 					formatter: function(value,row,index){
@@ -983,29 +976,9 @@ $('#grheader-plantid').combogrid('setValue',".Yii::app()->user->getDefaultPlant(
 					}
 				},
 				{
-					field:'lotno',
-					title:'".GetCatalog('lotno')."',
-					editor: {
-						type: 'textbox',
-						options:{
-							
-						}
-					},
-					sortable: true,
-					width:'100px',
-					formatter: function(value,row,index){
-										return value;
-					}
-				},
-				{
 					field:'description',
 					title:'".GetCatalog('description')."',
-					editor: {
-						type: 'textbox',
-						options:{
-							
-						}
-					},
+					editor: 'textbox',
 					sortable: true,
 					width:'100px',
 					formatter: function(value,row,index){
@@ -1104,6 +1077,7 @@ $('#grheader-plantid').combogrid('setValue',".Yii::app()->user->getDefaultPlant(
 								var uomid = $('#dg-grheader-grresult').datagrid('getEditor', {index: index, field:'uomid'});
 								var uom2id = $('#dg-grheader-grresult').datagrid('getEditor', {index: index, field:'uom2id'});
 								var uom3id = $('#dg-grheader-grresult').datagrid('getEditor', {index: index, field:'uom3id'});
+								var uom4id = $('#dg-grheader-grresult').datagrid('getEditor', {index: index, field:'uom4id'});
 								jQuery.ajax({'url':'".Yii::app()->createUrl('common/productplant/index',array('grid'=>true,'getdata'=>true)) ."',
 									'data':{'productid':$(productid.target).combogrid('getValue')},
 									'type':'post','dataType':'json',
@@ -1113,6 +1087,7 @@ $('#grheader-plantid').combogrid('setValue',".Yii::app()->user->getDefaultPlant(
 										$(uomid.target).combogrid('setValue',data.uom1);
 										$(uom2id.target).combogrid('setValue',data.uom2);
 										$(uom3id.target).combogrid('setValue',data.uom3);
+										$(uom4id.target).combogrid('setValue',data.uom4);
 									} ,
 									'cache':false});
 							},

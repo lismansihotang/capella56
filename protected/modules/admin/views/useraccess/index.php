@@ -9,6 +9,7 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/useraccess/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/useraccess/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/useraccess/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/useraccess/downdoc'),
 	'rowstyler'=>"
 		if (row.jumlah == 0) {
 			return 'background-color:red;color:#fff;';
@@ -17,7 +18,7 @@
 	'columns'=>"
 		{
 			field:'useraccessid',
-			title:'".GetCatalog('useraccessid') ."',
+			title:localStorage.getItem('cataloguseraccessid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -25,7 +26,7 @@
 		}},
 		{
 			field:'username',
-			title:'".GetCatalog('username') ."',
+			title:localStorage.getItem('catalogusername'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -33,7 +34,7 @@
 		}},
 		{
 			field:'realname',
-			title:'".GetCatalog('realname') ."',
+			title:localStorage.getItem('catalogrealname'),
 			width:'200px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -41,7 +42,7 @@
 		}},
 		{
 			field:'password',
-			title:'".GetCatalog('password') ."',
+			title:localStorage.getItem('catalogpassword'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -49,7 +50,7 @@
 		}},
 		{
 			field:'email',
-			title:'".GetCatalog('email') ."',
+			title:localStorage.getItem('catalogemail'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -57,7 +58,7 @@
 		}},
 		{
 			field:'phoneno',
-			title:'".GetCatalog('phoneno') ."',
+			title:localStorage.getItem('catalogphoneno'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -65,7 +66,7 @@
 		}},
 		{
 			field:'languageid',
-			title:'".GetCatalog('language') ."',
+			title:localStorage.getItem('cataloglanguage'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -73,7 +74,7 @@
 		}},
 		{
 			field:'themeid',
-			title:'".GetCatalog('theme') ."',
+			title:localStorage.getItem('catalogtheme'),
 			sortable: true,
 			width:'100px',
 			formatter: function(value,row,index){
@@ -81,13 +82,13 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus') ."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == '1'){
-					return '<img src=\"".Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 				} else {
 					return '';
 				}
@@ -96,27 +97,27 @@
 	'headerform'=> "
 		<table cellpadding='5'>
 			<tr>
-				<td>".GetCatalog('username')."</td>
+				<td id='useraccesstext-username'></td>
 				<td><input class='easyui-textbox' id='useraccess-username' name='useraccess-username' data-options=\"required:true,width:'300px'\"></input></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('realname')."</td>
+				<td id='useraccesstext-realname'></td>
 				<td><input class='easyui-textbox' id='useraccess-realname' name='useraccess-realname' data-options=\"required:true,width:'300px'\"></input></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('password')."</td>
-				<td><input class='easyui-passwordbox' id='useraccess-password' name='useraccess-password' data-options=\"required:true,width:'300px'\"></input></td>
+				<td id='useraccesstext-password'></td>
+				<td><input class='easyui-textbox' id='useraccess-password' name='useraccess-password' data-options=\"required:true,width:'300px'\"></input></td>
 			</tr>			
 			<tr>
-				<td>".GetCatalog('email')."</td>
+				<td id='useraccesstext-email'></td>
 				<td><input class='easyui-textbox' id='useraccess-email' name='useraccess-email' data-options=\"required:true,width:'300px'\"></input></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('phoneno')."</td>
+				<td id='useraccesstext-phoneno'></td>
 				<td><input class='easyui-textbox' id='useraccess-phoneno' name='useraccess-phoneno' data-options=\"width:'300px'\"></input></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('language')."</td>
+				<td id='useraccesstext-language'></td>
 				<td><select class='easyui-combogrid' id='useraccess-languageid' name='useraccess-languageid' style='width:300px' data-options=\"
 							panelWidth: '500px',
 							idField: 'languageid',
@@ -126,15 +127,15 @@
 							method: 'get',
 							mode: 'remote',
 							columns: [[
-									{field:'languageid',title:'". GetCatalog('languageid') ."',width:'80px'},
-									{field:'languagename',title:'". GetCatalog('languagename') ."',width:'150px'},
+								{field:'languageid',title:localStorage.getItem('cataloglanguageid'),width:'80px'},
+								{field:'languagename',title:localStorage.getItem('cataloglanguagename'),width:'150px'},
 							]],
 							fitColumns: true
 					\">
 			</select></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('theme')."</td>
+				<td id='useraccesstext-theme'></td>
 				<td><select class='easyui-combogrid' id='useraccess-themeid' name='useraccess-themeid' style='width:300px' data-options=\"
 							panelWidth: '500px',
 							idField: 'themeid',
@@ -144,18 +145,36 @@
 							method: 'get',
 							mode: 'remote',
 							columns: [[
-									{field:'themeid',title:'". GetCatalog('themeid') ."',width:'80px'},
-									{field:'themename',title:'". GetCatalog('themename') ."',width:'150px'},
+									{field:'themeid',title:localStorage.getItem('catalogthemeid'),width:'80px'},
+									{field:'themename',title:localStorage.getItem('catalogthemename'),width:'150px'},
 							]],
 							fitColumns: true
 					\">
 			</select></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('recordstatus')."</td>
+				<td id='useraccesstext-recordstatus'></td>
 				<td><input id='useraccess-recordstatus' name='useraccess-recordstatus' type='checkbox'></input></td>
 			</tr>
 		</table>
+	",
+	'addonscripts' => "
+	$(document).ready(function(){
+		var parel = document.getElementById('useraccesstext-username');
+		parel.innerHTML = localStorage.getItem('catalogusername');
+		parel = document.getElementById('useraccesstext-email');
+		parel.innerHTML = localStorage.getItem('catalogemail');
+		parel = document.getElementById('useraccesstext-realname');
+		parel.innerHTML = localStorage.getItem('catalogrealname');
+		parel = document.getElementById('useraccesstext-password');
+		parel.innerHTML = localStorage.getItem('catalogpassword');
+		parel = document.getElementById('useraccesstext-theme');
+		parel.innerHTML = localStorage.getItem('catalogtheme');
+		parel = document.getElementById('useraccesstext-phoneno');
+		parel.innerHTML = localStorage.getItem('catalogphoneno');
+		parel = document.getElementById('useraccesstext-language');
+		parel.innerHTML = localStorage.getItem('cataloglanguage');
+	});
 	",
 	'loadsuccess' => "
 		$('#useraccess-username').textbox('setValue',data.username);
@@ -183,12 +202,12 @@
 			'updateurl'=>Yii::app()->createUrl('admin/useraccess/saveusergroup'),
 			'destroyurl'=>Yii::app()->createUrl('admin/useraccess/purgeusergroup'),
 			'subs'=>"
-				{field:'groupname',title:'".GetCatalog('groupname')."',width:'200px'},
+				{field:'groupname',title:localStorage.getItem('cataloggroupname'),width:'200px'},
 			",
 			'columns'=>"
 				{
 					field:'usergroupid',
-					title:'".GetCatalog('usergroupid')."',
+					title:localStorage.getItem('catalogusergroupid'),
 					width:'80px',
 					hidden:true,
 					sortable: true,
@@ -198,7 +217,7 @@
 				},
 				{
 					field:'useraccessid',
-					title:'".GetCatalog('useraccessid')."',
+					title:localStorage.getItem('cataloguseraccessid'),
 					width:'80px',
 					hidden:true,
 					sortable: true,
@@ -208,7 +227,7 @@
 				},
 				{
 					field:'groupaccessid',
-					title:'".GetCatalog('groupaccess') ."',
+					title:localStorage.getItem('cataloggroupaccess'),
 					editor:{
 						type:'combogrid',
 						options:{
@@ -220,10 +239,10 @@
 							textField:'groupname',
 							url:'".$this->createUrl('groupaccess/index',array('grid'=>true,'combo'=>true)) ."',
 							fitColumns:true,
-							loadMsg: '".GetCatalog('pleasewait')."',
+							loadMsg: localStorage.getItem('catalogpleasewait'),
 							columns:[[
-								{field:'groupaccessid',title:'".GetCatalog('groupaccessid')."',width:'50px'},
-								{field:'groupname',title:'".GetCatalog('groupname')."',width:'200px'},
+								{field:'groupaccessid',title:localStorage.getItem('cataloggroupaccessid'),width:'50px'},
+								{field:'groupname',title:localStorage.getItem('cataloggroupname'),width:'200px'},
 							]]
 						}	
 					},
@@ -243,12 +262,12 @@
 			'updateurl'=>Yii::app()->createUrl('admin/useraccess/saveuserfav'),
 			'destroyurl'=>Yii::app()->createUrl('admin/useraccess/purgeuserfav'),
 			'subs'=>"
-				{field:'menuname',title:'".GetCatalog('menuname')."',width:'200px'},
+				{field:'menuname',title:localStorage.getItem('catalogmenuname'),width:'350px'},
 			",
 			'columns'=>"
 				{
 					field:'userfavid',
-					title:'".GetCatalog('userfavid')."',
+					title:localStorage.getItem('cataloguserfavid'),
 					width:'80px',
 					hidden:true,
 					sortable: true,
@@ -258,7 +277,7 @@
 				},
 				{
 					field:'useraccessid',
-					title:'".GetCatalog('useraccessid')."',
+					title:localStorage.getItem('cataloguseraccessid'),
 					width:'80px',
 					hidden:true,
 					sortable: true,
@@ -268,31 +287,31 @@
 				},
 				{
 					field:'menuaccessid',
-					title:'".GetCatalog('menuaccess')."',
+					title:localStorage.getItem('catalogmenuaccess'),
 					editor:{
 						type:'combogrid',
 						options:{
-								panelWidth:450,
+								panelWidth:'450px',
 								mode : 'remote',
 								method:'get',
 								idField:'menuaccessid',
 								textField:'menuname',
 								pagination:true,
 								required:true,
-								url:'".$this->createUrl('menuaccess/index',array('grid'=>true,'combo'=>true))."',
+								url:'".$this->createUrl('menuaccess/index',array('grid'=>true))."',
 								fitColumns:true,
-								loadMsg: '".GetCatalog('pleasewait')."',
+								loadMsg: localStorage.getItem('catalogpleasewait'),
 								columns:[[
-									{field:'menuaccessid',title:'".GetCatalog('menuaccessid')."',width:'50px'},
-									{field:'menuname',title:'".GetCatalog('menuname')."',width:'200px'},
+									{field:'menuaccessid',title:localStorage.getItem('catalogmenuaccessid'),width:'80px'},
+									{field:'menuname',title:localStorage.getItem('catalogmenuname'),width:'350px'},
 								]]
 						}	
 					},
-					width:'150px',
+					width:'350px',
 					sortable: true,
 					formatter: function(value,row,index){
 						return row.menuname;
-				}},
+				}}
 			"
 		)
 	)

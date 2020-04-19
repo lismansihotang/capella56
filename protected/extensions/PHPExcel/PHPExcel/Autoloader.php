@@ -72,7 +72,7 @@ $functions = spl_autoload_functions();
         }
 
         $pClassFilePath = PHPEXCEL_ROOT .
-                          str_replace('_',DIRECTORY_SEPARATOR,$pClassName) .
+                          strtr($pClassName,array('_'=>DIRECTORY_SEPARATOR)) .
                           '.php';
 
         if ((file_exists($pClassFilePath) === FALSE) || (is_readable($pClassFilePath) === FALSE)) {

@@ -9,7 +9,7 @@ class CountryController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$countryid = GetSearchText(array('POST','Q'),'countryid');
 		$countrycode = GetSearchText(array('POST','Q'),'countrycode');
 		$countryname = GetSearchText(array('POST','Q'),'countryname');
@@ -20,43 +20,29 @@ class CountryController extends Controller {
 		$offset = ($page-1) * $rows;
 		$result = array();
 		$row = array();
+		$selectcount = 'select count(1) as total ';
+		$select = 'select countryid,countrycode,countryname,recordstatus ';
+		$from = ' from country t ';
+		$where = ' where ';
 		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')
-				->from('country t')
-				->where('(countryid like :countryid) and (countrycode like :countrycode) and (countryname like :countryname)',
-						array(':countryid'=>$countryid,':countrycode'=>$countrycode,':countryname'=>$countryname))
-				->queryScalar();
+			$where .= " (countryid like '".$countryid."') 
+				and (countrycode like '".$countrycode."') 
+				and (countryname like '".$countryname."') ";
+		} else {
+			$where .= " ((countryid like '".$countryid."') 
+				or (countrycode like '".$countrycode."') 
+				or (countryname like '".$countryname."')) 
+				and t.recordstatus = 1 ";
 		}
-		else {			
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')
-				->from('country t')
-				->where('((countryid like :countryid) or (countrycode like :countrycode) or (countryname like :countryname)) and t.recordstatus = 1',
-						array(':countryid'=>$countryid,':countrycode'=>$countrycode,':countryname'=>$countryname))
-				->queryScalar();
-		}
+		$sql = $selectcount . $from . $where;
+		$cmd = Yii::app()->db->createCommand($sql)->queryScalar();
 		$result['total'] = $cmd;
 		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('*')			
-				->from('country t')
-				->where('(countryid like :countryid) and (countrycode like :countrycode) and (countryname like :countryname)',
-						array(':countryid'=>$countryid,':countrycode'=>$countrycode,':countryname'=>$countryname))
-				->offset($offset)
-				->limit($rows)
-				->order($sort.' '.$order)
-				->queryAll();
+			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order . ' limit ' . $offset . ',' . $rows;
+		} else {
+			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order;
 		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->select('*')			
-				->from('country t')
-				->where('((countryid like :countryid) or (countrycode like :countrycode) or (countryname like :countryname)) and t.recordstatus = 1',
-						array(':countryid'=>$countryid,':countrycode'=>$countrycode,':countryname'=>$countryname))
-				->order($sort.' '.$order)
-				->queryAll();
-		}
+		$cmd = Yii::app()->db->createCommand($sql)->queryAll();
 		foreach($cmd as $data) {	
 			$row[] = array(
 			'countryid'=>$data['countryid'],
@@ -150,17 +136,22 @@ class CountryController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('countryid');
+		$this->dataprint['countryname'] = GetSearchText(array('GET'),'countryname');
+		$this->dataprint['countrycode'] = GetSearchText(array('GET'),'countrycode');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'countryid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlecountrycode'] = GetCatalog('countrycode');
 		$this->dataprint['titlecountryname'] = GetCatalog('countryname');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['countrycode'] = GetSearchText(array('GET'),'countrycode');
-    $this->dataprint['countryname'] = GetSearchText(array('GET'),'countryname');
   }
 }

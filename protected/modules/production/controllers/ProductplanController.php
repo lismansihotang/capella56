@@ -48,7 +48,8 @@ class ProductplanController extends Controller {
     }
     Yii::app()->end();
   }
-	private function GetDetailBOM($connection,$plantid,$productplanid,$parentid,$productplanfgid,$sodetailid,$productname,$orderqty,$orderqty2,$orderqty3,$stdqty,$stdqty2,$stdqty3,$startdate,$enddate,$productplandetailid) {
+	private function GetDetailBOM($connection,$plantid,$productplanid,$parentid,$productplanfgid,$sodetailid,$productname,$orderqty,$orderqty2,$orderqty3,$stdqty,$stdqty2,$stdqty3,
+		$startdate,$enddate,$productplandetailid) {
 		if ($productplandetailid == '') {
 			$cmd = $connection->createCommand("
 				select a.* 
@@ -75,13 +76,8 @@ class ProductplanController extends Controller {
 			$sql = "
 				insert into productplanfg (productplanid,parentid,sodetailid,productid,qty,qty2,qty3,uomid,uom2id,uom3id,bomid,processprdid,mesinid,sloctoid,qtyres,description,isread,startdate,enddate)
 				select distinct ".$productplanid.",".$parentid.",".(($sodetailid != '')?$sodetailid:'null').",".$data['productid'].
-				",(a.qty/".$stdqty.")*".$orderqty;
-if ($stdqty2 != 0) {
-				$sql .= ",(a.qty2/".$stdqty2.")*".$orderqty2;
-			} 
-			else {
-				$sql .= ",0";
-			}
+				",(a.qty/".$stdqty.")*".$orderqty.
+				",(a.qty2/".$stdqty2.")*".$orderqty2;
 			if ($stdqty3 != 0) {
 				$sql .= ",(a.qty3/".$stdqty3.")*".$orderqty3;
 			} 
@@ -115,7 +111,7 @@ if ($stdqty2 != 0) {
 				)")->queryRow();
 			if ($cmd1 != null) {
 				$sql = "
-					select a.qty,a.qty2,a.qty3
+					select a.qty,a.qty2,a.qty3,
 					from billofmaterial a
 					where a.productid = ".$cmd1['productid']." and a.plantid = ".$plantid;
 				$std = $connection->createCommand($sql)->queryRow();
@@ -194,7 +190,7 @@ if ($stdqty2 != 0) {
 					$qty2 = Yii::app()->format->unformatNumber($id['qty2']);
 					$qty3 = Yii::app()->format->unformatNumber($id['qty3']);
 					$sql = "
-						select a.qty,a.qty2,ifnull(a.qty3,0) as qty3,b.productcode,b.productname
+						select a.qty,a.qty2,ifnull(a.qty3,0) as qty3,b.productcode,b.productname  
 						from billofmaterial a 
 						join product b on b.productid = a.productid 
 						where a.bomid = ".$bomid." and b.isstock = 1 and a.productid = ".$productid." and a.plantid = ".$plantid;
@@ -213,7 +209,7 @@ if ($stdqty2 != 0) {
 						left join product c on c.productid = b.productid 
 						where c.isstock = 1 and a.bomid = ".$bomid." and a.productid = ".$productid." and a.plantid = ".$plantid;
 					$command = $connection->createCommand($sql)->execute();
-					$this->GetDetailBOM($connection,$plantid,$productplanid,$productplanfgid,$productplanfgid,$sodetailid,$std['addressbookid'],$std['productname'],$qty,$qty2,$qty3,$std['qty'],$std['qty2'],$std['qty3'],
+					$this->GetDetailBOM($connection,$plantid,$productplanid,$productplanfgid,$productplanfgid,$sodetailid,$std['productname'],$qty,$qty2,$qty3,$std['qty'],$std['qty2'],$std['qty3'],
 						$startdate,$enddate,'');
 					$transaction->commit();
 				}
@@ -224,11 +220,11 @@ if ($stdqty2 != 0) {
 				GetMessage(true, $e->getMessage());
 			}
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true, getcatalog('chooseone'));
     }
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
 		$productplanid = GetSearchText(array('POST','Q'),'productplanid','','int');
 		$productplanfg = GetSearchText(array('POST','Q'),'productplanfg',0,'int');
 		$plantid = GetSearchText(array('POST','GET'),'plantid',0,'int');
@@ -241,6 +237,7 @@ if ($stdqty2 != 0) {
 		$productplandate = GetSearchText(array('POST','Q'),'productplandate');
 		$productplanno = GetSearchText(array('POST','Q'),'productplanno');
 		$description = GetSearchText(array('POST','Q'),'description');
+		$productcode = GetSearchText(array('POST','Q'),'productcode');
 		$productname = GetSearchText(array('POST','Q'),'productname');
 		$recordstatus = GetSearchText(array('POST','Q'),'recordstatus');
 		$page = GetSearchText(array('POST','GET'),'page',1,'int');
@@ -267,9 +264,10 @@ if ($stdqty2 != 0) {
 				or (coalesce(t.description,'') like :description) 
 				or (coalesce(sono,'') like :sono) 
 				or (coalesce(t.productplandate,'') like :productplandate)) 
-				and t.recordstatus = getWfmaxstatbywfname('appop') 
+				and t.recordstatus = getwfmaxstatbywfname('appprodplan')
 				and t.plantid in (".getUserObjectValues('plant').")".
-				(($plantid != '')?"and t.plantid = ".$plantid:'')."
+				(($plantid != '%%')?"
+				and t.plantid = ".$plantid:'')."
 				and t.productplanid in (select zz.productplanid 
 					from productplanfg zz 
 					where zz.qty > zz.qtyres and zz.sloctoid in (".getUserObjectValues('sloc')."))",
@@ -298,9 +296,9 @@ if ($stdqty2 != 0) {
 				or (coalesce(t.productplanno,'') like :productplanno) 
 				or (coalesce(t.description,'') like :description) 
 				or (coalesce(a.sono,'') like :sono)) 
-				and t.recordstatus = getWfmaxstatbywfname('appop') 
-				and t.plantid in (".getUserObjectValues('plant').")".
-				(($plantid != '')?"and t.plantid = ".$plantid:'')."
+				and t.recordstatus = getwfmaxstatbywfname('appprodplan')
+				and t.plantid in (".getUserObjectValues('plant').")
+				and t.plantid = ".$plantid." 
 				and t.productplanid in (select zz.productplanid 
 					from productplanfg zz 
 					where zz.sloctoid in (".getUserObjectValues('sloc')."))",
@@ -325,7 +323,7 @@ if ($stdqty2 != 0) {
 					((coalesce(d.fullname,'') like :customer) 
 				or (coalesce(t.productplanno,'') like :productplanno) 
 				or (coalesce(a.sono,'') like :sono)) 
-				and t.recordstatus = getWfmaxstatbywfname('appop') 
+				and t.recordstatus = getmaxstatbywfname('appprodplan')
 				and t.productplanid in (select zz.productplanid 
 					from productplanfg zz 
 					where zz.qty > zz.qtyres)",
@@ -366,6 +364,13 @@ if ($stdqty2 != 0) {
 					from productplanfg z 
 					join product zz on zz.productid = z.productid 
 					where zz.productname like '%".$productname."%'
+				)":'').
+				(($productcode != '')?"
+				and t.productplanid in (
+					select distinct z.productplanid 
+					from productplanfg z 
+					join product zz on zz.productid = z.productid 
+					where coalesce(zz.productcode,'') like '%".$productcode."%'
 				)":'')
 				,				
 				array(
@@ -380,7 +385,9 @@ if ($stdqty2 != 0) {
     }
     $result['total'] = $cmd;
     if (isset($_GET['ppop'])) {
-			$cmd = Yii::app()->db->createCommand()->select('t.*,a.sono,b.plantcode,b.companyid,c.companyname,d.fullname,e.productplanno as parentplanno')
+			$cmd = Yii::app()->db->createCommand()->select("t.*,a.sono,b.plantcode,b.companyid,c.companyname,d.fullname,e.productplanno as parentplanno,
+			(select sum(z.qty) from productplandetail z where z.productplanid = t.productplanid) as qty,
+			(select sum(z.qtyres) from productplandetail z where z.productplanid = t.productplanid) as qtyres")
 				->from('productplan t')
 				->leftjoin('soheader a', 'a.soheaderid = t.soheaderid')
 				->leftjoin('plant b', 'b.plantid = t.plantid')
@@ -395,9 +402,10 @@ if ($stdqty2 != 0) {
 				or (coalesce(t.description,'') like :description) 
 				or (coalesce(sono,'') like :sono) 
 				or (coalesce(t.productplandate,'') like :productplandate)) 
-				and t.recordstatus = getWfmaxstatbywfname('appop') 
+				and t.recordstatus = getwfmaxstatbywfname('appprodplan') 
 				and t.plantid in (".getUserObjectValues('plant').")".
-				(($plantid != '%%')?"and t.plantid = ".$plantid:'')."
+				(($plantid != '%%')?"
+				and t.plantid = ".$plantid:'')."
 				and t.productplanid in (select zz.productplanid 
 					from productplanfg zz 
 					where zz.qty > zz.qtyres and zz.sloctoid in (".getUserObjectValues('sloc')."))
@@ -413,7 +421,9 @@ if ($stdqty2 != 0) {
 				))->order($sort . ' ' . $order)->queryAll();
 		}else 
 					if (isset($_GET['ppfpbok'])) {
-			$cmd = Yii::app()->db->createCommand()->select('t.*,a.sono,b.plantcode,b.companyid,c.companyname,d.fullname,e.productplanno as parentplanno')
+			$cmd = Yii::app()->db->createCommand()->select("t.*,a.sono,b.plantcode,b.companyid,c.companyname,d.fullname,e.productplanno as parentplanno,
+			(select sum(z.qty) from productplandetail z where z.productplanid = t.productplanid) as qty,
+			(select sum(z.qtyres) from productplandetail z where z.productplanid = t.productplanid) as qtyres")
 				->from('productplan t')
 				->leftjoin('soheader a', 'a.soheaderid = t.soheaderid')
 				->leftjoin('plant b', 'b.plantid = t.plantid')
@@ -427,9 +437,9 @@ if ($stdqty2 != 0) {
 				or (coalesce(t.productplanno,'') like :productplanno) 
 				or (coalesce(t.description,'') like :description) 
 				or (coalesce(a.sono,'') like :sono)) 
-				and t.recordstatus = getWfmaxstatbywfname('appop') 
-				and t.plantid in (".getUserObjectValues('plant').")".
-				(($plantid != '')?"and t.plantid = ".$plantid:'')." 
+				and t.recordstatus = getwfmaxstatbywfname('appprodplan')
+				and t.plantid in (".getUserObjectValues('plant').")
+				and t.plantid = ".$plantid." 
 				and t.productplanid in (select zz.productplanid 
 					from productplanfg zz 
 					where zz.sloctoid in (".getUserObjectValues('sloc')."))
@@ -443,7 +453,10 @@ if ($stdqty2 != 0) {
 				':sono' => '%' . $sono . '%',
 				))->queryAll();
 		} else if (isset($_GET['lintaspp'])) {
-			$cmd = Yii::app()->db->createCommand()->select('t.*,a.sono,b.plantcode,b.companyid,c.companyname,d.fullname,e.productplanno as parentplanno')
+			$cmd = Yii::app()->db->createCommand()->select("t.*, a.sono,b.plantcode,b.companyid,c.companyname,d.fullname,e.productplanno as parentplanno,
+			(select sum(z.qty) from productplandetail z where z.productplanid = t.productplanid) as qty,
+			(select sum(z.qtyres) from productplandetail z where z.productplanid = t.productplanid) as qtyres
+			")
 				->from('productplan t')
 				->leftjoin('soheader a', 'a.soheaderid = t.soheaderid')
 				->leftjoin('plant b', 'b.plantid = t.plantid')
@@ -454,7 +467,7 @@ if ($stdqty2 != 0) {
 					((coalesce(d.fullname,'') like :customer) 
 				or (coalesce(t.productplanno,'') like :productplanno) 
 				or (coalesce(a.sono,'') like :sono))  
-				and t.recordstatus = getWfmaxstatbywfname('appop') 
+				and t.recordstatus = getwfmaxstatbywfname('appprodplan')
 				and t.productplanid in (select zz.productplanid 
 					from productplanfg zz 
 					where zz.qty > zz.qtyres)
@@ -465,7 +478,10 @@ if ($stdqty2 != 0) {
 				':sono' => '%' . $sono . '%',
 				))->queryAll();
 		} else {
-			$cmd = Yii::app()->db->createCommand()->select('t.*,a.sono,b.plantcode,b.companyid,c.companyname,d.fullname,e.productplanno as parentplanno')
+			$cmd = Yii::app()->db->createCommand()->select('t.*,a.sono,b.plantcode,b.companyid,c.companyname,
+			d.fullname,e.productplanno as parentplanno,
+			(select sum(z.qty) from productplandetail z where z.productplanid = t.productplanid) as qty,
+			(select sum(z.qtyres) from productplandetail z where z.productplanid = t.productplanid) as qtyres')
 				->from('productplan t')
 				->leftjoin('soheader a', 'a.soheaderid = t.soheaderid')
 				->leftjoin('plant b', 'b.plantid = t.plantid')
@@ -496,6 +512,13 @@ if ($stdqty2 != 0) {
 					from productplanfg z 
 					join product zz on zz.productid = z.productid 
 					where zz.productname like '%".$productname."%'
+				)":'').
+				(($productcode != '')?"
+				and t.productplanid in (
+					select distinct z.productplanid 
+					from productplanfg z 
+					join product zz on zz.productid = z.productid 
+					where coalesce(zz.productcode,'') like '%".$productcode."%'
 				)":'')
 				,				
 				array(
@@ -521,6 +544,8 @@ if ($stdqty2 != 0) {
 				'parentplanno' => $data['parentplanno'],
 				'soheaderid' => $data['soheaderid'],
 				'sono' => $data['sono'],
+				'qty' => $data['qty'],
+				'qtyres' => $data['qtyres'],
 				'addressbookid' => $data['addressbookid'],
 				'fullname' => $data['fullname'],
 				'description' => $data['description'],
@@ -543,7 +568,7 @@ if ($stdqty2 != 0) {
 	public function actionproductionfg() {
     $items = array();
     $cmd   = Yii::app()->db->createCommand()
-			->select('c.productplanno,d.fullname as customer, a.productname,t.qty,t.startdate,t.enddate,e.uomcode,f.kodemesin,
+			->select('c.productplanno,d.fullname as customer, a.productcode,a.productname,t.qty,t.startdate,t.enddate,e.uomcode,f.kodemesin,
 			(t.qty-t.qtyres) as qtyout,t.qtyres,g.processprdname')
 			->from('productplanfg t')
 			->leftjoin('product a', 'a.productid = t.productid')
@@ -561,7 +586,7 @@ if ($stdqty2 != 0) {
     foreach ($cmd as $data) {
       $items[] = array(
         'title' => 'Customer: '.$data['customer']."\n No OK:".$data['productplanno'].
-					"\n Artikel: ".$data['productname'].
+					"\n Artikel: ".$data['productcode'].
 					"\n Qty OK: ". Yii::app()->format->formatNumber($data['qty']).''.$data['uomcode'].
 					"\n Qty Prod: ".Yii::app()->format->formatNumber($data['qtyres']).
 					"\n Qty Out: ".Yii::app()->format->formatNumber($data['qtyout']).
@@ -575,7 +600,7 @@ if ($stdqty2 != 0) {
     echo CJSON::encode($items);
   }
   public function actionSearchhasil() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -691,7 +716,7 @@ if ($stdqty2 != 0) {
     echo CJSON::encode($result);
   }
   public function actionSearchdetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -753,7 +778,16 @@ if ($stdqty2 != 0) {
 						FROM transstockdet zz
 						WHERE zz.productplandetailid = t.productplandetailid AND zz.productid = t.productid
 						) as qtytrf2,
-						GetStdQty(a.productid) as stdqty,
+						(
+						SELECT IFNULL(SUM(zz.qty) ,0)
+						FROM productoutputdetail zz
+						where zz.productplandetailid = t.productplandetailid and zz.productid = t.productid 
+						) as qtypakai,
+						(
+							SELECT IFNULL(SUM(zz.qty2) ,0)
+							FROM productoutputdetail zz
+							where zz.productplandetailid = t.productplandetailid and zz.productid = t.productid 
+							) as qtypakai2,
 						GetStdQty2(a.productid) as stdqty2,
 						GetStdQty3(a.productid) as stdqty3,
 						GetStock(a.productid,t.uomid,t.sloctoid) as qtystock
@@ -800,11 +834,11 @@ if ($stdqty2 != 0) {
 			'qty' => Yii::app()->format->formatNumber($data['qty']),
 			'qty2' => Yii::app()->format->formatNumber($data['qty2']),
 			'qty3' => Yii::app()->format->formatNumber($data['qty3']),
-			'qtyres' => Yii::app()->format->formatNumber($data['qtyres']),
+			'qtyres' => Yii::app()->format->formatNumber($data['qtypakai']),
+			'qtyres2' => Yii::app()->format->formatNumber($data['qtypakai2']),
 			'qtyfr' => Yii::app()->format->formatNumber($data['qtyfr']),
 			'qtyfr2' => Yii::app()->format->formatNumber($data['qtyfr2']),
 			'qtyfr3' => Yii::app()->format->formatNumber($data['qtyfr3']),
-			'stdqty' => Yii::app()->format->formatNumber($data['stdqty']),
 			'stdqty2' => Yii::app()->format->formatNumber($data['stdqty2']),
 			'stdqty3' => Yii::app()->format->formatNumber($data['stdqty3']),
 			'qtystock' => Yii::app()->format->formatNumber($data['qtystock']),
@@ -852,7 +886,7 @@ if ($stdqty2 != 0) {
         GetMessage(true, $e->getMessage());
       }
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true, getcatalog('chooseone'));
     }
   }	
   public function actionApprove() {
@@ -875,7 +909,7 @@ if ($stdqty2 != 0) {
         GetMessage(true, $e->getMessage());
       }
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true, getcatalog('chooseone'));
     }
   }
   public function actionHoldOk() {
@@ -898,7 +932,7 @@ if ($stdqty2 != 0) {
         GetMessage(true, $e->getMessage());
       }
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true, getcatalog('chooseone'));
     }
   }
   public function actionOpenOk() {
@@ -921,7 +955,7 @@ if ($stdqty2 != 0) {
         GetMessage(true, $e->getMessage());
       }
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true, getcatalog('chooseone'));
     }
   }
 	public function actionCopyOk() {
@@ -1065,22 +1099,22 @@ if ($stdqty2 != 0) {
 								$qty3 = $objWorksheet->getCellByColumnAndRow(13, $row)->getValue(); //N
 								$uomcode = $objWorksheet->getCellByColumnAndRow(14, $row)->getValue(); //O
 								$uom3id = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
-								$bomversion = $objWorksheet->getCellByColumnAndRow(17, $row)->getValue(); //P
+								$bomversion = $objWorksheet->getCellByColumnAndRow(15, $row)->getValue(); //R
 								$sql = "select bomid from billofmaterial where bomversion = :bomversion and productid = :productid and plantid = :plantid";
 								$command=$connection->createCommand($sql);
 								$command->bindvalue(':bomversion',$bomversion,PDO::PARAM_STR);
 								$command->bindvalue(':productid',$productid,PDO::PARAM_STR);
 								$command->bindvalue(':plantid',$plantid,PDO::PARAM_STR);
 								$bomid = $command->queryScalar();
-								$processprd = $objWorksheet->getCellByColumnAndRow(18, $row)->getValue(); //Q
+								$processprd = $objWorksheet->getCellByColumnAndRow(16, $row)->getValue(); //S
 								$processprdid = Yii::app()->db->createCommand("select processprdid from processprd where processprdname = '".$processprd."'")->queryScalar();
-								$kodemesin = $objWorksheet->getCellByColumnAndRow(19, $row)->getValue(); //R
+								$kodemesin = $objWorksheet->getCellByColumnAndRow(17, $row)->getValue(); //T
 								$mesinid = Yii::app()->db->createCommand("select processprdid from processprd where processprdname = '".$processprd."'")->queryScalar();
-								$sloccode = $objWorksheet->getCellByColumnAndRow(20, $row)->getValue(); //S
+								$sloccode = $objWorksheet->getCellByColumnAndRow(18, $row)->getValue(); //U
 								$slocid = Yii::app()->db->createCommand("select slocid from sloc where sloccode = '".$sloccode."'")->queryScalar();
-								$startdate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(21, $row)->getValue())); //T
-								$enddate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(22, $row)->getValue())); //U
-								$itemnote = $objWorksheet->getCellByColumnAndRow(23, $row)->getValue(); //V
+								$startdate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(19, $row)->getValue())); //V
+								$enddate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(20, $row)->getValue())); //W
+								$itemnote = $objWorksheet->getCellByColumnAndRow(21, $row)->getValue(); //X
 								$this->ModifyHasil($connection,array(
 									'',
 									$pid,
@@ -1125,18 +1159,18 @@ if ($stdqty2 != 0) {
 							$qty3 = $objWorksheet->getCellByColumnAndRow(29, $row)->getValue(); //AD
 							$uomcode = $objWorksheet->getCellByColumnAndRow(30, $row)->getValue(); //AE
 							$uom3id = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
-							$bomversion = $objWorksheet->getCellByColumnAndRow(33, $row)->getValue(); //AF
+							$bomversion = $objWorksheet->getCellByColumnAndRow(33, $row)->getValue(); //AH
 							$sql = "select bomid from billofmaterial where bomversion = :bomversion and productid = :productid and plantid = :plantid";
 							$command=$connection->createCommand($sql);
 							$command->bindvalue(':bomversion',$bomversion,PDO::PARAM_STR);
 							$command->bindvalue(':productid',$productid,PDO::PARAM_STR);
 							$command->bindvalue(':plantid',$plantid,PDO::PARAM_STR);
 							$bomid = $command->queryScalar();
-							$sloccode = $objWorksheet->getCellByColumnAndRow(34, $row)->getValue(); //AG
+							$sloccode = $objWorksheet->getCellByColumnAndRow(34, $row)->getValue(); //AI
 							$slocfromid = Yii::app()->db->createCommand("select slocid from sloc where sloccode = '".$sloccode."'")->queryScalar();
-							$sloccode = $objWorksheet->getCellByColumnAndRow(35, $row)->getValue(); //AH
+							$sloccode = $objWorksheet->getCellByColumnAndRow(35, $row)->getValue(); //AJ
 							$sloctoid = Yii::app()->db->createCommand("select slocid from sloc where sloccode = '".$sloccode."'")->queryScalar();
-							$itemnote = $objWorksheet->getCellByColumnAndRow(36, $row)->getValue(); //AI	
+							$itemnote = $objWorksheet->getCellByColumnAndRow(36, $row)->getValue(); //AK	
 							$this->ModifyDetail($connection,array(
 								'',
 								$pid,
@@ -1167,7 +1201,7 @@ if ($stdqty2 != 0) {
 	}
 	private function ModifyHasil($connection,$arraydata) {
 		if ($arraydata[0]=='') {
-			$sql     = 'call InsertProductplanhasil (:vproductplanid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vqty,:vqty2,:vqty3,:vbomid,
+			$sql     = 'call InsertProductplanfg (:vproductplanid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vqty,:vqty2,:vqty3,:vbomid,
 				:vprocessprdid,:vmesinid,:vsloctoid,:vstartdate,:venddate,:vdescription,:vdatauser)';
 			$command = $connection->createCommand($sql);
 		} else {
@@ -1196,7 +1230,7 @@ if ($stdqty2 != 0) {
 		$command->execute();
 	}
   public function actionSaveHasil() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1257,7 +1291,7 @@ if ($stdqty2 != 0) {
 		$command->execute();
 	}
   public function actionsavedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1288,7 +1322,7 @@ if ($stdqty2 != 0) {
     }
   }
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1311,7 +1345,7 @@ if ($stdqty2 != 0) {
     }
   }
   public function actionPurgehasil() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1330,11 +1364,11 @@ if ($stdqty2 != 0) {
         GetMessage(true, $e->getMessage());
       }
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true, getcatalog('chooseone'));
     }
   }
   public function actionPurgebahan() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1353,42 +1387,581 @@ if ($stdqty2 != 0) {
         GetMessage(true, $e->getMessage());
       }
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true, getcatalog('chooseone'));
     }
-	}
-	protected function actionDataPrint() {
-		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('productplanid');
-		$this->dataprint['titleproductplanno'] = GetCatalog('productplanno');
-		$this->dataprint['titleplantcode'] = GetCatalog('plantcode');
-		$this->dataprint['titleproductplandate'] = GetCatalog('productplandate');
-		$this->dataprint['titlesono'] = GetCatalog('sono');
-		$this->dataprint['titlesodate'] = GetCatalog('sodate');
-		$this->dataprint['titlepocustno'] = GetCatalog('pocustno');
-		$this->dataprint['titlefullname'] = GetCatalog('customer');
-		$this->dataprint['titledescription'] = GetCatalog('description');
-		$this->dataprint['titlehasilproses'] = GetCatalog('hasilproses');
-		$this->dataprint['titleproductname'] = GetCatalog('productname');
-		$this->dataprint['titleproductcode'] = GetCatalog('productcode');
-		$this->dataprint['titleqty'] = GetCatalog('qty');
-		$this->dataprint['titleqty2'] = GetCatalog('qty2');
-		$this->dataprint['titleqty3'] = GetCatalog('qty3');
-		$this->dataprint['titleuomcode'] = GetCatalog('uomcode');
-		$this->dataprint['titleuom2code'] = GetCatalog('uom2code');
-		$this->dataprint['titleuom3code'] = GetCatalog('uom3code');
-		$this->dataprint['titlefromsloccode'] = GetCatalog('slocfrom');
-		$this->dataprint['titletosloccode'] = GetCatalog('slocprocess');
-		$this->dataprint['titlekodemesin'] = GetCatalog('kodemesin');
-		$this->dataprint['titleprocessprdname'] = GetCatalog('processprdname');
-		$this->dataprint['titlebomversion'] = GetCatalog('bomversion');
-		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['productplanno'] = GetSearchText(array('GET'),'productplanno');
-    $this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
-    $this->dataprint['productplandate'] = GetSearchText(array('GET'),'productplandate');
-    $this->dataprint['sono'] = GetSearchText(array('GET'),'sono');
-    $this->dataprint['sodate'] = GetSearchText(array('GET'),'sodate');
-    $this->dataprint['pocustno'] = GetSearchText(array('GET'),'pocustno');
-    $this->dataprint['customer'] = GetSearchText(array('GET'),'customer');
   }
-} 
+  public function actionDownPDF() {
+    parent::actionDownload();
+		$sql = "select a.*,b.sono,b.sodate,b.pocustno,c.fullname,a.description
+      from productplan a
+			left join soheader b on b.soheaderid = a.soheaderid
+			left join addressbook c on c.addressbookid = a.addressbookid
+			";
+		if ($_GET['id'] !== '') {
+      $sql = $sql . "where a.productplanid in (" . $_GET['id'] . ")";
+		}
+    $command          = $this->connection->createCommand($sql);
+    $dataReader       = $command->queryAll();
+	  $this->pdf->title = GetCatalog('productplan');
+	  $this->pdf->AddPage('L',array(210,330));
+    foreach($dataReader as $row)  {
+			$this->pdf->SetFontSize(10);
+      /* 
+			$this->pdf->text(15, $this->pdf->gety() + 5, 'No OK ');
+      $this->pdf->text(40, $this->pdf->gety() + 5, ': ' . $row['productplanno']);
+      $this->pdf->text(90, $this->pdf->gety() + 5, 'No SO ');
+      $this->pdf->text(115, $this->pdf->gety() + 5, ': ' . $row['sono']);
+			$this->pdf->text(90, $this->pdf->gety() + 10, 'Customer ');
+      $this->pdf->text(115, $this->pdf->gety() + 10, ': ' . $row['fullname']);
+      $this->pdf->text(15, $this->pdf->gety() + 10, 'Tgl SPP ');
+      $this->pdf->text(40, $this->pdf->gety() + 10, ': ' . date(Yii::app()->params['dateviewfromdb'], strtotime($row['productplandate'])));
+			$this->pdf->text(195, $this->pdf->gety() + 5, 'No PO Customer ');
+      $this->pdf->text(230, $this->pdf->gety() + 5, ': ' . $row['pocustno']);
+			$this->pdf->text(15, $this->pdf->gety() + 15, 'Keterangan ');
+      $this->pdf->text(40, $this->pdf->gety() + 15, ': ' . $row['description']);
+			*/
+      $sql1 = "select b.productname, a.qty,a.qty2,a.qty3,c.uomcode,a.productplanfgid,j.bomversion,
+							e.uomcode as uom2code,
+							f.uomcode as uom3code,
+							a.description,d.sloccode,
+							d.description as slocdesc,i.processprdname,h.kodemesin,h.namamesin,a.startdate,a.enddate,
+														(
+							select zz.delvdate 
+							from sodetail zz 
+							where zz.sodetailid = a.sodetailid and zz.productid = a.productid 
+							) as delvdate,
+							(
+							select zz.qty
+							from sodetail zz 
+							where zz.sodetailid = a.sodetailid and zz.productid = a.productid 
+							) as qtyso
+        from productplanfg a
+        left join product b on b.productid = a.productid
+				left join unitofmeasure c on c.unitofmeasureid = a.uomid
+				left join unitofmeasure e on e.unitofmeasureid = a.uom2id
+				left join unitofmeasure f on f.unitofmeasureid = a.uom3id
+				left join sloc d on d.slocid = a.sloctoid
+				left join processprd i on i.processprdid = a.processprdid
+				left join mesin h on h.mesinid = a.mesinid 
+				left join billofmaterial j on j.bomid = a.bomid 
+        where a.productplanid = ".$row['productplanid']." order by productplanfgid desc,parentid asc ";
+      $command1    = $this->connection->createCommand($sql1);
+      $dataReader1 = $command1->queryAll();
+      $i=0;
+      //$this->pdf->sety($this->pdf->gety()+25);
+			$parentid = '';$proseske=0;
+			
+      foreach($dataReader1 as $row1) {
+				$this->pdf->text(15, $this->pdf->gety() + 5, 'No OK ');
+      $this->pdf->text(40, $this->pdf->gety() + 5, ': ' . $row['productplanno']);
+      $this->pdf->text(90, $this->pdf->gety() + 5, 'No OS ');
+      $this->pdf->text(115, $this->pdf->gety() + 5, ': ' . $row['sono']);
+			$this->pdf->text(90, $this->pdf->gety() + 10, 'Customer ');
+      $this->pdf->text(115, $this->pdf->gety() + 10, ': ' . $row['fullname']);
+      $this->pdf->text(15, $this->pdf->gety() + 10, 'Tgl OK ');
+      $this->pdf->text(40, $this->pdf->gety() + 10, ': ' . date(Yii::app()->params['dateviewfromdb'], strtotime($row['productplandate'])));
+			$this->pdf->text(195, $this->pdf->gety() + 5, 'No PO Customer ');
+      $this->pdf->text(230, $this->pdf->gety() + 5, ': ' . $row['pocustno']);
+			$this->pdf->text(15, $this->pdf->gety() + 15, 'Keterangan ');
+      $this->pdf->text(40, $this->pdf->gety() + 15, ': ' . $row['description']);
+			$this->pdf->sety($this->pdf->gety()+25);
+        $i=$i+1;
+				$this->pdf->SetFontSize(9);$proseske+=1;
+				$this->pdf->text(10,$this->pdf->gety(),'HASIL PROSES '.$proseske);
+				$this->pdf->text(10,$this->pdf->gety()+5,'Product');$this->pdf->text(30,$this->pdf->gety()+5,': '.$row1['productname']);
+				$this->pdf->text(10,$this->pdf->gety()+10,'Versi BOM');$this->pdf->text(30,$this->pdf->gety()+10,': '.$row1['bomversion']);
+				$this->pdf->text(10,$this->pdf->gety()+15,'Qty OS');$this->pdf->text(30,$this->pdf->gety()+15,': '.Yii::app()->format->formatNumber($row1['qtyso']).'   '.$row1['uomcode']);
+				$this->pdf->text(10,$this->pdf->gety()+20,'Qty');$this->pdf->text(30,$this->pdf->gety()+20,': '.Yii::app()->format->formatNumber($row1['qty']).'   '.$row1['uomcode']);
+				$this->pdf->text(10,$this->pdf->gety()+25,'Qty2');$this->pdf->text(30,$this->pdf->gety()+25,': '.Yii::app()->format->formatNumber($row1['qty2']).'   '.$row1['uom2code']);
+				$this->pdf->text(10,$this->pdf->gety()+30,'Qty3');$this->pdf->text(30,$this->pdf->gety()+30,': '.Yii::app()->format->formatNumber($row1['qty3']).'   '.$row1['uom3code']);
+				$this->pdf->text(110,$this->pdf->gety()+15,'Mesin');$this->pdf->text(140,$this->pdf->gety()+15,': '.$row1['kodemesin']);
+				$this->pdf->text(110,$this->pdf->gety()+20,'Dept Proses');$this->pdf->text(140,$this->pdf->gety()+20,': '.$row1['sloccode']);
+				$this->pdf->text(110,$this->pdf->gety()+25,'Proses');$this->pdf->text(140,$this->pdf->gety()+25,': '.$row1['processprdname']);
+				//$this->pdf->text(10,$this->pdf->gety()+50,'Keterangan');$this->pdf->text(25,$this->pdf->gety()+50,': '.$row1['description']);
+				$this->pdf->text(110, $this->pdf->gety()+30,'Tgl Mulai');$this->pdf->text(140,$this->pdf->gety()+30,': '.date(Yii::app()->params['dateviewfromdb'], strtotime($row1['startdate'])));
+				$this->pdf->text(110, $this->pdf->gety()+35,'Tgl Selesai');$this->pdf->text(140,$this->pdf->gety()+35,': '.date(Yii::app()->params['dateviewfromdb'], strtotime($row1['enddate'])));
+				if ($row1['delvdate'] != null) {
+					$this->pdf->text(210, $this->pdf->gety()+15,'Tgl Kirim');$this->pdf->text(240,$this->pdf->gety()+15,': '.date(Yii::app()->params['dateviewfromdb'], strtotime($row1['delvdate'])));
+				}
+				$this->pdf->text(10,$this->pdf->gety()+40,'Keterangan');$this->pdf->text(30,$this->pdf->gety()+40,': '.$row1['description']);
+				
+				$this->pdf->sety($this->pdf->gety()+40);
+				$sql2 = "select b.productname,
+								sum(a.qty) as qty,
+								sum(a.qty2) as qty2,
+								sum(a.qty3) as qty3,
+								c.uomcode,
+								f.uomcode as uom2code,
+								g.uomcode as uom3code,
+								a.description,d.bomversion,
+							(select sloccode from sloc d where d.slocid = a.slocfromid) as fromsloccode,
+							(select description from sloc d where d.slocid = a.slocfromid) as fromslocdesc,
+							(select sloccode from sloc d where d.slocid = a.sloctoid) as tosloccode,	
+							(select description from sloc d where d.slocid = a.sloctoid) as toslocdesc						
+							from productplandetail a
+							left join product b on b.productid = a.productid
+							left join unitofmeasure c on c.unitofmeasureid = a.uomid
+							left join unitofmeasure f on f.unitofmeasureid = a.uom2id
+							left join unitofmeasure g on g.unitofmeasureid = a.uom3id
+							left join billofmaterial d on d.bomid = a.bomid
+							where b.isstock = 1 and productplanid = ".$row['productplanid']." and productplanfgid = ".$row1['productplanfgid']."   
+							group by b.productname,c.uomcode,d.bomversion,fromsloccode,fromslocdesc,tosloccode,toslocdesc, productplanfgid ";
+				$command2    = $this->connection->createCommand($sql2);
+				$dataReader2 = $command2->queryAll();
+				$this->pdf->text(10,$this->pdf->gety()+10,'BAHAN PEMBUAT');
+				$this->pdf->SetFontSize(9);
+				$this->pdf->sety($this->pdf->gety()+12);
+				$this->pdf->colalign = array('C','C','C','C','C','C','C','C','C','C','C','C','C');
+				$this->pdf->setwidths(array(8,65,23,15,23,15,23,15,23,15,24,30,40));
+				$this->pdf->colheader = array('No','Items','Qty','Unit','Qty2','Unit2','Qty3','Unit3','GD Asal','GD Proses','Remark');
+				$this->pdf->RowHeader();
+				$this->pdf->coldetailalign = array('L','L','R','L','R','L','R','L','R','L','L','L','L');
+				$j=0;
+				foreach($dataReader2 as $row2) {
+					$j=$j+1;
+					$this->pdf->row(array($j,$row2['productname'],
+							Yii::app()->format->formatNumber($row2['qty']),
+							$row2['uomcode'],
+							Yii::app()->format->formatNumber($row2['qty2']),
+							$row2['uom2code'],
+							Yii::app()->format->formatNumber($row2['qty3']),
+							$row2['uom3code'],
+							$row2['fromsloccode'],
+							$row2['tosloccode'],
+							$row2['bomversion'].''.$row2['description']));
+				}
+				//$this->pdf->sety($this->pdf->gety());
+				$this->pdf->text(20,$this->pdf->gety()+15,'Approved By');$this->pdf->text(150,$this->pdf->gety()+15,'Proposed By');
+				$this->pdf->text(20,$this->pdf->gety()+30,'____________ ');$this->pdf->text(150,$this->pdf->gety()+30,'____________');
+				$this->pdf->CheckPageBreak(20);
+				$this->pdf->AddPage('L',array(210,330));
+			}      
+		}
+	  $this->pdf->Output();
+	}
+	public function actionPDFpakai() {
+    parent::actionDownload();
+		$sql = "select a.*,b.sono,b.sodate,b.pocustno,c.fullname,a.description
+      from productplan a
+			left join soheader b on b.soheaderid = a.soheaderid
+			left join addressbook c on c.addressbookid = a.addressbookid
+			";
+		if ($_GET['id'] !== '') {
+      $sql = $sql . "where a.productplanid in (" . $_GET['id'] . ")";
+		}
+    $command          = $this->connection->createCommand($sql);
+    $dataReader       = $command->queryAll();
+	  $this->pdf->title = GetCatalog('productplan');
+	  $this->pdf->AddPage('L',array(210,360));
+    foreach($dataReader as $row)  {
+			$this->pdf->SetFontSize(10);
+      $sql1 = "select b.productname, a.qty,a.qty2,a.qty3,c.uomcode,a.productplanfgid,j.bomversion,
+							e.uomcode as uom2code,
+							f.uomcode as uom3code,
+							a.description,d.sloccode,
+							d.description as slocdesc,i.processprdname,h.kodemesin,h.namamesin,a.startdate,a.enddate,
+														(
+							select zz.delvdate 
+							from sodetail zz 
+							where zz.sodetailid = a.sodetailid and zz.productid = a.productid 
+							) as delvdate,
+							(
+							select zz.qty
+							from sodetail zz 
+							where zz.sodetailid = a.sodetailid and zz.productid = a.productid 
+							) as qtyso
+        from productplanfg a
+        left join product b on b.productid = a.productid
+				left join unitofmeasure c on c.unitofmeasureid = a.uomid
+				left join unitofmeasure e on e.unitofmeasureid = a.uom2id
+				left join unitofmeasure f on f.unitofmeasureid = a.uom3id
+				left join sloc d on d.slocid = a.sloctoid
+				left join processprd i on i.processprdid = a.processprdid
+				left join mesin h on h.mesinid = a.mesinid 
+				left join billofmaterial j on j.bomid = a.bomid 
+        where a.productplanid = ".$row['productplanid']." order by productplanfgid desc,parentid asc ";
+      $command1    = $this->connection->createCommand($sql1);
+      $dataReader1 = $command1->queryAll();
+      $i=0;
+			$parentid = '';$proseske=0;
+			
+      foreach($dataReader1 as $row1) {
+				$this->pdf->text(15, $this->pdf->gety() + 5, 'No OK ');
+      $this->pdf->text(40, $this->pdf->gety() + 5, ': ' . $row['productplanno']);
+      $this->pdf->text(90, $this->pdf->gety() + 5, 'No OS ');
+      $this->pdf->text(115, $this->pdf->gety() + 5, ': ' . $row['sono']);
+			$this->pdf->text(90, $this->pdf->gety() + 10, 'Customer ');
+      $this->pdf->text(115, $this->pdf->gety() + 10, ': ' . $row['fullname']);
+      $this->pdf->text(15, $this->pdf->gety() + 10, 'Tgl OK ');
+      $this->pdf->text(40, $this->pdf->gety() + 10, ': ' . date(Yii::app()->params['dateviewfromdb'], strtotime($row['productplandate'])));
+			$this->pdf->text(195, $this->pdf->gety() + 5, 'No PO Customer ');
+      $this->pdf->text(230, $this->pdf->gety() + 5, ': ' . $row['pocustno']);
+			$this->pdf->text(15, $this->pdf->gety() + 15, 'Keterangan ');
+      $this->pdf->text(40, $this->pdf->gety() + 15, ': ' . $row['description']);
+			$this->pdf->sety($this->pdf->gety()+25);
+        $i=$i+1;
+				$this->pdf->SetFontSize(9);$proseske+=1;
+				$this->pdf->text(10,$this->pdf->gety(),'HASIL PROSES '.$proseske);
+				$this->pdf->text(10,$this->pdf->gety()+5,'Product');$this->pdf->text(30,$this->pdf->gety()+5,': '.$row1['productname']);
+				$this->pdf->text(10,$this->pdf->gety()+10,'Versi BOM');$this->pdf->text(30,$this->pdf->gety()+10,': '.$row1['bomversion']);
+				$this->pdf->text(10,$this->pdf->gety()+15,'Qty OS');$this->pdf->text(30,$this->pdf->gety()+15,': '.Yii::app()->format->formatNumber($row1['qtyso']).'   '.$row1['uomcode']);
+				$this->pdf->text(10,$this->pdf->gety()+20,'Qty');$this->pdf->text(30,$this->pdf->gety()+20,': '.Yii::app()->format->formatNumber($row1['qty']).'   '.$row1['uomcode']);
+				$this->pdf->text(10,$this->pdf->gety()+25,'Qty2');$this->pdf->text(30,$this->pdf->gety()+25,': '.Yii::app()->format->formatNumber($row1['qty2']).'   '.$row1['uom2code']);
+				$this->pdf->text(10,$this->pdf->gety()+30,'Qty3');$this->pdf->text(30,$this->pdf->gety()+30,': '.Yii::app()->format->formatNumber($row1['qty3']).'   '.$row1['uom3code']);
+				$this->pdf->text(110,$this->pdf->gety()+15,'Mesin');$this->pdf->text(140,$this->pdf->gety()+15,': '.$row1['kodemesin']);
+				$this->pdf->text(110,$this->pdf->gety()+20,'Dept Proses');$this->pdf->text(140,$this->pdf->gety()+20,': '.$row1['sloccode']);
+				$this->pdf->text(110,$this->pdf->gety()+25,'Proses');$this->pdf->text(140,$this->pdf->gety()+25,': '.$row1['processprdname']);
+				//$this->pdf->text(10,$this->pdf->gety()+50,'Keterangan');$this->pdf->text(25,$this->pdf->gety()+50,': '.$row1['description']);
+				$this->pdf->text(110, $this->pdf->gety()+30,'Tgl Mulai');$this->pdf->text(140,$this->pdf->gety()+30,': '.date(Yii::app()->params['dateviewfromdb'], strtotime($row1['startdate'])));
+				$this->pdf->text(110, $this->pdf->gety()+35,'Tgl Selesai');$this->pdf->text(140,$this->pdf->gety()+35,': '.date(Yii::app()->params['dateviewfromdb'], strtotime($row1['enddate'])));
+				if ($row1['delvdate'] != null) {
+					$this->pdf->text(210, $this->pdf->gety()+15,'Tgl Kirim');$this->pdf->text(240,$this->pdf->gety()+15,': '.date(Yii::app()->params['dateviewfromdb'], strtotime($row1['delvdate'])));
+				}
+				$this->pdf->text(10,$this->pdf->gety()+40,'Keterangan');$this->pdf->text(30,$this->pdf->gety()+40,': '.$row1['description']);
+				
+				$this->pdf->sety($this->pdf->gety()+40);
+				$sql2 = "select b.productname,
+								sum(a.qty) as qty,
+								sum(a.qty2) as qty2,
+								sum(a.qty3) as qty3,
+								c.uomcode,
+								f.uomcode as uom2code,
+								g.uomcode as uom3code,
+								a.description,d.bomversion,
+							(select sloccode from sloc d where d.slocid = a.slocfromid) as fromsloccode,
+							(select description from sloc d where d.slocid = a.slocfromid) as fromslocdesc,
+							(select sloccode from sloc d where d.slocid = a.sloctoid) as tosloccode,	
+							(select description from sloc d where d.slocid = a.sloctoid) as toslocdesc,
+							(
+								SELECT IFNULL(SUM(zz.qty) ,0)
+								FROM productoutputdetail zz
+								where zz.productplandetailid = a.productplandetailid and zz.productid = a.productid 
+								) as qtypakai						
+							from productplandetail a
+							left join product b on b.productid = a.productid
+							left join unitofmeasure c on c.unitofmeasureid = a.uomid
+							left join unitofmeasure f on f.unitofmeasureid = a.uom2id
+							left join unitofmeasure g on g.unitofmeasureid = a.uom3id
+							left join billofmaterial d on d.bomid = a.bomid
+							where b.isstock = 1 and productplanid = ".$row['productplanid']." and productplanfgid = ".$row1['productplanfgid']."   
+							group by b.productname,c.uomcode,d.bomversion,fromsloccode,fromslocdesc,tosloccode,toslocdesc, productplanfgid ";
+				$command2    = $this->connection->createCommand($sql2);
+				$dataReader2 = $command2->queryAll();
+				$this->pdf->text(10,$this->pdf->gety()+10,'BAHAN PEMBUAT');
+				$this->pdf->SetFontSize(9);
+				$this->pdf->sety($this->pdf->gety()+12);
+				$this->pdf->colalign = array('C','C','C','C','C','C','C','C','C','C','C','C','C','C');
+				$this->pdf->setwidths(array(8,65,23,23,15,23,15,23,15,23,15,24,30,40));
+				$this->pdf->colheader = array('No','Items','Qty','Qty Pakai','Unit','Qty2','Unit2','Qty3','Unit3','GD Asal','GD Proses','Remark');
+				$this->pdf->RowHeader();
+				$this->pdf->coldetailalign = array('L','L','R','R','L','R','L','R','L','R','L','L','L','L');
+				$j=0;
+				foreach($dataReader2 as $row2) {
+					$j=$j+1;
+					$this->pdf->row(array($j,$row2['productname'],
+							Yii::app()->format->formatNumber($row2['qty']),
+							Yii::app()->format->formatNumber($row2['qtypakai']),
+							$row2['uomcode'],
+							Yii::app()->format->formatNumber($row2['qty2']),
+							$row2['uom2code'],
+							Yii::app()->format->formatNumber($row2['qty3']),
+							$row2['uom3code'],
+							$row2['fromsloccode'],
+							$row2['tosloccode'],
+							$row2['bomversion'].''.$row2['description']));
+				}
+				$this->pdf->text(20,$this->pdf->gety()+15,'Approved By');$this->pdf->text(150,$this->pdf->gety()+15,'Proposed By');
+				$this->pdf->text(20,$this->pdf->gety()+30,'____________ ');$this->pdf->text(150,$this->pdf->gety()+30,'____________');
+				$this->pdf->CheckPageBreak(20);
+				$this->pdf->AddPage('L',array(210,330));
+			}      
+		}
+	  $this->pdf->Output();
+	}
+	public function actionPdfOperator() {
+    parent::actionDownload();
+		$sql = "select a.*,b.sono,b.sodate,b.pocustno,c.fullname,a.description
+      from productplan a
+			left join soheader b on b.soheaderid = a.soheaderid
+			left join addressbook c on c.addressbookid = a.addressbookid
+			";
+		if ($_GET['id'] !== '') {
+      $sql = $sql . "where a.productplanid in (" . $_GET['id'] . ")";
+		}
+    $command          = $this->connection->createCommand($sql);
+    $dataReader       = $command->queryAll();
+	  $this->pdf->title = GetCatalog('productoutput');
+	  $this->pdf->AddPage('L','legal');
+    foreach($dataReader as $row)  {
+      $sql1 = "select b.productname, a.qty,a.qty2,a.qty3,c.uomcode,a.productplanfgid,j.bomversion,
+							e.uomcode as uom2code,
+							f.uomcode as uom3code,
+							a.description,d.sloccode,
+							d.description as slocdesc,i.processprdname,h.kodemesin,h.namamesin
+        from productplanfg a
+        left join product b on b.productid = a.productid
+				left join unitofmeasure c on c.unitofmeasureid = a.uomid
+				left join unitofmeasure e on e.unitofmeasureid = a.uom2id
+				left join unitofmeasure f on f.unitofmeasureid = a.uom3id
+				left join sloc d on d.slocid = a.sloctoid
+				left join processprd i on i.processprdid = a.processprdid
+				left join mesin h on h.mesinid = a.mesinid 
+				left join billofmaterial j on j.bomid = a.bomid 
+        where a.productplanid = ".$row['productplanid']." order by productplanfgid desc,parentid asc ";
+      $command1    = $this->connection->createCommand($sql1);
+      $dataReader1 = $command1->queryAll();
+      $i=0;
+      $this->pdf->sety($this->pdf->gety());
+			$proseske=0;
+      foreach($dataReader1 as $row1) {
+				$this->pdf->SetFontSize(10);
+      $this->pdf->text(15, $this->pdf->gety() + 5, 'No OK ');
+      $this->pdf->text(40, $this->pdf->gety() + 5, ': ' . $row['productplanno']);
+      $this->pdf->text(90, $this->pdf->gety() + 5, 'No OS ');
+      $this->pdf->text(115, $this->pdf->gety() + 5, ': ' . $row['sono']);
+			$this->pdf->text(90, $this->pdf->gety() + 10, 'Customer ');
+      $this->pdf->text(115, $this->pdf->gety() + 10, ': ' . $row['fullname']);
+      $this->pdf->text(15, $this->pdf->gety() + 10, 'Tgl OK ');
+      $this->pdf->text(40, $this->pdf->gety() + 10, ': ' . date(Yii::app()->params['dateviewfromdb'], strtotime($row['productplandate'])));
+			$this->pdf->text(195, $this->pdf->gety() + 5, 'No PO Customer ');
+      $this->pdf->text(230, $this->pdf->gety() + 5, ': ' . $row['pocustno']);
+			$this->pdf->text(15, $this->pdf->gety() + 15, 'Keterangan ');
+      $this->pdf->text(40, $this->pdf->gety() + 15, ': ' . $row['description']);
+			$this->pdf->sety($this->pdf->gety()+25);
+        $i=$i+1;
+				$this->pdf->SetFontSize(8);$proseske+=1;
+				$this->pdf->text(10,$this->pdf->gety(),'HASIL PROSES '.$proseske);
+				$this->pdf->text(10,$this->pdf->gety()+5,'Product');$this->pdf->text(25,$this->pdf->gety()+5,': '.$row1['productname']);
+				$this->pdf->text(10,$this->pdf->gety()+10,'Versi BOM');$this->pdf->text(25,$this->pdf->gety()+10,': '.$row1['bomversion']);
+				$this->pdf->text(10,$this->pdf->gety()+15,'Qty') ;$this->pdf->text(25,$this->pdf->gety()+15,':................................'.$row1['uomcode']);
+				$this->pdf->text(10,$this->pdf->gety()+20,'Qty2');$this->pdf->text(25,$this->pdf->gety()+20,':................................'.$row1['uom2code']);
+				$this->pdf->text(10,$this->pdf->gety()+25,'Qty3');$this->pdf->text(25,$this->pdf->gety()+25,':................................'.$row1['uom3code']);
+				$this->pdf->text(10,$this->pdf->gety()+35,'Keterangan');$this->pdf->text(25,$this->pdf->gety()+35,': ');
+				$this->pdf->text(110,$this->pdf->gety()+15,'Dept Proses ');$this->pdf->text(140,$this->pdf->gety()+15,': '.$row1['sloccode']);
+				$this->pdf->text(110,$this->pdf->gety()+20,'Proses');$this->pdf->text(140,$this->pdf->gety()+20,': '.$row1['processprdname']);
+				$this->pdf->text(110,$this->pdf->gety()+25,'Mesin');$this->pdf->text(140,$this->pdf->gety()+25,':.......................');
+				$this->pdf->text(110,$this->pdf->gety()+30,'Shift');$this->pdf->text(140,$this->pdf->gety()+30,':.......................');
+				$this->pdf->text(180,$this->pdf->gety()+15,'Angkatan');$this->pdf->text(195,$this->pdf->gety()+15,':....................');
+				$this->pdf->text(180,$this->pdf->gety()+20,'Efektivitas');$this->pdf->text(195,$this->pdf->gety()+20,':.................... '.' '.'Menit');
+				$this->pdf->text(180,$this->pdf->gety()+25,'SPV');$this->pdf->text(195,$this->pdf->gety()+25,':............................');
+				$this->pdf->sety($this->pdf->gety()+45);
+				$sql2 = "select b.productname,
+								sum(a.qty) as qty,
+								sum(a.qty2) as qty2,
+								sum(a.qty3) as qty3,
+								c.uomcode,
+								f.uomcode as uom2code,
+								g.uomcode as uom3code,
+								a.description,d.bomversion,
+							(select sloccode from sloc d where d.slocid = a.slocfromid) as fromsloccode,
+							(select description from sloc d where d.slocid = a.slocfromid) as fromslocdesc,
+							(select sloccode from sloc d where d.slocid = a.sloctoid) as tosloccode,	
+							(select description from sloc d where d.slocid = a.sloctoid) as toslocdesc			
+							from productplandetail a
+							left join product b on b.productid = a.productid
+							left join unitofmeasure c on c.unitofmeasureid = a.uomid
+							left join unitofmeasure f on f.unitofmeasureid = a.uom2id
+							left join unitofmeasure g on g.unitofmeasureid = a.uom3id
+							left join billofmaterial d on d.bomid = a.bomid
+							where b.isstock = 1 and productplanid = ".$row['productplanid']." and productplanfgid = ".$row1['productplanfgid']."   
+							group by b.productname,c.uomcode,d.bomversion,fromsloccode,fromslocdesc,tosloccode,toslocdesc, productplanfgid ";
+				$command2    = $this->connection->createCommand($sql2);
+				$dataReader2 = $command2->queryAll();
+				$this->pdf->text(10,$this->pdf->gety(),'BAHAN PEMBUAT');
+				$this->pdf->sety($this->pdf->gety()+2);
+				$this->pdf->colalign = array('C','C','C','C','C','C','C','C','C','C','C','C','C','C');
+				$this->pdf->setwidths(array(8,130,30,30,30,30,70,30,80));
+				$this->pdf->colheader = array('No','Items','Qty','Qty2','Qty3','Remark');
+				$this->pdf->RowHeader();
+				$this->pdf->coldetailalign = array('L','L','R','R','R','R','L','L','L','L');
+				$j=0;
+				foreach($dataReader2 as $row2) {
+					$j=$j+1;
+					$this->pdf->row(array($j,$row2['productname'],
+							$row2['uomcode'],
+							$row2['uom2code'],
+							$row2['uom3code'],
+							$row2['bomversion'].''.$row2['description']));
+				}
+				$this->pdf->sety($this->pdf->gety()+10);
+				$this->pdf->text(10,$this->pdf->gety()+5,'Operator');
+				$this->pdf->sety($this->pdf->gety()+10);
+				$this->pdf->colalign = array('C','C','C','C','C','C','C','C','C','C','C','C','C','C');
+				$this->pdf->setwidths(array(8,55,11,25,11,25,11,25,11,25,11,24,24,30));
+				$this->pdf->colheader = array('No','Nama Operator');
+				$this->pdf->RowHeader();
+				$this->pdf->coldetailalign = array('L','L','L','R','L','R','L','R','L','R','L','L','L','L');
+				for($j=1;$j<6;$j++) {
+					$this->pdf->sety($this->pdf->gety()+2);
+					$this->pdf->row(array($j,''));
+				}
+				$this->pdf->sety($this->pdf->gety()+5);
+				$this->pdf->text(120,$this->pdf->gety()-40,'Disetujui Oleh');$this->pdf->text(170,$this->pdf->gety()-40,'Dibuat Oleh');
+				$this->pdf->text(120,$this->pdf->gety()-25,'____________ ');$this->pdf->text(170,$this->pdf->gety()-25,'____________');
+				$this->pdf->AddPage('L','legal');
+      }
+		}
+	  $this->pdf->Output();
+	}
+	public function actionPdfFG()
+  {
+    parent::actionDownload();		
+    $sql = "select b.fullname as customer, d.sono, c.productname,c.startdate, e.shift, e.angkatan, f.fullname as spv,a.productplanno,c.qty
+						from productplan a
+						join addressbook b on b.addressbookid = a.addressbookid
+						left join productplanfg c on c.productplanid = a.productplanid
+						left join soheader d on d.soheaderid = a.soheaderid
+						left join productoutputfg e on e.productplanfgid = c.productplanfgid and e.productid = c.productid
+						left join employee f on f.employeeid = e.employeeid
+		";
+    if ($_GET['id'] !== '') {
+      $sql = $sql . " where a.productplanid in (" . $_GET['id'] . ")";
+    }
+		$sql .= " order by c.productplanfgid asc limit 1";
+    $command          = $this->connection->createCommand($sql);
+    $dataReader       = $command->queryAll();
+		
+		$this->pdf->sety($this->pdf->gety()-20);
+	  $this->pdf->title = '';
+    $this->pdf->AddPage('P','A4');    
+    $this->pdf->setFont('Arial', '', 7);
+		$this->pdf->setx(5);
+		$this->pdf->sety(5);
+    foreach ($dataReader as $row) {
+			$this->pdf->colalign = array(
+				'C',
+				'C',
+				'C',
+			);
+			$this->pdf->setwidths(array(
+				65,
+				65,
+				65
+			));
+			$this->pdf->RowHeader();
+			$this->pdf->coldetailalign = array(
+				'L',
+				'L',
+				'L'
+			);
+			$this->pdf->bordercell = array(
+				'LRBT',
+				'LRBT',
+				'LRBT'
+			);
+			$x = $row['qty'] / 3;
+			for ($j=1;$j<=$x;$j++) {
+				$this->pdf->row(array(
+					"\n"."PT TUNAS ALFIN Tbk"."\n".'Customer : '.$row['customer']."\n"."Tgl Proses : ".date(Yii::app()->params['dateviewfromdb'], strtotime($row['startdate']))."\n"."No SO/OK : ".
+						$row['sono'].' / '.$row['productplanno']."\n".'ITEM : '.$row['productname']."\n"."Spec : "."\n"."No Lot : "."\n"."Tgl Kirim :"."\n    ",
+					"\n"."PT TUNAS ALFIN Tbk"."\n".'Customer : '.$row['customer']."\n"."Tgl Proses : ".date(Yii::app()->params['dateviewfromdb'], strtotime($row['startdate']))."\n"."No SO/OK : ".
+						$row['sono'].' / '.$row['productplanno']."\n".'ITEM : '.$row['productname']."\n"."Spec : "."\n"."No Lot : "."\n"."Tgl Kirim :"."\n    ",
+					"\n"."PT TUNAS ALFIN Tbk"."\n".'Customer : '.$row['customer']."\n"."Tgl Proses : ".date(Yii::app()->params['dateviewfromdb'], strtotime($row['startdate']))."\n"."No SO/OK : ".
+						$row['sono'].' / '.$row['productplanno']."\n".'ITEM : '.$row['productname']."\n"."Spec : "."\n"."No Lot : "."\n"."Tgl Kirim : "."\n    ",
+				));
+			}
+    }
+    $this->pdf->Output();
+  }
+	
+	public function actionDownxls() {
+    $this->menuname = 'productplanlist';
+    parent::actionDownxls();
+	  $productplanid 		= GetSearchText(array('POST','GET','Q'),'productplanid');
+		$sono 		= GetSearchText(array('POST','GET','Q'),'sono');
+		$customer 		= GetSearchText(array('POST','GET','Q'),'customer');
+		$plantcode     		= GetSearchText(array('POST','GET','Q'),'plantcode');
+    $sloccode     	= GetSearchText(array('POST','GET','Q'),'sloccode');
+    $productplandate    = GetSearchText(array('POST','GET','Q'),'productplandate');
+    $productplanno 		= GetSearchText(array('POST','GET','Q'),'productplanno');
+		$description 		= GetSearchText(array('POST','GET','Q'),'description');
+		$productname 		= GetSearchText(array('POST','GET','Q'),'productname');
+		$sql = "select a.*,b.sono,b.sodate,b.pocustno,c.fullname,n.plantcode,m.sloccode,e.productname,f.uomcode,g.uomcode as uom2code,
+			h.uomcode as uom3code,d.qty,d.qty2,d.qty3,o.productplanno as oklanjut,j.bomversion,
+			d.description as fgdesc,p.processprdname,l.kodemesin,d.startdate,d.enddate,s.uomcode as uomdetail,t.uomcode as uom2detail,
+			u.uomcode as uom3detail,r.productname as productjasa,q.qty as qtydetail,q.qty2 as qty2detail,q.qty3 as qty3detail,
+			w.bomversion as bomdetail,q.description as descdetail,x.sloccode as sloctodetail,y.sloccode as slocfromdetail
+      from productplan a
+			left join soheader b on b.soheaderid = a.soheaderid
+			left join addressbook c on c.addressbookid = a.addressbookid 
+			left join productplanfg d on d.productplanid = a.productplanid 
+			left join product e on e.productid = d.productid 
+			left join unitofmeasure f on f.unitofmeasureid = d.uomid 
+			left join unitofmeasure g on g.unitofmeasureid = d.uom2id 
+			left join unitofmeasure h on h.unitofmeasureid = d.uom3id 
+			left join billofmaterial j on j.bomid = d.bomid 
+			left join processprd k on k.processprdid = d.processprdid 
+			left join mesin l on l.mesinid = d.mesinid 
+			left join sloc m on m.slocid = d.sloctoid 
+			left join plant n on n.plantid = a.plantid 
+			left join productplan o on o.productplanid = a.parentplanid 
+			left join processprd p on p.processprdid = k.processprdid  
+			left join productplandetail q on q.productplanfgid = d.productplanfgid 
+			left join product r on r.productid = q.productid 
+			left join unitofmeasure s on s.unitofmeasureid = q.uomid 
+			left join unitofmeasure t on t.unitofmeasureid = q.uom2id 
+			left join unitofmeasure u on u.unitofmeasureid = q.uom3id 
+			left join billofmaterial w on w.bomid = q.bomid 
+			left join sloc x on x.slocid = q.sloctoid 
+			left join sloc y on y.slocid = q.slocfromid 
+		";
+		$sql .= " where coalesce(a.productplanid,'') like '".$productplanid."' 
+			and coalesce(n.plantcode,'') like '".$plantcode."' 
+			and coalesce(a.productplandate,'') like '".$productplandate."' 
+			and coalesce(a.productplanno,'') like '".$productplanno."' 
+			and coalesce(b.sono,'') like '".$sono."' 
+			and coalesce(a.description,'') like '".$description."'".
+			(($productname != '%%')?"
+				and coalesce(m.productname,'') like '".$productname."'
+			":'')
+		;		
+		if ($_GET['id'] !== '') {
+      $sql = $sql . " and a.productplanid in (" . $_GET['id'] . ")";
+    }
+    $dataReader = Yii::app()->db->createCommand($sql)->queryAll();
+    $i          = 2;$nourut=0;$oldbom='';
+    foreach ($dataReader as $row) {
+			if ($oldbom != $row['productplanid']) {
+				$nourut+=1;
+				$oldbom = $row['productplanid'];
+			}
+      $this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i+1, $nourut)
+				->setCellValueByColumnAndRow(1, $i+1, $row['plantcode'])
+				->setCellValueByColumnAndRow(2, $i+1, $row['productplanno'])
+				->setCellValueByColumnAndRow(3, $i+1, $row['sono'])
+				->setCellValueByColumnAndRow(4, $i+1, $row['fullname'])
+				->setCellValueByColumnAndRow(5, $i+1, date(Yii::app()->params['dateviewfromdb'], strtotime($row['productplandate'])))
+				->setCellValueByColumnAndRow(6, $i+1, $row['oklanjut'])
+				->setCellValueByColumnAndRow(7, $i+1, $row['description'])
+				->setCellValueByColumnAndRow(9, $i+1, $row['productname'])
+				->setCellValueByColumnAndRow(10, $i+1, Yii::app()->format->formatNumber($row['qty']))
+				->setCellValueByColumnAndRow(11, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(12, $i+1, Yii::app()->format->formatNumber($row['qty2']))
+				->setCellValueByColumnAndRow(13, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(14, $i+1, Yii::app()->format->formatNumber($row['qty3']))
+				->setCellValueByColumnAndRow(15, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(18, $i+1, $row['bomversion'])
+				->setCellValueByColumnAndRow(19, $i+1, $row['processprdname'])
+				->setCellValueByColumnAndRow(20, $i+1, $row['kodemesin'])
+				->setCellValueByColumnAndRow(21, $i+1, $row['sloccode'])
+				->setCellValueByColumnAndRow(22, $i+1, date(Yii::app()->params['dateviewfromdb'], strtotime($row['startdate'])))
+				->setCellValueByColumnAndRow(23, $i+1, date(Yii::app()->params['dateviewfromdb'], strtotime($row['enddate'])))
+				->setCellValueByColumnAndRow(24, $i+1, $row['fgdesc'])
+				->setCellValueByColumnAndRow(25, $i+1, $row['productjasa'])
+				->setCellValueByColumnAndRow(26, $i+1, Yii::app()->format->formatNumber($row['qtydetail']))
+				->setCellValueByColumnAndRow(27, $i+1, $row['uomdetail'])
+				->setCellValueByColumnAndRow(28, $i+1, Yii::app()->format->formatNumber($row['qty2detail']))
+				->setCellValueByColumnAndRow(29, $i+1, $row['uom2detail'])
+				->setCellValueByColumnAndRow(30, $i+1, Yii::app()->format->formatNumber($row['qty3detail']))
+				->setCellValueByColumnAndRow(31, $i+1, $row['uom3detail'])
+				->setCellValueByColumnAndRow(34, $i+1, $row['bomdetail'])
+				->setCellValueByColumnAndRow(35, $i+1, $row['sloctodetail'])
+				->setCellValueByColumnAndRow(36, $i+1, $row['slocfromdetail'])
+				->setCellValueByColumnAndRow(37, $i+1, $row['descdetail'])
+				;
+			$i++;
+    }
+    $this->getFooterXLS($this->phpExcel);
+  }
+}

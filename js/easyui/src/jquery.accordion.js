@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.6.2
+ * EasyUI for jQuery 1.9.4
  * 
- * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -80,7 +80,8 @@
 		var headers = cc.find('>.panel>.accordion-header');
 		if (headers.length){
 			if (isHorizontal){
-				$(panels[0]).panel('resize', {width:cc.width(),height:cc.height()});
+				// $(panels[0]).panel('resize', {width:cc.width(),height:cc.height()});
+				$(headers[0]).next().panel('resize', {width:cc.width(),height:cc.height()});
 				headerHeight = $(headers[0])._outerWidth();
 			} else {
 				headerHeight = $(headers[0]).css('height', '')._outerHeight();
@@ -93,7 +94,7 @@
 				bodyHeight = cc.height() - headerHeight*headers.length;
 			}
 		}
-		
+
 		// _resize(true, bodyHeight - _resize(false) + 1);
 		_resize(true, bodyHeight - _resize(false));
 		
@@ -208,7 +209,7 @@
 			createPanel(container, pp, opts);
 		});
 		
-		cc.bind('_resize', function(e,force){
+		cc._bind('_resize', function(e,force){
 			if ($(this).hasClass('easyui-fluid') || force){
 				setSize(container);
 			}
@@ -273,7 +274,7 @@
 		var tool = header.children('div.panel-tool');
 		tool.children('a.panel-tool-collapse').hide();	// hide the old collapse button
 		var t = $('<a href="javascript:;"></a>').addClass('accordion-collapse accordion-expand').appendTo(tool);
-		t.bind('click', function(){
+		t._bind('click', function(){
 			togglePanel(pp);
 			return false;
 		});
@@ -282,10 +283,10 @@
 			t.hide();
 		}
 		
-		header.click(function(){
+		header._bind('click', function(){
 			togglePanel(pp);
 			return false;
-		});
+		})
 		
 		function togglePanel(p){
 			var popts = p.panel('options');

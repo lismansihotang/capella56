@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.6.2
+ * EasyUI for jQuery 1.9.4
  * 
- * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -332,11 +332,6 @@
 			}
 		}));
 
-		// var p = $(target).combo('panel');
-		// p.unbind('.combobox');
-		// for(var event in opts.panelEvents){
-		// 	p.bind(event+'.combobox', {target:target}, opts.panelEvents[event]);
-		// }
 	}
 
 	function mouseoverHandler(e){
@@ -571,10 +566,11 @@
 		render: function(target, container, data){
 			var state = $.data(target, 'combobox');
 			var opts = state.options;
-
+			var prefixId = $(target).attr('id')||'';
+			
 			COMBOBOX_SERNO++;
-			state.itemIdPrefix = '_easyui_combobox_i' + COMBOBOX_SERNO;
-			state.groupIdPrefix = '_easyui_combobox_g' + COMBOBOX_SERNO;		
+			state.itemIdPrefix = prefixId + '_easyui_combobox_i' + COMBOBOX_SERNO;
+			state.groupIdPrefix = prefixId + '_easyui_combobox_g' + COMBOBOX_SERNO;		
 			state.groups = [];
 			
 			var dd = [];

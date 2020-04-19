@@ -9,7 +9,7 @@ class ModulesController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$moduleid = GetSearchText(array('POST','Q'),'moduleid');
 		$modulename = GetSearchText(array('POST','Q'),'modulename');
 		$moduledesc = GetSearchText(array('POST','Q'),'moduledesc');
@@ -125,7 +125,7 @@ class ModulesController extends Controller {
 	}
 	public function actionSave() {
 		parent::actionWrite();
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		if(!Yii::app()->request->isPostRequest)
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 		$connection=Yii::app()->db;
@@ -142,7 +142,7 @@ class ModulesController extends Controller {
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		if (isset($_POST['id'])) {
 			$id=$_POST['id'];
 			$connection=Yii::app()->db;
@@ -162,21 +162,27 @@ class ModulesController extends Controller {
 			}	
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('moduleid');
+		$this->dataprint['modulename'] = GetSearchText(array('GET'),'modulename');
+		$this->dataprint['moduledesc'] = GetSearchText(array('GET'),'moduledesc');
+		$this->dataprint['moduleicon'] = GetSearchText(array('GET'),'moduleicon');
+		$this->dataprint['url'] = GetSearchText(array('GET'),'url');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'moduleid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlemodulename'] = GetCatalog('modulename');
 		$this->dataprint['titlemoduledesc'] = GetCatalog('moduledesc');
 		$this->dataprint['titlemoduleicon'] = GetCatalog('moduleicon');
+		$this->dataprint['titleurl'] = GetCatalog('url');
 		$this->dataprint['titleisinstall'] = GetCatalog('isinstall');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-		$this->dataprint['url'] = Yii::app()->params['baseUrl'];
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['modulename'] = GetSearchText(array('GET'),'modulename');
-    $this->dataprint['moduledesc'] = GetSearchText(array('GET'),'moduledesc');
-    $this->dataprint['moduleicon'] = GetSearchText(array('GET'),'moduleicon');
   }
 }

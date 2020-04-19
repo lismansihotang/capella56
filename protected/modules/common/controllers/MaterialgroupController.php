@@ -23,7 +23,7 @@ class MaterialgroupController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$materialgroupid = GetSearchText(array('POST','Q'),'materialgroupid');
 		$materialgroupcode = GetSearchText(array('POST','Q'),'materialgroupcode');
 		$description = GetSearchText(array('POST','Q'),'description');
@@ -134,7 +134,7 @@ class MaterialgroupController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchtrx() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$materialgroupid = GetSearchText(array('POST','Q'),'materialgroupid');
 		$materialgroupcode = GetSearchText(array('POST','Q'),'materialgroupcode');
 		$description = GetSearchText(array('POST','Q'),'description');
@@ -190,7 +190,7 @@ class MaterialgroupController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchfg() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$materialgroupid = GetSearchText(array('POST','Q'),'materialgroupid');
 		$materialgroupcode = GetSearchText(array('POST','Q'),'materialgroupcode');
 		$description = GetSearchText(array('POST','Q'),'description');
@@ -332,21 +332,27 @@ class MaterialgroupController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('materialgroupid');
+		$this->dataprint['materialgroupcode'] = GetSearchText(array('GET'),'materialgroupcode');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$this->dataprint['parentmatgroupcode'] = GetSearchText(array('GET'),'parentmatgroupcode');
+		$this->dataprint['parentmatgroupdesc'] = GetSearchText(array('GET'),'parentmatgroupdesc');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'materialgroupid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlematerialgroupcode'] = GetCatalog('materialgroupcode');
 		$this->dataprint['titledescription'] = GetCatalog('description');
 		$this->dataprint['titleparentmatgroupcode'] = GetCatalog('parentmatgroupcode');
+		$this->dataprint['titleparentmatgroupdesc'] = GetCatalog('parentmatgroupdesc');
 		$this->dataprint['titlefg'] = GetCatalog('isfg');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['materialgroupcode'] = GetSearchText(array('GET'),'materialgroupcode');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
-    $this->dataprint['parentmatgroupcode'] = GetSearchText(array('GET'),'parentmatgroupcode');
-    $this->dataprint['parentmatgroupdesc'] = GetSearchText(array('GET'),'parentmatgroupdesc');
   }
 }

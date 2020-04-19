@@ -15,8 +15,15 @@ class ProductController extends Controller {
 		else
 			$this->renderPartial('index',array());
 	}
+	public function actionIndexproductsales() {
+		parent::actionIndex();
+		if(isset($_GET['grid']))
+			echo $this->searchproductsales();
+		else
+			$this->renderPartial('index',array());
+	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$productid = GetSearchText(array('POST','Q','GET'),'productid');
 		$plantid = GetSearchText(array('POST','GET'),'plantid',0,'int');
 		$slocid = GetSearchText(array('POST','GET'),'slocid',0,'int');
@@ -131,9 +138,8 @@ class ProductController extends Controller {
 					or (coalesce(b.materialtypecode,'') like :materialtypecode) 
 					or (coalesce(t.productname,'') like :productname) 
 					or (coalesce(t.barcode,'') like :barcode)) 
-					and t.recordstatus = 1 
-					and b.materialtypeid in (3,5,6,7)
-					and c.plantid = ".$plantid,
+					and t.recordstatus = 1 ".
+					(($plantid != '')?" and c.plantid = ".$plantid:''),
 						array(':productid'=>$productid,
 							':productcode'=>$productcode,
 							':materialtypedesc'=>$materialtypedesc,
@@ -486,8 +492,8 @@ class ProductController extends Controller {
 				->queryAll();
 		} else if (isset($_GET['plant'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,t.recordstatus,t.productcode,t.productname,
-        t.qty1,t.qty2,t.qty3,(null) as sloccode,
+        ->selectdistinct('t.*,b.materialtypecode,
+        (null) as sloccode,
         (null) as slocdesc,(null) as rak, (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,
         d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3cod,g.materialgroupcode')	
 				->from('product t')
@@ -516,8 +522,8 @@ class ProductController extends Controller {
 				->queryAll();
 		} else if (isset($_GET['asset'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,t.qty1,t.qty2,t.qty3,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        (null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,
         d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
@@ -548,8 +554,8 @@ class ProductController extends Controller {
 				->queryAll();
 		} else  if (isset($_GET['plantplanhp'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        (null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,t.qty1,t.qty2,t.qty3,
         d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
@@ -566,10 +572,9 @@ class ProductController extends Controller {
 					or (coalesce(b.materialtypecode,'') like :materialtypecode) 
 					or (coalesce(t.productname,'') like :productname) 
 					or (coalesce(t.barcode,'') like :barcode)) 
-					and t.recordstatus = 1 
-          and b.materialtypeid in (3,5,6,7) 
-          and c.plantid = ".$plantid,
-						array(':productid'=>$productid,
+					and t.recordstatus = 1 ".
+					(($plantid != '')?" and c.plantid = ".$plantid:''),						
+					array(':productid'=>$productid,
 							':productcode'=>$productcode,
 							':materialtypedesc'=>$materialtypedesc,
 							':materialtypecode'=>$materialtypecode,
@@ -579,10 +584,10 @@ class ProductController extends Controller {
 		}
 		else if (isset($_GET['plantplanbp'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        (null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
 				->join('productplant a','a.productid = t.productid')
 				->join('materialtype b','b.materialtypeid = t.materialtypeid')
@@ -611,10 +616,10 @@ class ProductController extends Controller {
 		else
 			if (isset($_GET['plantfg'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        (null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
 				->join('productplant a','a.productid = t.productid')
 				->join('materialtype b','b.materialtypeid = t.materialtypeid')
@@ -644,10 +649,10 @@ class ProductController extends Controller {
 		else
 			if (isset($_GET['plantpo'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        (null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
 				->join('productplant a','a.productid = t.productid')
 				->join('materialtype b','b.materialtypeid = t.materialtypeid')
@@ -676,10 +681,10 @@ class ProductController extends Controller {
 		else 
 			if (isset($_GET['waste'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        (null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
 				->join('productplant a','a.productid = t.productid')
 				->join('materialtype b','b.materialtypeid = t.materialtypeid')
@@ -709,10 +714,10 @@ class ProductController extends Controller {
 		else
 		if (isset($_GET['trx'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->select('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,b.sloccode,b.description as slocdesc,c.description as rak, 
+        ->select('t.*,b.materialtypecode,
+        b.sloccode,b.description as slocdesc,c.description as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,h.materialgroupcode')	
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,h.materialgroupcode')	
 				->from('product t')
 				->leftjoin('productstock a','a.productid = t.productid')
 				->join('sloc b','b.slocid = a.slocid')
@@ -741,8 +746,8 @@ class ProductController extends Controller {
 				->queryAll();
 		} else if (isset($_GET['productplant'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,0 as qty,(null) as sloccode,(null) as slocdesc,
+        ->selectdistinct('t.*,b.materialtypecode,
+        0 as qty,(null) as sloccode,(null) as slocdesc,
         (null) as rak, (null) as materialtypeid, (null) as description,(null) as grdetailid,
         (null) as gidetailid,d.uomcode as uom1code, e.uomcode as uom2code, 
         f.uomcode as uom3code,g.materialgroupcode')	
@@ -772,8 +777,8 @@ class ProductController extends Controller {
 				->queryAll();
 		} else if (isset($_GET['grretur'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description, c.grdetailid,(null) as gidetailid,
         d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
@@ -804,10 +809,10 @@ class ProductController extends Controller {
 				->queryAll();
 		} else if (isset($_GET['giretur'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid, c.gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
 				->join('productplant a','a.productid = t.productid')
 				->join('materialtype b','b.materialtypeid = t.materialtypeid')
@@ -836,10 +841,10 @@ class ProductController extends Controller {
 				->queryAll();
 		} else if (isset($_GET['plantcuststock'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid, (null) as gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
 				->join('productplant a','a.productid = t.productid')
         ->join('materialtype b','b.materialtypeid = t.materialtypeid')
@@ -866,10 +871,10 @@ class ProductController extends Controller {
 				->queryAll();
 		} else if (isset($_GET['productplantjasa'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
 				->join('productplant a','a.productid = t.productid')
         ->join('materialtype b','b.materialtypeid = t.materialtypeid')
@@ -896,10 +901,10 @@ class ProductController extends Controller {
 				->queryAll();
 		} else if (isset($_GET['invapumum'])) {
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->selectdistinct('t.sled,t.isautolot,t.isasset,t.productid,t.isstock,t.productpic,b.materialtypecode,t.barcode,
-        t.recordstatus,t.productcode,t.productname,0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
+        ->selectdistinct('t.*,b.materialtypecode,
+        0 as qty,(null) as sloccode,(null) as slocdesc,(null) as rak, 
         (null) as materialtypeid, (null) as description,(null) as grdetailid,(null) as gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode')	
 				->from('product t')
 				->join('productplant a','a.productid = t.productid')
         ->join('materialtype b','b.materialtypeid = t.materialtypeid')
@@ -928,9 +933,9 @@ class ProductController extends Controller {
 		else
 		{
 			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-        ->select("t.*, (0) as qty, (null) as sloccode,(null) as slocdesc,(null) as rak, a.description,t.productcode,
-        t.productname, a.materialtypeid,a.materialtypecode,(null) as grdetailid,(null) as gidetailid,
-        t.qty1,t.qty2,t.qty3,d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode")	
+        ->select("t.*, (0) as qty, (null) as sloccode,(null) as slocdesc,(null) as rak, a.description,
+        a.materialtypeid,a.materialtypecode,(null) as grdetailid,(null) as gidetailid,
+        d.uomcode as uom1code, e.uomcode as uom2code, f.uomcode as uom3code,g.materialgroupcode")	
 				->from('product t')
         ->leftjoin('materialtype a','a.materialtypeid = t.materialtypeid')
         ->leftjoin('unitofmeasure d','d.unitofmeasureid = t.uom1')
@@ -995,7 +1000,7 @@ class ProductController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchproductplant() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id = 0;	
 		if (isset($_POST['id'])) {
 			$id = $_POST['id'];
@@ -1016,61 +1021,190 @@ class ProductController extends Controller {
 		$offset = ($page-1) * $rows;
 		$result = array();
 		$row = array();
-		if (!isset($_GET['getdata'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')	
-				->from('productplant t')
-				->leftjoin('product p','p.productid=t.productid')
-				->leftjoin('sloc r','r.slocid=t.slocid')
-				->where("t.productid = :productid",
-						array(':productid'=>$id))
-				->queryScalar();
-			$result['total'] = $cmd;
-			$cmd = Yii::app()->db->createCommand()
-				->select('t.*,p.productcode,p.productname,r.sloccode')	
-				->from('productplant t')
-				->leftjoin('product p','p.productid=t.productid')
-				->leftjoin('sloc r','r.slocid=t.slocid')
-				->where("t.productid = :productid",
-						array(':productid'=>$id))
-				->offset($offset)
-				->limit($rows)
-				->order($sort.' '.$order)
-				->queryAll();
-			foreach($cmd as $data) {	
-				$row[] = array(
-					'productplantid'=>$data['productplantid'],
-					'productid'=>$data['productid'],
-					'productcode'=>$data['productcode'],
-					'productname'=>$data['productname'],
-					'slocid'=>$data['slocid'],
-					'sloccode'=>$data['sloccode'],
-					'issource'=>$data['issource'],
-				);
-			}
-			$result=array_merge($result,array('rows'=>$row));
-		} else {
-			$cmd = Yii::app()->db->createCommand("
-				select b.productid,b.uom1,c.uomcode as uom1code,b.uom2,d.uomcode as uom2code,b.uom3,e.uomcode as uom3code,
-					b.productname,a.productid,b.productcode,b.qty1,b.qty2,b.qty3,
-					g.bomid, g.bomversion,g.processprdid,g.mesinid
-				from productplant a 
-				join product b on b.productid = a.productid 
-				left join unitofmeasure c on c.unitofmeasureid = b.uom1 
-				left join unitofmeasure d on d.unitofmeasureid = b.uom2
-				left join unitofmeasure e on e.unitofmeasureid = b.uom3
-				left join billofmaterial g on g.productid = a.productid 
-				where a.productid = ".$productid." limit 1"
-			)->queryRow();
-			$result = $cmd;
+		$cmd = Yii::app()->db->createCommand()
+			->select('count(1) as total')	
+			->from('productplant t')
+			->leftjoin('product p','p.productid=t.productid')
+			->leftjoin('sloc r','r.slocid=t.slocid')
+			->where("t.productid = :productid",
+					array(':productid'=>$id))
+			->queryScalar();
+		$result['total'] = $cmd;
+		$cmd = Yii::app()->db->createCommand()
+			->select('t.*,p.productcode,p.productname,r.sloccode')	
+			->from('productplant t')
+			->leftjoin('product p','p.productid=t.productid')
+			->leftjoin('sloc r','r.slocid=t.slocid')
+			->where("t.productid = :productid",
+					array(':productid'=>$id))
+			->offset($offset)
+			->limit($rows)
+			->order($sort.' '.$order)
+			->queryAll();
+		foreach($cmd as $data) {	
+			$row[] = array(
+				'productplantid'=>$data['productplantid'],
+				'productid'=>$data['productid'],
+				'productcode'=>$data['productcode'],
+				'productname'=>$data['productname'],
+				'slocid'=>$data['slocid'],
+				'sloccode'=>$data['sloccode'],
+				'issource'=>$data['issource'],
+			);
 		}
+		$result=array_merge($result,array('rows'=>$row));
 		return CJSON::encode($result);
-  }
+	}
+	public function searchproductsales() {
+		header('Content-Type: application/json');
+		$id = 0;	
+		if (isset($_POST['id'])) {
+			$id = $_POST['id'];
+		}
+		else 
+		if (isset($_GET['id'])) {
+			$id = $_GET['id'];
+		}
+		$productsalesid = GetSearchText(array('POST','Q'),'productsalesid');
+		$productname = GetSearchText(array('POST','Q'),'productname');
+		$currencyname = GetSearchText(array('POST','Q'),'currencyname');
+		$currencyvalue = GetSearchText(array('POST','Q'),'currencyvalue');
+		$pricecategory = GetSearchText(array('POST','Q'),'pricecategory');
+		$page = GetSearchText(array('POST','GET'),'page',1,'int');
+		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
+		$sort = GetSearchText(array('POST','GET'),'sort','productsalesid','int');
+		$order = GetSearchText(array('POST','GET'),'order','desc','int');
+		$offset = ($page-1) * $rows;
+		$result = array();
+		$row = array();
+		$cmd = Yii::app()->db->createCommand()
+			->select('count(1) as total')	
+			->from('productsales t')
+			->leftjoin('product p','p.productid=t.productid')
+			->leftjoin('currency q','q.currencyid=t.currencyid')
+			->leftjoin('pricecategory r','r.pricecategoryid=t.pricecategoryid')
+			->leftjoin('unitofmeasure s','s.unitofmeasureid=t.uomid')
+			->where("t.productid = :productid",
+					array(':productid'=>$id))
+			->queryScalar();
+		$result['total'] = $cmd;
+		$cmd = Yii::app()->db->createCommand()
+			->select()	
+			->from('productsales t')
+			->leftjoin('product p','p.productid=t.productid')
+			->leftjoin('currency q','q.currencyid=t.currencyid')
+			->leftjoin('pricecategory r','r.pricecategoryid=t.pricecategoryid')
+			->leftjoin('unitofmeasure s','s.unitofmeasureid=t.uomid')
+			->where("t.productid = :productid",
+					array(':productid'=>$id))
+			->offset($offset)
+			->limit($rows)
+			->order($sort.' '.$order)
+			->queryAll();
+		foreach($cmd as $data) {	
+			$row[] = array(
+				'productsalesid'=>$data['productsalesid'],
+				'productid'=>$data['productid'],
+				'productname'=>$data['productname'],
+				'productcode'=>$data['productcode'],
+				'currencyid'=>$data['currencyid'],
+				'currencyname'=>$data['currencyname'],
+				'currencyvalue'=>Yii::app()->format->formatNumber($data['currencyvalue']),
+				'pricecategoryid'=>$data['pricecategoryid'],
+				'categoryname'=>$data['categoryname'],
+				'uomid'=>$data['uomid'],
+				'uomcode'=>$data['uomcode'],
+			);
+		}
+		$result=array_merge($result,array('rows'=>$row));
+		return CJSON::encode($result);
+	}
   public function actionGetData() {
 		$id = rand(-1, -1000000000);
 		echo CJSON::encode(array(
 			'productid' => $id
 		));
+	}
+	public function actionGetProductPlant() {
+		$productid = GetSearchText(array('POST','Q'),'productid',0,'int');
+		$issource = GetSearchText(array('POST','Q'),'issource',0,'int');
+		$cmd = Yii::app()->db->createCommand("
+			select b.productid,b.uom1,c.uomcode as uom1code,b.uom2,d.uomcode as uom2code,b.uom3,e.uomcode as uom3code,
+				b.productname,a.productid,b.productcode,b.qty1,b.qty2,b.qty3,
+				g.bomid, g.bomversion,g.processprdid,g.mesinid,a.slocid
+			from productplant a 
+			join product b on b.productid = a.productid 
+			left join unitofmeasure c on c.unitofmeasureid = b.uom1 
+			left join unitofmeasure d on d.unitofmeasureid = b.uom2
+			left join unitofmeasure e on e.unitofmeasureid = b.uom3
+			left join billofmaterial g on g.productid = a.productid 
+			where a.productid = ".$productid." and issource = ".$issource." limit 1"
+		)->queryRow();
+		echo CJSON::encode(array(
+			'productid' => $cmd['productid'],
+			'productcode' => $cmd['productcode'],
+			'productname' => $cmd['productname'],
+			'uom1' => $cmd['uom1'],
+			'uom1code' => $cmd['uom1code'],
+			'uom2' => $cmd['uom2'],
+			'uom2code' => $cmd['uom2code'],
+			'uom3' => $cmd['uom3'],
+			'uom3code' => $cmd['uom3code'],
+			'qty1' => $cmd['qty1'],
+			'qty2' => $cmd['qty2'],
+			'qty3' => $cmd['qty3'],
+			'bomid' => $cmd['bomid'],
+			'bomversion' => $cmd['bomversion'],
+			'processprdid' => $cmd['processprdid'],
+			'slocid' => $cmd['slocid'],
+			'mesinid' => $cmd['mesinid']
+		));
+	}
+	public function actiongetprice() {
+		$product = null;
+		$cmd='';
+		if(isset($_POST['productid']) && isset($_POST['addressbookid'])) {
+			$cmd = Yii::app()->db->createCommand()
+				->select('t.pricecategoryid')
+				->from('addressbook t')
+				->where('t.addressbookid = '.$_POST['addressbookid'])
+				->limit(1)
+				->queryRow();
+			$cmd = Yii::app()->db->createCommand()
+				->select('t.currencyvalue')
+				->from('productsales t')
+				->where('productid = '.$_POST['productid'].' and pricecategoryid = '.$cmd['pricecategoryid'])
+				->limit(1)
+				->queryRow();
+		}
+		if (Yii::app()->request->isAjaxRequest) {
+			echo CJSON::encode(array(
+				'status'=>'success',
+				'currencyvalue'=> Yii::app()->format->formatNumber($cmd['currencyvalue']),
+				));
+			Yii::app()->end();
+		}
+	}
+	public function actionGenerateDataprice() {
+		$cmd = 0;
+		if(isset($_POST['productid']) && isset($_POST['customerid'])) {
+			$cmd = Yii::app()->db->createCommand()
+				->select('t.currencyid,t.currencyvalue')	
+				->from('productsales t')
+				->join('addressbook a','a.pricecategoryid = t.pricecategoryid')
+				->where('productid = :productid and a.addressbookid = :addressbookid',
+					array(':productid'=>$_POST['productid'],':addressbookid'=>$_POST['customerid']))
+				->queryRow();			
+		}
+		if (Yii::app()->request->isAjaxRequest) {
+			echo CJSON::encode(array(
+				'status'=>'success',
+				'price'=> Yii::app()->format->formatNumber($cmd['currencyvalue']),
+				'currencyid'=>$cmd['currencyid'],
+				'currencyrate'=>1
+				));
+			Yii::app()->end();
+		}
 	}
 	private function ModifyData($connection,$arraydata) {
 		$id = (int)$arraydata[0];
@@ -1204,6 +1338,40 @@ class ProductController extends Controller {
 			GetMessage(true,implode(" ",$e->errorInfo));
 		}
 	}
+	private function ModifyDataProductSales($connection,$arraydata) {
+		$id = (int)$arraydata[0];
+		if ($id == '') {
+			$sql = 'call Insertproductsales(:vproductid,:vcurrencyid,:vcurrencyvalue,:vpricecategoryid,:vuomid,:vdatauser)';
+			$command=$connection->createCommand($sql);
+		}
+		else {
+			$sql = 'call Updateproductsales(:vid,:vproductid,:vcurrencyid,:vcurrencyvalue,:vpricecategoryid,:vuomid,:vdatauser)';
+			$command=$connection->createCommand($sql);
+			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
+		}
+		$command->bindvalue(':vproductid',$arraydata[1],PDO::PARAM_STR);
+		$command->bindvalue(':vcurrencyid',$arraydata[2],PDO::PARAM_STR);
+		$command->bindvalue(':vcurrencyvalue',$arraydata[3],PDO::PARAM_STR);
+		$command->bindvalue(':vpricecategoryid',$arraydata[4],PDO::PARAM_STR);
+		$command->bindvalue(':vuomid',$arraydata[5],PDO::PARAM_STR);
+		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
+		$command->execute();
+	}
+	public function actionSaveProductSales() {
+		parent::actionWrite();
+		$connection=Yii::app()->db;
+		$transaction=$connection->beginTransaction();
+		try {
+			$this->ModifyDataProductSales($connection,array((isset($_POST['productsalesid'])?$_POST['productsalesid']:''),$_POST['productid'],$_POST['currencyid'],$_POST['currencyvalue'],
+				$_POST['pricecategoryid'],$_POST['uomid']));
+			$transaction->commit();
+			GetMessage(false,getcatalog('insertsuccess'));
+		}
+		catch (CDbException $e) {
+			$transaction->rollBack();
+			GetMessage(true,implode(" ",$e->errorInfo));
+		}
+	}
 	public function actionPurge() {
 		parent::actionPurge();
 		if (isset($_POST['id'])) {
@@ -1252,9 +1420,33 @@ class ProductController extends Controller {
 			GetMessage(true, getcatalog('chooseone'));
 		}
 	}
+	public function actionPurgeProductSales() {
+		parent::actionPurge();
+		if (isset($_POST['id'])) {
+			$id=$_POST['id'];
+			$connection=Yii::app()->db;
+			$transaction=$connection->beginTransaction();
+			try {
+				$sql = 'call Purgeproductsales(:vid,:vdatauser)';
+				$command=$connection->createCommand($sql);
+				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
+				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
+				$command->execute();
+				$transaction->commit();
+				GetMessage(false,getcatalog('insertsuccess'));
+			}
+			catch (CDbException $e) {
+				$transaction->rollBack();
+				GetMessage(true,implode(" ",$e->errorInfo));
+			}
+		}
+		else {
+			GetMessage(true,getcatalog('chooseone'));
+		}
+	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('productid');
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlematerialtypedesc'] = GetCatalog('materialtypedesc');
 		$this->dataprint['titlematerialtypecode'] = GetCatalog('materialtypecode');
 		$this->dataprint['titleproductcode'] = GetCatalog('productcode');
@@ -1263,7 +1455,12 @@ class ProductController extends Controller {
 		$this->dataprint['titleisasset'] = GetCatalog('isasset');
 		$this->dataprint['titlebarcode'] = GetCatalog('barcode');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'productid');
+		}
     $this->dataprint['materialtypedesc'] = GetSearchText(array('GET'),'materialtypedesc');
     $this->dataprint['materialtypecode'] = GetSearchText(array('GET'),'materialtypecode');
     $this->dataprint['productcode'] = GetSearchText(array('GET'),'productcode');

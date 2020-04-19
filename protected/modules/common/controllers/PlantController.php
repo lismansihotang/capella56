@@ -9,7 +9,7 @@ class PlantController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$plantid = GetSearchText(array('POST','Q'),'plantid');
 		$plantcode = GetSearchText(array('POST','Q'),'plantcode');
 		$description = GetSearchText(array('POST','Q'),'description');
@@ -259,15 +259,20 @@ class PlantController extends Controller {
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('plantid');
+		$this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$this->dataprint['company'] = GetSearchText(array('GET'),'company');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'plantid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titleplantcode'] = GetCatalog('plantcode');
 		$this->dataprint['titledescription'] = GetCatalog('description');
-		$this->dataprint['titlecompanyname'] = GetCatalog('companyname');
+		$this->dataprint['titlecompanyname'] = GetCatalog('company');
 		$this->dataprint['titleaddresstoname'] = GetCatalog('addresstoname');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
-    $this->dataprint['company'] = GetSearchText(array('GET'),'company');
   }
 }

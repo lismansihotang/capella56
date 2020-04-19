@@ -9,21 +9,15 @@ class PaymentmethodController extends Controller {
       $this->renderPartial('index', array());
   }
 	public function search() {
-    header("Content-Type: application/json");
-    $paycode     = isset($_POST['paycode']) ? $_POST['paycode'] : '';
-    $paydays     = isset($_POST['paydays']) ? $_POST['paydays'] : '';
-    $paymentname = isset($_POST['paymentname']) ? $_POST['paymentname'] : '';
-    $paycode     = isset($_GET['q']) ? $_GET['q'] : $paycode;
-    $paydays     = isset($_GET['q']) ? $_GET['q'] : $paydays;
-    $paymentname = isset($_GET['q']) ? $_GET['q'] : $paymentname;
-    $page        = isset($_POST['page']) ? intval($_POST['page']) : 1;
-    $rows        = isset($_POST['rows']) ? intval($_POST['rows']) : 10;
-    $sort        = isset($_POST['sort']) ? strval($_POST['sort']) : 't.paymentmethodid';
-    $order       = isset($_POST['order']) ? strval($_POST['order']) : 'desc';
-    $page        = isset($_GET['page']) ? intval($_GET['page']) : $page;
-    $rows        = isset($_GET['rows']) ? intval($_GET['rows']) : $rows;
-    $sort        = isset($_POST['sort']) ? strval($_POST['sort']) : $sort;
-    $order       = isset($_POST['order']) ? strval($_POST['order']) : $order;
+    header('Content-Type: application/json');
+    $paymentmethodid = GetSearchText(array('POST','Q'),'paymentmethodid');
+    $paycode     = GetSearchText(array('POST','Q'),'paycode');
+    $paydays     = GetSearchText(array('POST','Q'),'paydays');
+    $paymentname = GetSearchText(array('POST','Q'),'paymentname');
+    $page = GetSearchText(array('POST','GET'),'page',1,'int');
+		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
+		$sort = GetSearchText(array('POST','GET'),'sort','paymentmethodid','int');
+		$order = GetSearchText(array('POST','GET'),'order','desc','int');
     $offset      = ($page - 1) * $rows;
     $result      = array();
     $row         = array();
@@ -129,7 +123,7 @@ class PaymentmethodController extends Controller {
     }
 	}
   public function actionSave() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
 		$connection  = Yii::app()->db;
@@ -146,7 +140,7 @@ class PaymentmethodController extends Controller {
 		}
   }
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -170,14 +164,19 @@ class PaymentmethodController extends Controller {
   }
   protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('paymentmethodid');
+		$this->dataprint['paycode'] = GetSearchText(array('GET'),'paycode');
+		$this->dataprint['paydays'] = GetSearchText(array('GET'),'paydays');
+		$this->dataprint['paymentname'] = GetSearchText(array('GET'),'paymentname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'paymentmethodid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlepaycode'] = GetCatalog('paycode');
 		$this->dataprint['titlepaydays'] = GetCatalog('paydays');
 		$this->dataprint['titlepaymentname'] = GetCatalog('paymentname');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['paycode'] = GetSearchText(array('GET'),'paycode');
-    $this->dataprint['paydays'] = GetSearchText(array('GET'),'paydays');
-    $this->dataprint['paymentname'] = GetSearchText(array('GET'),'paymentname');
   }
 }

@@ -8,10 +8,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/theme/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/theme/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/theme/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/theme/downdoc'),
 	'columns'=>"
 		{
 			field:'themeid',
-			title:'".GetCatalog('themeid') ."',
+			title:localStorage.getItem('catalogthemeid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -19,7 +20,7 @@
 		}},
 		{
 			field:'themename',
-			title:'".GetCatalog('themename') ."',
+			title:localStorage.getItem('catalogthemename'),
 			editor:'text',
 			width:'150px',
 			sortable: true,
@@ -28,7 +29,7 @@
 		}},
 		{
 			field:'description',
-			title:'".GetCatalog('description') ."',
+			title:localStorage.getItem('catalogdescription'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -37,7 +38,7 @@
 		}},
 		{
 			field:'themeprev',
-			title:'".GetCatalog('themeprev') ."',
+			title:localStorage.getItem('catalogthemeprev'),
 			editor:'text',
 			width:'150px',
 			sortable: true,
@@ -46,14 +47,14 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus') ."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 				} else {
 					return '';
 				}

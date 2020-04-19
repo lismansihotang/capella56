@@ -9,7 +9,7 @@ class GroupcustomerController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$groupcustomerid = GetSearchText(array('POST','Q'),'groupcustomerid');
 		$groupname = GetSearchText(array('POST','Q'),'groupname');
 		$page = GetSearchText(array('POST','GET'),'page',1,'int');
@@ -147,15 +147,20 @@ class GroupcustomerController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}	
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('groupcustomerid');
+		$this->dataprint['groupname'] = GetSearchText(array('GET'),'groupname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'groupcustomerid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlegroupname'] = GetCatalog('groupname');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['groupname'] = GetSearchText(array('GET'),'groupname');
   }
 }

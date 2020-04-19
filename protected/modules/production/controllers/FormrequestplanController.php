@@ -58,7 +58,7 @@ class FormrequestplanController extends Controller {
     Yii::app()->end();
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $formrequestid 		= Getsearchtext(array('POST','Q'),'formrequestid','','int');
     $plantid 		= Getsearchtext(array('POST','GET'),'plantid',0,'int');
     $plantcode 		= Getsearchtext(array('POST','Q'),'plantcode');
@@ -356,7 +356,7 @@ class FormrequestplanController extends Controller {
     return CJSON::encode($result);
 	}
 	public function actionSearchRaw() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -449,7 +449,7 @@ class FormrequestplanController extends Controller {
     echo CJSON::encode($result);
   }
   public function actionSearchJasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -517,7 +517,7 @@ class FormrequestplanController extends Controller {
     echo CJSON::encode($result);
   }
   public function actionSearchResult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -549,8 +549,7 @@ class FormrequestplanController extends Controller {
 					->select('t.*,a.productcode,a.productname,
 						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uomid) as uomcode,t.description,
 						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom2id) as uom2code,
-						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code,
-						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom4id) as uom4code')
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code')
 					->from('formrequestresult t')
 					->leftjoin('formrequest g', 'g.formrequestid = t.formrequestid')
 					->leftjoin('product a', 'a.productid = t.productid')
@@ -666,11 +665,11 @@ class FormrequestplanController extends Controller {
   }
 	private function ModifyRaw($connection,$arraydata) {
 		if ($arraydata[0] == '') {
-			$sql     = 'call Insertfrraw(:vformrequestid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vuom4id,:vqty,:vqty2,:vqty3,:vreqdate,
+			$sql     = 'call Insertfrraw(:vformrequestid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vqty,:vqty2,:vqty3,:vreqdate,
 				:vsloctoid,:vnamamesin,:vdescription,:vdatauser)';
 			$command = $connection->createCommand($sql);
 		} else {
-			$sql     = 'call Updatefrraw(:vid,:vformrequestid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vuom4id,:vqty,:vqty2,:vqty3,
+			$sql     = 'call Updatefrraw(:vid,:vformrequestid,:vproductid,:vuomid,:vuom2id,:vuom3id,:vqty,:vqty2,:vqty3,
 				:vreqdate,:vsloctoid,:vnamamesin,:vdescription,:vdatauser)';
 			$command = $connection->createCommand($sql);
 			$command->bindvalue(':vid', $arraydata[0], PDO::PARAM_STR);
@@ -681,18 +680,18 @@ class FormrequestplanController extends Controller {
 		$command->bindvalue(':vuomid', $arraydata[3], PDO::PARAM_STR);
 		$command->bindvalue(':vuom2id', $arraydata[4], PDO::PARAM_STR);
 	  $command->bindvalue(':vuom3id', $arraydata[5], PDO::PARAM_STR);
-	  $command->bindvalue(':vqty', $arraydata[7], PDO::PARAM_STR);
-	  $command->bindvalue(':vqty2', $arraydata[8], PDO::PARAM_STR);
-	  $command->bindvalue(':vqty3', $arraydata[9], PDO::PARAM_STR);
-	  $command->bindvalue(':vreqdate', $arraydata[11], PDO::PARAM_STR);
-		$command->bindvalue(':vsloctoid', $arraydata[12], PDO::PARAM_STR);
-	  $command->bindvalue(':vnamamesin', $arraydata[13], PDO::PARAM_STR);
-		$command->bindvalue(':vdescription', $arraydata[14], PDO::PARAM_STR);
+	  $command->bindvalue(':vqty', $arraydata[6], PDO::PARAM_STR);
+	  $command->bindvalue(':vqty2', $arraydata[7], PDO::PARAM_STR);
+	  $command->bindvalue(':vqty3', $arraydata[8], PDO::PARAM_STR);
+	  $command->bindvalue(':vreqdate', $arraydata[9], PDO::PARAM_STR);
+		$command->bindvalue(':vsloctoid', $arraydata[10], PDO::PARAM_STR);
+	  $command->bindvalue(':vnamamesin', $arraydata[11], PDO::PARAM_STR);
+		$command->bindvalue(':vdescription', $arraydata[12], PDO::PARAM_STR);
 		$command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
 		$command->execute();
 	}
   public function actionSaveraw() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -745,7 +744,7 @@ class FormrequestplanController extends Controller {
 		$command->execute();
 	}
   public function actionSavejasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -793,7 +792,7 @@ class FormrequestplanController extends Controller {
 		$command->execute();
 	}
   public function actionSaveresult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -891,12 +890,12 @@ class FormrequestplanController extends Controller {
 							$qty3 = $objWorksheet->getCellByColumnAndRow(13, $row)->getValue(); //N
 							$uomcode = $objWorksheet->getCellByColumnAndRow(14, $row)->getValue(); //O
 							$uom3id = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
-							$reqdate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(17, $row)->getValue())); //R
-							$slocto = $objWorksheet->getCellByColumnAndRow(18, $row)->getValue(); //S
+							$reqdate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(15, $row)->getValue())); //R
+							$slocto = $objWorksheet->getCellByColumnAndRow(16, $row)->getValue(); //S
 							$sloctoid = Yii::app()->db->createCommand("select slocid from sloc where sloccode = '".$slocto."'")->queryScalar();
-							$kodemesin = $objWorksheet->getCellByColumnAndRow(19, $row)->getValue(); //T
+							$kodemesin = $objWorksheet->getCellByColumnAndRow(17, $row)->getValue(); //T
 							$mesinid = Yii::app()->db->createCommand("select mesinid from mesin where kodemesin = '".$kodemesin."'")->queryScalar();
-							$itemnote = $objWorksheet->getCellByColumnAndRow(20, $row)->getValue(); //U
+							$itemnote = $objWorksheet->getCellByColumnAndRow(18, $row)->getValue(); //U
 							$sql = "
 								select productplandetailid 
 								from productplandetail a
@@ -907,8 +906,8 @@ class FormrequestplanController extends Controller {
 								limit 1
 							";
 							$plandetailid = $connection->createCommand($sql)->queryScalar();
-							$sql = "insert into formrequestraw (formrequestid,productplandetailid,productid,qty,uomid,qty2,uom2id,qty3,uom3id,reqdate,sloctoid,mesinid,description)
-								values (:formrequestid,:productplandetailid,:productid,:qty,:uomid,:qty2,:uom2id,:qty3,:uom3id,:reqdate,:sloctoid,:mesinid,:description)";
+							$sql = "insert into formrequestraw (formrequestid,productplandetailid,productid,qty,uomid,qty2,uom2id,qty3,uom3id,qty4,uom4id,reqdate,sloctoid,mesinid,description)
+								values (:formrequestid,:productplandetailid,:productid,:qty,:uomid,:qty2,:uom2id,:qty3,:uom3id,:qty4,:uom4id,:reqdate,:sloctoid,:mesinid,:description)";
 							$command = $connection->createCommand($sql);
 							$command->bindvalue(':formrequestid',$pid,PDO::PARAM_STR);
 							$command->bindvalue(':productplandetailid',$plandetailid,PDO::PARAM_STR);
@@ -925,21 +924,21 @@ class FormrequestplanController extends Controller {
 							$command->bindvalue(':description',$description,PDO::PARAM_STR);
 							$command->execute();
 						}
-						$productname = $objWorksheet->getCellByColumnAndRow(21, $row)->getValue(); //V
+						$productname = $objWorksheet->getCellByColumnAndRow(19, $row)->getValue(); //V
 						$sql = "select productid from product where productname = :productname";
 						$command=$connection->createCommand($sql);
 						$command->bindvalue(':productname',$productname,PDO::PARAM_STR);
 						$productid = $command->queryScalar();
 						if ($productid > 0) {
-							$qty = $objWorksheet->getCellByColumnAndRow(22, $row)->getValue(); //W
-							$uomcode = $objWorksheet->getCellByColumnAndRow(23, $row)->getValue(); //X
+							$qty = $objWorksheet->getCellByColumnAndRow(20, $row)->getValue(); //W
+							$uomcode = $objWorksheet->getCellByColumnAndRow(21, $row)->getValue(); //X
 							$uomid = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
-							$kodemesin = $objWorksheet->getCellByColumnAndRow(24, $row)->getValue(); //Y
+							$kodemesin = $objWorksheet->getCellByColumnAndRow(22, $row)->getValue(); //Y
 							$mesinid = Yii::app()->db->createCommand("select mesinid from mesin where kodemesin = '".$kodemesin."'")->queryScalar();
-							$reqdate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(25, $row)->getValue())); //Z
-							$slocto = $objWorksheet->getCellByColumnAndRow(26, $row)->getValue(); //AA
+							$reqdate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(23, $row)->getValue())); //Z
+							$slocto = $objWorksheet->getCellByColumnAndRow(24, $row)->getValue(); //AA
 							$sloctoid = Yii::app()->db->createCommand("select slocid from sloc where sloccode = '".$slocto."'")->queryScalar();
-							$itemnote = $objWorksheet->getCellByColumnAndRow(27, $row)->getValue(); //AB
+							$itemnote = $objWorksheet->getCellByColumnAndRow(25, $row)->getValue(); //AB
 							$this->ModifyJasa($connection,array(
 								'',
 								$pid,
@@ -952,22 +951,25 @@ class FormrequestplanController extends Controller {
 								$itemnote
 							));
 						}
-						$productname = $objWorksheet->getCellByColumnAndRow(28, $row)->getValue(); //AC
+						$productname = $objWorksheet->getCellByColumnAndRow(26, $row)->getValue(); //AC
 						$sql = "select productid from product where productname = :productname";
 						$command=$connection->createCommand($sql);
 						$command->bindvalue(':productname',$productname,PDO::PARAM_STR);
 						$productid = $command->queryScalar();
 						if ($productid > 0) {
-							$qty = $objWorksheet->getCellByColumnAndRow(29, $row)->getValue(); //AD
-							$uomcode = $objWorksheet->getCellByColumnAndRow(30, $row)->getValue(); //AE
+							$qty = $objWorksheet->getCellByColumnAndRow(27, $row)->getValue(); //AD
+							$uomcode = $objWorksheet->getCellByColumnAndRow(28, $row)->getValue(); //AE
 							$uomid = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
-							$qty2 = $objWorksheet->getCellByColumnAndRow(31, $row)->getValue(); //AF
-							$uomcode = $objWorksheet->getCellByColumnAndRow(32, $row)->getValue(); //AG
+							$qty2 = $objWorksheet->getCellByColumnAndRow(29, $row)->getValue(); //AF
+							$uomcode = $objWorksheet->getCellByColumnAndRow(30, $row)->getValue(); //AG
 							$uom2id = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
-							$qty3 = $objWorksheet->getCellByColumnAndRow(33, $row)->getValue(); //AH
-							$uomcode = $objWorksheet->getCellByColumnAndRow(34, $row)->getValue(); //AI
+							$qty3 = $objWorksheet->getCellByColumnAndRow(31, $row)->getValue(); //AH
+							$uomcode = $objWorksheet->getCellByColumnAndRow(32, $row)->getValue(); //AI
 							$uom3id = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
-							$itemnote = $objWorksheet->getCellByColumnAndRow(37, $row)->getValue(); //AL
+							$qty4 = $objWorksheet->getCellByColumnAndRow(33, $row)->getValue(); //AJ
+							$uomcode = $objWorksheet->getCellByColumnAndRow(34, $row)->getValue(); //AK
+							$uom4id = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
+							$itemnote = $objWorksheet->getCellByColumnAndRow(35, $row)->getValue(); //AL
 							$plandetailid = $connection->createCommand("
 								select productplanfgid 
 								from productplandetail a
@@ -979,7 +981,7 @@ class FormrequestplanController extends Controller {
 								limit 1
 							")->queryScalar();
 							$connection->createCommand("
-								insert into formrequestresult (formrequestid,productplanfgid,productid,qty,uomid,qty2,uom2id,qty3,uom3id,description)
+								insert into formrequestresult (formrequestid,productplanfgid,productid,qty,uomid,qty2,uom2id,qty3,uom3id,qty4,uom4id,description)
 								values ('".$pid."','".$plandetailid."','".$productid."','".$qty."','".$uomid."','".$qty2."','".$uom2id."',
 									'".$qty3."','".$uom3id."','".$itemnote."')")->execute();
 						}
@@ -1007,7 +1009,7 @@ class FormrequestplanController extends Controller {
 				$command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
 				$command->execute();
         $transaction->commit();
-        GetMessage(false, 'insertsuccess');
+        GetMessage(false, getcatalog('insertsuccess'));
       }
       catch (Exception $e) {
         $transaction->rollback();
@@ -1018,7 +1020,7 @@ class FormrequestplanController extends Controller {
     }
   }
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1030,7 +1032,7 @@ class FormrequestplanController extends Controller {
 				$command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
 				$command->execute();
         $transaction->commit();
-        GetMessage(false, 'insertsuccess');
+        GetMessage(false, getcatalog('insertsuccess'));
       }
       catch (Exception $e) {
         $transaction->rollback();
@@ -1042,7 +1044,7 @@ class FormrequestplanController extends Controller {
   }
   public function actionPurgeraw()
   {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1054,7 +1056,7 @@ class FormrequestplanController extends Controller {
         $command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
         $command->execute();
         $transaction->commit();
-        GetMessage(false, 'insertsuccess');
+        GetMessage(false, getcatalog('insertsuccess'));
       }
       catch (Exception $e) {
         $transaction->rollback();
@@ -1066,7 +1068,7 @@ class FormrequestplanController extends Controller {
   }
   public function actionPurgejasa()
   {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1078,7 +1080,7 @@ class FormrequestplanController extends Controller {
         $command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
         $command->execute();
         $transaction->commit();
-        GetMessage(false, 'insertsuccess');
+        GetMessage(false, getcatalog('insertsuccess'));
       }
       catch (Exception $e) {
         $transaction->rollback();
@@ -1090,7 +1092,7 @@ class FormrequestplanController extends Controller {
   }
   public function actionPurgeresult()
   {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1102,7 +1104,7 @@ class FormrequestplanController extends Controller {
         $command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
         $command->execute();
         $transaction->commit();
-        GetMessage(false, 'insertsuccess');
+        GetMessage(false, getcatalog('insertsuccess'));
       }
       catch (Exception $e) {
         $transaction->rollback();
@@ -1113,7 +1115,7 @@ class FormrequestplanController extends Controller {
     }
   }
 	public function actionPurgeAllDetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1125,7 +1127,7 @@ class FormrequestplanController extends Controller {
           $command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
           $command->execute();
         $transaction->commit();
-        GetMessage(false, 'insertsuccess');
+        GetMessage(false, getcatalog('insertsuccess'));
       }
       catch (Exception $e) {
         $transaction->rollback();
@@ -1134,41 +1136,510 @@ class FormrequestplanController extends Controller {
     } else {
       GetMessage(true, getcatalog('chooseone'));
     }
-	}
-	protected function actionDataPrint() {
-		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('formrequestid');
-		$this->dataprint['titleplantcode'] = GetCatalog('plantcode');
-		$this->dataprint['titleproductcode'] = GetCatalog('productcode');
-		$this->dataprint['titleproductname'] = GetCatalog('productname');
-		$this->dataprint['titleproductplanno'] = GetCatalog('productplanno');
-		$this->dataprint['titlesloccode'] = GetCatalog('sloccode');
-		$this->dataprint['titleformrequestdate'] = GetCatalog('formrequestdate');
-		$this->dataprint['titleformrequestno'] = GetCatalog('formrequestno');
-		$this->dataprint['titlerequestedbycode'] = GetCatalog('requestedbycode');
-		$this->dataprint['titledescription'] = GetCatalog('description');
-		$this->dataprint['titlefullname'] = GetCatalog('customer');
-		$this->dataprint['titlesono'] = GetCatalog('sono');
-		$this->dataprint['titlepocustno'] = GetCatalog('pocustno');
-		$this->dataprint['titlesodate'] = GetCatalog('sodate');
-		$this->dataprint['titleproductname'] = GetCatalog('productname');
-		$this->dataprint['titleqty'] = GetCatalog('qty');
-		$this->dataprint['titleqty2'] = GetCatalog('qty2');
-		$this->dataprint['titleqty3'] = GetCatalog('qty3');
-		$this->dataprint['titlekodemesin'] = GetCatalog('kodemesin');
-		$this->dataprint['titleproductcode'] = GetCatalog('productcode');
-		$this->dataprint['titlesloccode'] = GetCatalog('sloccode');
-		$this->dataprint['titlenamamesin'] = GetCatalog('namamesin');
-		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
-    $this->dataprint['productcode'] = GetSearchText(array('GET'),'productcode');
-    $this->dataprint['productname'] = GetSearchText(array('GET'),'productname');
-    $this->dataprint['productplanno'] = GetSearchText(array('GET'),'productplanno');
-    $this->dataprint['sloccode'] = GetSearchText(array('GET'),'sloccode');
-    $this->dataprint['formrequestdate'] = GetSearchText(array('GET'),'formrequestdate');
-    $this->dataprint['formrequestno'] = GetSearchText(array('GET'),'formrequestno');
-    $this->dataprint['requestedbycode'] = GetSearchText(array('GET'),'requestedbycode');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
+  }
+  public function actionDownPDF() {
+    parent::actionDownload();
+		$formrequestid 	= Getsearchtext(array('GET'),'formrequestid');
+		$plantcode 	= Getsearchtext(array('GET'),'plantcode');
+		$productcode 	= Getsearchtext(array('GET'),'productcode');
+		$productname 	= Getsearchtext(array('GET'),'productname');
+		$productplanno 	= Getsearchtext(array('GET'),'productplanno');
+		$sloccode 	= Getsearchtext(array('GET'),'sloccode');
+		$formrequestdate 	= Getsearchtext(array('GET'),'formrequestdate');
+		$formrequestno 	= Getsearchtext(array('GET'),'formrequestno');
+		$requestedbycode 	= Getsearchtext(array('GET'),'requestedbycode');
+		$description 	= Getsearchtext(array('GET'),'description');
+    $sql = "select a.formrequestid,a.formrequestno,a.formrequestdate,b.sloccode,a.description,c.productplanno,e.sono,f.fullname 
+			from formrequest a
+			left join sloc b on b.slocid = a.slocfromid 
+			left join productplan c on c.productplanid = a.productplanid 
+			left join plant d on d.plantid = a.plantid 
+			left join soheader e on e.soheaderid = c.soheaderid 
+			left join addressbook f on f.addressbookid = e.addressbookid 
+			left join requestedby g on g.requestedbyid = a.requestedbyid 
+			";
+		$sql .= " where coalesce(a.formrequestid,'') like '".$formrequestid."' 
+			and coalesce(d.plantcode,'') like '".$plantcode."' 
+			and coalesce(c.productplanno,'') like '".$productplanno."'
+			and coalesce(b.sloccode,'') like '".$sloccode."'
+			and coalesce(g.requestedbycode,'') like '".$requestedbycode."'
+			and coalesce(a.description,'') like '".$description."'
+			";
+		($productcode!='%%')?$sql.= "
+			and a.formrequestid in 
+			(
+				select a.formrequestid 
+				from formrequestraw a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productcode,'') like '".$productcode."'
+				
+				union 
+				
+				select a.formrequestid 
+				from formrequestjasa a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productcode,'') like '".$productcode."'
+			)
+		":'';
+		($productname!='%%')?$sql.= "
+			and a.formrequestid in 
+			(
+				select a.formrequestid 
+				from formrequestraw a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productname,'') like '".$productname."'
+				
+				union 
+				
+				select a.formrequestid 
+				from formrequestjasa a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productname,'') like '".$productname."'
+			)
+		":'';
+    if ($_GET['id'] !== '') {
+      $sql = $sql . " and a.formrequestid in (" . $_GET['id'] . ")";
+    }
+    $command          = $this->connection->createCommand($sql);
+    $dataReader       = $command->queryAll();
+    $this->pdf->title = getCatalog('formrequestplan');
+    $this->pdf->AddPage('L', array(
+      210,
+      330
+    ));    
+    foreach ($dataReader as $row) {
+      $this->pdf->setFont('Arial', '', 8);
+      $this->pdf->text(15, $this->pdf->gety(), 'No ');
+      $this->pdf->text(20, $this->pdf->gety(), ': ' . $row['formrequestno']);
+      $this->pdf->text(65, $this->pdf->gety(), 'Tgl ');
+      $this->pdf->text(70, $this->pdf->gety(), ': ' . date(Yii::app()->params['dateviewfromdb'], strtotime($row['formrequestdate'])));
+      $this->pdf->text(115, $this->pdf->gety(), 'OK ');
+      $this->pdf->text(130, $this->pdf->gety(), ': ' . $row['productplanno']);
+      $this->pdf->text(15, $this->pdf->gety() + 4, 'OS ');
+      $this->pdf->text(20, $this->pdf->gety() + 4, ': ' . $row['sono']);
+      $this->pdf->text(65, $this->pdf->gety() + 4, 'Pelanggan ');
+      $this->pdf->text(70, $this->pdf->gety() + 4, ': ' . $row['fullname']);
+      $this->pdf->text(115, $this->pdf->gety() + 4, 'Gudang ');
+      $this->pdf->text(130, $this->pdf->gety() + 4, ': ' . $row['sloccode']);
+      $i           = 0;
+      $totalqty    = 0;
+			$totalqty2    = 0;
+			$totalqty3    = 0;
+			$totalqty4    = 0;
+      $totaljumlah = 0;
+      $sql1        = "select b.productcode,b.productname,a.qty,a.qty2,a.qty3,c.uomcode,g.uomcode as uom2code,h.uomcode as uom3code,i.uomcode as uom4code,a.description,d.namamesin,e.sloccode
+							from formrequestraw a
+							inner join product b on b.productid = a.productid
+							inner join unitofmeasure c on c.unitofmeasureid = a.uomid
+							left join unitofmeasure g on g.unitofmeasureid = a.uom2id
+							left join unitofmeasure h on h.unitofmeasureid = a.uom3id
+							left join unitofmeasure i on i.unitofmeasureid = a.uom4id
+							left join mesin d on d.mesinid = a.mesinid
+							left join sloc e on e.slocid = a.sloctoid
+							where formrequestid = " . $row['formrequestid'] . " order by formrequestrawid ";
+      $command1    = $this->connection->createCommand($sql1);
+      $dataReader1 = $command1->queryAll();
+      $this->pdf->sety($this->pdf->gety() + 10);
+      $this->pdf->colalign = array(
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+		'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C'
+      );
+      $this->pdf->setFont('Arial', 'B', 7);
+      $this->pdf->setwidths(array(
+        7,
+        100,
+        25,
+		25,
+		25,
+        25,
+        50,
+        25,
+        30,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ));
+      $this->pdf->colheader = array(
+        'No',
+        'Nama Barang',
+        'Qty 1',
+		'Qty 2',
+		'Qty 3',
+		'Qty 4',
+        'Mesin',
+        'Tujuan',
+        'Keterangan'
+      );
+      $this->pdf->RowHeader();
+      $this->pdf->setFont('Arial', '', 7);
+      $this->pdf->coldetailalign = array(
+        'L',
+        'L',
+        'R',
+		'R',
+		'R',
+        'C',
+        'R',
+        'C',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L'
+      );
+      foreach ($dataReader1 as $row1) {
+          $i = $i + 1;
+          $this->pdf->row(array(
+            $i,
+            $row1['productname'],
+            Yii::app()->format->formatNumber($row1['qty']).' '.$row1['uomcode'],
+			Yii::app()->format->formatNumber($row1['qty2']).' '.$row1['uom2code'],
+			Yii::app()->format->formatNumber($row1['qty3']).' '.$row1['uom3code'],
+            $row1['namamesin'],
+						$row1['sloccode'],
+            $row1['description']
+          ));
+          $totalqty += $row1['qty'];
+		  $totalqty2 += $row1['qty2'];
+		  $totalqty3 += $row1['qty3'];
+      }
+      $this->pdf->sety($this->pdf->gety());
+      $this->pdf->setFont('Arial', 'B', 7);
+      $this->pdf->coldetailalign = array(
+        'L',
+        'R',
+        'R',
+        'R',
+        'R',
+        'C',
+        'L',
+        'L',
+        'L'
+      );
+      $this->pdf->row(array(
+        '',
+        'TOTAL',
+        Yii::app()->format->formatNumber($totalqty),
+		Yii::app()->format->formatNumber($totalqty2),
+		Yii::app()->format->formatNumber($totalqty3),
+        '',
+        '',
+        ''
+      ));
+      $this->pdf->setFont('Arial', '', 7);
+      $this->pdf->colalign = array(
+        'C',
+        'C'
+      );
+      $this->pdf->setwidths(array(
+        50,
+        140
+      ));
+      $this->pdf->coldetailalign = array(
+        'L',
+        'L'
+      );
+      $this->pdf->row(array(
+        'Note',
+        $row['description']
+      ));
+      $this->pdf->setFont('Arial', '', 8);
+			$this->pdf->CheckNewPage(30);
+      $this->pdf->sety($this->pdf->gety() + 5);
+      $this->pdf->text(15, $this->pdf->gety(), '  Dibuat oleh,');
+      $this->pdf->text(55, $this->pdf->gety(), ' Diperiksa oleh,');
+      $this->pdf->text(96, $this->pdf->gety(), ' Diketahui oleh,');
+      $this->pdf->text(137, $this->pdf->gety(), '     Disetujui oleh,');
+      $this->pdf->text(15, $this->pdf->gety() + 18, '........................');
+      $this->pdf->text(55, $this->pdf->gety() + 18, '.........................');
+      $this->pdf->text(96, $this->pdf->gety() + 18, '.........................');
+      $this->pdf->text(137, $this->pdf->gety() + 18, '.................................');
+      $this->pdf->text(15, $this->pdf->gety() + 20, '       Admin');
+      $this->pdf->text(55, $this->pdf->gety() + 20, '    Supervisor');
+      $this->pdf->text(96, $this->pdf->gety() + 20, 'Chief Accounting');
+      $this->pdf->text(137, $this->pdf->gety() + 20, 'Manager Accounting');
+    }
+    $this->pdf->Output();
+  }
+  public function actionDownPDFminus()
+  {
+    parent::actionDownload();
+    $formrequestid 	= Getsearchtext(array('GET'),'formrequestid');
+		$plantcode 	= Getsearchtext(array('GET'),'plantcode');
+		$productcode 	= Getsearchtext(array('GET'),'productcode');
+		$productname 	= Getsearchtext(array('GET'),'productname');
+		$productplanno 	= Getsearchtext(array('GET'),'productplanno');
+		$sloccode 	= Getsearchtext(array('GET'),'sloccode');
+		$formrequestdate 	= Getsearchtext(array('GET'),'formrequestdate');
+		$formrequestno 	= Getsearchtext(array('GET'),'formrequestno');
+		$requestedbycode 	= Getsearchtext(array('GET'),'requestedbycode');
+		$description 	= Getsearchtext(array('GET'),'description');
+    $sql = "select a.formrequestid,a.formrequestno,a.formrequestdate,b.sloccode,a.description,c.productplanno,e.sono,f.fullname 
+			from formrequest a
+			left join sloc b on b.slocid = a.slocfromid 
+			left join productplan c on c.productplanid = a.productplanid 
+			left join plant d on d.plantid = a.plantid 
+			left join soheader e on e.soheaderid = c.soheaderid 
+			left join addressbook f on f.addressbookid = e.addressbookid 
+			left join requestedby g on g.requestedbyid = a.requestedbyid 
+			";
+		$sql .= " where coalesce(a.formrequestid,'') like '".$formrequestid."' 
+			and coalesce(d.plantcode,'') like '".$plantcode."' 
+			and coalesce(c.productplanno,'') like '".$productplanno."'
+			and coalesce(b.sloccode,'') like '".$sloccode."'
+			and coalesce(g.requestedbycode,'') like '".$requestedbycode."'
+			and coalesce(a.description,'') like '".$description."'
+			";
+		($productcode!='%%')?$sql.= "
+			and a.formrequestid in 
+			(
+				select a.formrequestid 
+				from formrequestraw a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productcode,'') like '".$productcode."'
+				
+				union 
+				
+				select a.formrequestid 
+				from formrequestjasa a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productcode,'') like '".$productcode."'
+			)
+		":'';
+		($productname!='%%')?$sql.= "
+			and a.formrequestid in 
+			(
+				select a.formrequestid 
+				from formrequestraw a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productname,'') like '".$productname."'
+				
+				union 
+				
+				select a.formrequestid 
+				from formrequestjasa a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productname,'') like '".$productname."'
+			)
+		":'';
+    if ($_GET['id'] !== '') {
+      $sql = $sql . " and a.formrequestid in (" . $_GET['id'] . ")";
+    }
+    $command          = $this->connection->createCommand($sql);
+    $dataReader       = $command->queryAll();
+    $this->pdf->title = "Produk Yang Akan Minus Setelah Koreksi";
+    $this->pdf->AddPage('L', 'A4');    
+    foreach ($dataReader as $row) {
+      $this->pdf->setFont('Arial', 'B', 10);
+      $this->pdf->text(15, $this->pdf->gety() + 5, 'No ');
+      $this->pdf->text(50, $this->pdf->gety() + 5, ': ' . $row['formrequestno']);
+      $this->pdf->text(15, $this->pdf->gety() + 10, 'Date ');
+      $this->pdf->text(50, $this->pdf->gety() + 10, ': ' . date(Yii::app()->params['dateviewfromdb'], strtotime($row['formrequestdate'])));
+      $this->pdf->text(135, $this->pdf->gety() + 5, 'Gudang ');
+      $this->pdf->text(170, $this->pdf->gety() + 5, ': ' . $row['sloccode']);
+      $i           = 0;
+      $totalqty    = 0;
+      $totaljumlah = 0;
+      $sql1        = "select * from (select *,qty+qtystock as selisih
+						from (select formrequestrawid,d.productname,sum(a.qty) as qty,
+						sum(a.qtystdkg) as qtystdkg,sum(a.qtystdmtr) as qtystdmtr,
+						ifnull((select ifnull(b.qty,0) from productstock b 
+						where b.productid=a.productid 
+						and b.slocid=c.slocid 
+						and b.unitofmeasureid=a.unitofmeasureid 
+						and b.storagebinid=a.storagebinid),0) as qtystock
+						from formrequestraw a
+						join formrequest c on c.formrequestid=a.formrequestid
+						join product d on d.productid=a.productid
+						where a.formrequestid in (" . $_GET['id'] . ")
+						group by a.productid,unitofmeasureid,storagebinid) z) zz
+						where selisih < 0";
+      $command1    = $this->connection->createCommand($sql1);
+      $dataReader1 = $command1->queryAll();
+        $this->pdf->sety($this->pdf->gety() + 15);
+        $this->pdf->colalign = array('C','C','C','C','C','C','C');
+        $this->pdf->setFont('Arial', 'B', 8);
+        $this->pdf->setwidths(array(7,115,30,30,30,30,30));
+        $this->pdf->colheader = array('No','Nama Barang','Qty Koreksi','Qty KG Koreksi','Qty Meter Koreksi','Qty Stock','Qty Setelah Koreksi');
+        $this->pdf->RowHeader();
+        $this->pdf->setFont('Arial', '', 8);
+        $this->pdf->coldetailalign = array('R','L','R','R','R','R','R');
+      foreach ($dataReader1 as $row1) {
+        $i                         = $i + 1;
+        $this->pdf->row(array(
+          $i,
+          $row1['productcode'] . '-' . $row1['productname'],
+          Yii::app()->format->formatNumber($row1['qty']),
+		  Yii::app()->format->formatNumber($row1['qtystdkg']),
+		  Yii::app()->format->formatNumber($row1['qtystdmtr']),
+          Yii::app()->format->formatNumber($row1['qtystock']),
+          Yii::app()->format->formatNumber($row1['selisih'])
+        ));
+      }
+    }
+    $this->pdf->Output();
+  }
+  public function actionDownxls() {
+    $this->menuname = 'formrequestplanlist';
+    parent::actionDownxls();
+    $formrequestid 	= Getsearchtext(array('GET'),'formrequestid');
+		$plantcode 	= Getsearchtext(array('GET'),'plantcode');
+		$productcode 	= Getsearchtext(array('GET'),'productcode');
+		$productname 	= Getsearchtext(array('GET'),'productname');
+		$productplanno 	= Getsearchtext(array('GET'),'productplanno');
+		$sloccode 	= Getsearchtext(array('GET'),'sloccode');
+		$formrequestdate 	= Getsearchtext(array('GET'),'formrequestdate');
+		$formrequestno 	= Getsearchtext(array('GET'),'formrequestno');
+		$requestedbycode 	= Getsearchtext(array('GET'),'requestedbycode');
+		$description 	= Getsearchtext(array('GET'),'description');
+    $sql = "select a.formrequestid,a.formrequestno,a.isjasa,a.formrequestdate,b.sloccode,d.plantcode,a.description,c.productplanno,e.sono,f.fullname,g.requestedbycode,a.description as headernote,
+			i.productcode,i.productname,h.qty,j.uomcode,h.qty2,k.uomcode as uom2code,h.qty3,l.uomcode as uom3code,h.qty4,m.uomcode as uom4code,h.reqdate,
+			n.namamesin,h.description as rawnote,o.sloccode as sloctocode,q.productcode as jasaproductcode,q.productname as jasaproductname,p.qty as jasaqty,r.uomcode as jasauomcode,
+			s.namamesin as jasamesin,t.sloccode as jasasloctocode,p.reqdate as jasareqdate,p.description as jasadescription,v.productcode as resultproductcode,
+			v.productname as resultproductname,u.qty as resultqty,w.uomcode as resultuomcode,u.qty2 as resultqty2,w.uomcode as resultuom2code,u.qty3 as resultqty3,
+			x.uomcode as resultuom3code,u.qty4 as resultqty4, z.uomcode as resultuom4code,u.description as resultdescription
+			from formrequest a
+			left join sloc b on b.slocid = a.slocfromid 
+			left join productplan c on c.productplanid = a.productplanid 
+			left join plant d on d.plantid = a.plantid 
+			left join soheader e on e.soheaderid = c.soheaderid 
+			left join addressbook f on f.addressbookid = e.addressbookid 
+			left join requestedby g on g.requestedbyid = a.requestedbyid 
+			left join formrequestraw h on h.formrequestid = a.formrequestid 
+			left join product i on i.productid = h.productid 
+			left join unitofmeasure j on j.unitofmeasureid = h.uomid 
+			left join unitofmeasure k on k.unitofmeasureid = h.uom2id 
+			left join unitofmeasure l on l.unitofmeasureid = h.uom3id
+			left join unitofmeasure m on m.unitofmeasureid = h.uom4id 
+			left join mesin n on n.mesinid = h.mesinid 
+			left join sloc o on o.slocid = h.sloctoid 
+			left join formrequestjasa p on p.formrequestid = a.formrequestid 
+			left join product q on q.productid = p.productid 
+			left join unitofmeasure r on r.unitofmeasureid = p.uomid 
+			left join mesin s on s.mesinid = p.mesinid 
+			left join sloc t on t.slocid = p.sloctoid 
+			left join formrequestresult u on u.formrequestid = a.formrequestid 
+			left join product v on v.productid = p.productid 
+			left join unitofmeasure w on w.unitofmeasureid = p.uomid 
+			left join unitofmeasure x on x.unitofmeasureid = p.uomid 
+			left join unitofmeasure y on y.unitofmeasureid = p.uomid 
+			left join unitofmeasure z on z.unitofmeasureid = p.uomid 
+			";
+		$sql .= " where coalesce(a.formrequestid,'') like '".$formrequestid."' 
+			and coalesce(d.plantcode,'') like '".$plantcode."' 
+			and coalesce(c.productplanno,'') like '".$productplanno."'
+			and coalesce(b.sloccode,'') like '".$sloccode."'
+			and coalesce(g.requestedbycode,'') like '".$requestedbycode."'
+			and coalesce(a.description,'') like '".$description."'
+			";
+		($productcode!='%%')?$sql.= "
+			and a.formrequestid in 
+			(
+				select a.formrequestid 
+				from formrequestraw a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productcode,'') like '".$productcode."'
+				
+				union 
+				
+				select a.formrequestid 
+				from formrequestjasa a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productcode,'') like '".$productcode."'
+			)
+		":'';
+		($productname!='%%')?$sql.= "
+			and a.formrequestid in 
+			(
+				select a.formrequestid 
+				from formrequestraw a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productname,'') like '".$productname."'
+				
+				union 
+				
+				select a.formrequestid 
+				from formrequestjasa a 
+				left product b on b.productid = a.productid 
+				where coalesce(b.productname,'') like '".$productname."'
+			)
+		":'';
+    if ($_GET['id'] !== '') {
+      $sql = $sql . " and a.formrequestid in (" . $_GET['id'] . ")";
+    }
+		$sql = $sql . " order by formrequestid asc ";
+    $dataReader = Yii::app()->db->createCommand($sql)->queryAll();
+    $i          = 2;$nourut=0;$oldbom='';
+    foreach ($dataReader as $row) {
+			if ($oldbom != $row['formrequestid']) {
+				$nourut+=1;
+				$oldbom = $row['formrequestid'];
+			}
+			$this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i+1, $nourut)
+				->setCellValueByColumnAndRow(1, $i+1, $row['plantcode'])
+				->setCellValueByColumnAndRow(2, $i+1, date(Yii::app()->params['dateviewfromdb'], strtotime($row['formrequestdate'])))
+				->setCellValueByColumnAndRow(3, $i+1, $row['formrequestno'])
+				->setCellValueByColumnAndRow(4, $i+1, $row['productplanno'])
+				->setCellValueByColumnAndRow(5, $i+1, $row['sloccode'])
+				->setCellValueByColumnAndRow(6, $i+1, $row['isjasa'])
+				->setCellValueByColumnAndRow(7, $i+1, $row['requestedbycode'])      
+				->setCellValueByColumnAndRow(8, $i+1, $row['headernote'])            
+				->setCellValueByColumnAndRow(9, $i+1, $row['productcode'])            
+				->setCellValueByColumnAndRow(10, $i+1, $row['productname'])            
+				->setCellValueByColumnAndRow(11, $i+1, $row['qty'])
+				->setCellValueByColumnAndRow(12, $i+1, $row['uomcode'])
+				->setCellValueByColumnAndRow(13, $i+1, $row['qty2'])
+				->setCellValueByColumnAndRow(14, $i+1, $row['uom2code'])
+				->setCellValueByColumnAndRow(15, $i+1, $row['qty3'])
+				->setCellValueByColumnAndRow(16, $i+1, $row['uom3code'])
+				->setCellValueByColumnAndRow(17, $i+1, $row['qty4'])
+				->setCellValueByColumnAndRow(18, $i+1, $row['uom4code'])
+				->setCellValueByColumnAndRow(19, $i+1, date(Yii::app()->params['dateviewfromdb'], strtotime($row['reqdate'])))
+				->setCellValueByColumnAndRow(20, $i+1, $row['sloctocode'])
+				->setCellValueByColumnAndRow(21, $i+1, $row['rawnote'])
+				->setCellValueByColumnAndRow(22, $i+1, $row['jasaproductcode'])
+				->setCellValueByColumnAndRow(23, $i+1, $row['jasaproductname'])
+				->setCellValueByColumnAndRow(24, $i+1, $row['jasaqty'])
+				->setCellValueByColumnAndRow(25, $i+1, $row['jasauomcode'])
+				->setCellValueByColumnAndRow(26, $i+1, $row['jasamesin'])
+				->setCellValueByColumnAndRow(27, $i+1, $row['jasareqdate'])
+				->setCellValueByColumnAndRow(28, $i+1, $row['jasasloctocode'])
+				->setCellValueByColumnAndRow(29, $i+1, $row['jasadescription'])
+				->setCellValueByColumnAndRow(30, $i+1, $row['resultproductcode'])
+				->setCellValueByColumnAndRow(31, $i+1, $row['resultproductname'])
+				->setCellValueByColumnAndRow(32, $i+1, $row['resultqty'])
+				->setCellValueByColumnAndRow(33, $i+1, $row['resultuomcode'])
+				->setCellValueByColumnAndRow(34, $i+1, $row['resultqty2'])
+				->setCellValueByColumnAndRow(35, $i+1, $row['resultuom2code'])
+				->setCellValueByColumnAndRow(36, $i+1, $row['resultqty3'])
+				->setCellValueByColumnAndRow(37, $i+1, $row['resultuom3code'])
+				->setCellValueByColumnAndRow(38, $i+1, $row['resultqty4'])
+				->setCellValueByColumnAndRow(39, $i+1, $row['resultuom4code'])
+				->setCellValueByColumnAndRow(40, $i+1, $row['resultdescription'])
+				;
+				$i += 1;
+    }
+    $this->getFooterXLS($this->phpExcel);
   }
 }

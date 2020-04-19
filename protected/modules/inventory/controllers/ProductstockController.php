@@ -30,7 +30,7 @@ class ProductstockController extends Controller {
       $this->renderPartial('index', array());
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $productstockid   	= GetSearchText(array('POST'),'productstockid');
     $productname   	= GetSearchText(array('POST'),'productname');
     $sloc        	 	= GetSearchText(array('POST'),'sloc');
@@ -116,7 +116,7 @@ class ProductstockController extends Controller {
     return CJSON::encode($result);
   }
 	public function searchhome() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $productstockid   	= GetSearchText(array('POST'),'productstockid');
     $productname   	= GetSearchText(array('POST'),'productname');
     $sloc        	 	= GetSearchText(array('POST'),'sloc');
@@ -199,7 +199,7 @@ class ProductstockController extends Controller {
     return CJSON::encode($result);
   }
   public function actionsearchdetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -223,7 +223,7 @@ class ProductstockController extends Controller {
     ))->queryScalar();
     $result['total'] = $cmd;
     $cmd             = Yii::app()->db->createCommand()->select('t.*,a.productcode,a.productname,b.uomcode,f.sloccode,c.uomcode as uom2code,
-			d.uomcode as uom3code,e.uomcode as uom4code')
+			d.uomcode as uom3code')
 			->from('productstockdet t')
 			->leftjoin('product a', 'a.productid = t.productid')
 			->leftjoin('unitofmeasure b', 'b.unitofmeasureid = t.uomid')
@@ -233,12 +233,14 @@ class ProductstockController extends Controller {
 			->where('t.productstockid = :productstockid', array(
       ':productstockid' => $id
     ))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
+		$price = getUserObjectValues($menuobject='currency');
     foreach ($cmd as $data) {
       $row[] = array(
         'referenceno' => $data['referenceno'],
         'qty' => Yii::app()->format->formatNumber($data['qty']),
 				'qty2' => Yii::app()->format->formatNumber($data['qty2']),
 				'qty3' => Yii::app()->format->formatNumber($data['qty3']),
+				'averageprice'=>(($price == 1)?Yii::app()->format->formatNumber($data['averageprice']):Yii::app()->format->formatNumber(0)),
 				'uomcode' => $data['uomcode'],
 				'uom2code' => $data['uom2code'],
 				'uom3code' => $data['uom3code'],
@@ -251,7 +253,7 @@ class ProductstockController extends Controller {
     echo CJSON::encode($result);
   }
 	public function actionsearchaloc() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -281,10 +283,12 @@ class ProductstockController extends Controller {
 			->leftjoin('unitofmeasure b', 'b.unitofmeasureid = t.uomid')
 			->leftjoin('unitofmeasure c', 'c.unitofmeasureid = t.uom2id')
 			->leftjoin('unitofmeasure d', 'd.unitofmeasureid = t.uom3id')
+			->leftjoin('unitofmeasure e', 'e.unitofmeasureid = t.uom4id')
 			->leftjoin('sloc f', 'f.slocid = t.slocid')
 			->where('t.productstockid = :productstockid', array(
       ':productstockid' => $id
     ))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
+		$price = getUserObjectValues($menuobject='currency');
     foreach ($cmd as $data) {
       $row[] = array(
         'referenceno' => $data['referenceno'],
@@ -305,7 +309,7 @@ class ProductstockController extends Controller {
   public function actionDownPDF() {
     parent::actionDownload();
     $sql = "select a.productstockid,b.productname,c.sloccode as sloc,c.description,a.qty,d.uomcode,e.description as storagebin,
-			a.qtyinprogress,h.uomcode as uom3code, g.uomcode as uom2code,a.qty2,a.qty3 
+			a.qtyinprogress,h.uomcode as uom3code, g.uomcode as uom2code,a.qty2,a.qty3,
 			from productstock a
 			join product b on b.productid = a.productid
 			join sloc c on c.slocid = a.slocid
@@ -419,14 +423,13 @@ class ProductstockController extends Controller {
     $this->menuname = 'productstock';
     parent::actionDownxls();
     $sql = "select a.productstockid,b.productname,c.sloccode as sloc,c.description,a.qty,d.uomcode,e.description as storagebin,
-			a.qtyinprogress,h.uomcode as uom3code, g.uomcode as uom2code,a.qty2,a.qty3
+			a.qtyinprogress,h.uomcode as uom3code, g.uomcode as uom2code,a.qty2,a.qty3,
 			from productstock a
 			join product b on b.productid = a.productid
 			join sloc c on c.slocid = a.slocid
 			join unitofmeasure d on d.unitofmeasureid = a.uomid 
 			left join unitofmeasure g on g.unitofmeasureid = a.uom2id
 			left join unitofmeasure h on h.unitofmeasureid = a.uom3id
-			left join unitofmeasure i on i.unitofmeasureid = a.uom4id
 			join storagebin e on e.storagebinid = a.storagebinid 
 			join plant f on f.plantid = c.plantid 
 		";
@@ -458,8 +461,8 @@ class ProductstockController extends Controller {
 			->setCellValueByColumnAndRow(6, $i, $row1['uom2code'])
 			->setCellValueByColumnAndRow(7, $i, $row1['qty3'])
 			->setCellValueByColumnAndRow(8, $i, $row1['uom3code'])
-			->setCellValueByColumnAndRow(11, $i, $row1['storagebin'])
-			->setCellValueByColumnAndRow(12, $i, $row1['qtyinprogress']);
+			->setCellValueByColumnAndRow(9, $i, $row1['storagebin'])
+			->setCellValueByColumnAndRow(10, $i, $row1['qtyinprogress']);
       $i++;
     }
     $this->getFooterXLS($this->phpExcel);

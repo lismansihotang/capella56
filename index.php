@@ -1,6 +1,7 @@
 <?php
 date_default_timezone_set('Asia/Jakarta');
 $capella=dirname(__FILE__).'/protected/components/CpHelper.php';
+$yiilite=dirname(__FILE__).'/../framework/yiilite.php';
 $yii=dirname(__FILE__).'/../framework/yii.php';
 $config=dirname(__FILE__).'/protected/config/main.php';
 define('ROOTPATH', __DIR__);

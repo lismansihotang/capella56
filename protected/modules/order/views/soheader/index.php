@@ -164,9 +164,8 @@
 		$('#soheader-sodate').datebox({
 			value: (new Date().toString('dd-MMM-yyyy'))
 		});	
-		$('#soheader-currencyid').combogrid('setValue',".Yii::app()->user->basecurrencyid.");
+		$('#soheader-currencyid').combogrid('setValue',40);
 		$('#soheader-currencyrate').numberbox('setValue',1);
-		$('#soheader-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.");
 	",
 	'postbuttons'=>"
 		<a href='javascript:void(0)' title='".getCatalog('hold')."' class='easyui-linkbutton' iconCls='icon-lock' plain='true' onclick='holdso()'></a>
@@ -212,8 +211,12 @@
 	'headerform'=> "
 		<table cellpadding='5'>
 			<tr>
+				<td>".GetCatalog('sono')."</td>
+				<td><input class='easyui-textbox' id='soheader-sono' name='soheader-sono' data-options=''></input></td>
 				<td>".GetCatalog('sodate')."</td>
 				<td><input class='easyui-datebox' id='soheader-sodate' name='soheader-sodate' style='width:250px' data-options='formatter:dateformatter,required:true,parser:dateparser'></input></td>
+			</tr>
+			<tr>
 				<td>".getCatalog('plant')."</td>
 				<td><select class='easyui-combogrid' id='soheader-plantid' name='soheader-plantid' style='width:250px' data-options=\"
 								panelWidth: '500px',
@@ -232,8 +235,6 @@
 								fitColumns: true
 						\">
 				</select></td>
-				</tr>				
-				<tr>
 				<td>".GetCatalog('customer')."</td>
 				<td>
 					<select class='easyui-combogrid' id='soheader-addressbookid' name='soheader-addressbookid' style='width:250px' data-options=\"
@@ -268,8 +269,8 @@
 						fitColumns: true\">
 					</select>
 				</td>
-</tr>
-<tr>
+				</tr>
+				<tr>
 				<td>".GetCatalog('pocustno')."</td>
 				<td><input class='easyui-textbox' id='soheader-pocustno' name='soheader-pocustno' data-options='required:false' style='width:150px;height:25px'></input></td>
 				<td>".GetCatalog('pocustdate')."</td>
@@ -285,7 +286,7 @@
 						idField: 'addressid',
 						textField: 'addressname',
 						mode:'remote',
-						url: '".Yii::app()->createUrl('common/customer/indexaddress',array('grid'=>true)) ."',
+						url: '".Yii::app()->createUrl('common/customer/indexaddressto',array('grid'=>true)) ."',
 						method: 'get',
 						onShowPanel: function() {
 							$('#soheader-addresstoid').combogrid('grid').datagrid('reload');
@@ -315,7 +316,7 @@
 						onBeforeLoad: function(param){
 							param.id = $('#soheader-addressbookid').combogrid('getValue');
 						},
-						url: '".Yii::app()->createUrl('common/customer/indexaddress',array('grid'=>true)) ."',
+						url: '".Yii::app()->createUrl('common/customer/indexaddresspay',array('grid'=>true)) ."',
 						method: 'get',
 						columns: [[
 							{field:'addressid',title:'".GetCatalog('addressid') ."',width:'50px'},
@@ -330,6 +331,7 @@
 				<td>
 					<select class='easyui-combogrid' id='soheader-salesid' name='soheader-salesid' style='width:250px' data-options=\"
 						panelWidth: '500px',
+						required: true,
 						idField: 'salesid',
 						textField: 'fullname',
 						mode:'remote',
@@ -533,28 +535,31 @@
 				},width:'100px'},
 				{field:'qty',title:'".GetCatalog('qty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'giqty',title:'".GetCatalog('giqty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'sppqty',title:'".GetCatalog('sppqty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
 				{field:'opqty',title:'".GetCatalog('qtyprod') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uomcode',title:'".GetCatalog('uomcode') ."',width:'80px'},
 				{field:'qty2',title:'".GetCatalog('qty2') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom2code);
+						return formatnumber('',value);
 					},width:'100px'},
+				{field:'uom2code',title:'".GetCatalog('uom2code') ."',width:'80px'},
 				{field:'qty3',title:'".GetCatalog('qty3') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom3code);
-					},width:'100px'},"
+						return formatnumber('',value);
+					},width:'100px'},
+				{field:'uom3code',title:'".GetCatalog('uom3code') ."',width:'80px'},"		
 				.((GetMenuAuth('currency') != 0)?"
 				{field:'price',title:'".GetCatalog('price') ."',
 					formatter: function(value,row,index){
@@ -651,7 +656,7 @@
 					formatter: function(value,row,index){
 						return value;
 					}
-				},				
+				},			
 				{
 					field:'materialtypecode',
 					title:'".GetCatalog('materialtypecode') ."',
@@ -665,6 +670,15 @@
 					width:'150px',
 					formatter: function(value,row,index){
 						return value;
+					}
+				},
+				{
+					field:'productcode',
+					title:'".getCatalog('productcode') ."',
+					width:'150px',
+					sortable: true,
+					formatter: function(value,row,index){
+										return row.productcode;
 					}
 				},
 				{
@@ -703,8 +717,10 @@
 								var stdqty = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'stdqty'});
 								var stdqty2 = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'stdqty2'});
 								var stdqty3 = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'stdqty3'});
+								var price = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'price'});
+								var slocid = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'slocid'});
 								$(bomid.target).combogrid('grid').datagrid('reload');
-								jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/indexproductplant',array('grid'=>true,'getdata'=>true)) ."',
+								jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/getproductplant') ."',
 									'data':{'productid':$(productid.target).combogrid('getValue')},
 									'type':'post','dataType':'json',
 									'success':function(data)
@@ -716,7 +732,17 @@
 										$(stdqty.target).numberbox('setValue',data.qty1);
 										$(stdqty2.target).numberbox('setValue',data.qty2);
 										$(stdqty3.target).numberbox('setValue',data.qty3);
+										$(slocid.target).combogrid('setValue',data.slocid);
 										$('#soheader-productid').val(data.productid);
+									} ,
+									'cache':false});
+								jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/getprice') ."',
+									'data':{'productid':$(productid.target).combogrid('getValue'),
+										'addressbookid':$('#soheader-addressbookid').combogrid('getValue')},
+									'type':'post','dataType':'json',
+									'success':function(data)
+									{
+										$(price.target).numberbox('setValue',data.currencyvalue);
 									} ,
 									'cache':false});
 							},
@@ -753,8 +779,7 @@
 								var stdqty2 = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'stdqty2'});
 								var stdqty3 = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'stdqty3'});
 								var qty2 = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'qty2'});								
-								var qty3 = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'qty3'});								
-								var qty4 = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'qty4'});								
+								var qty3 = $('#dg-soheader-sodetail').datagrid('getEditor', {index: index, field:'qty3'});													
 								$(qty2.target).numberbox('setValue',$(stdqty2.target).numberbox('getValue') * (newValue / $(stdqty.target).numberbox('getValue')));
 								$(qty3.target).numberbox('setValue',$(stdqty3.target).numberbox('getValue') * (newValue / $(stdqty.target).numberbox('getValue')));
 							}

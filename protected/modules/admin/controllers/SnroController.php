@@ -16,7 +16,7 @@ class SnroController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$snroid = GetSearchText(array('POST','Q'),'snroid');
 		$description = GetSearchText(array('POST','Q'),'description');
 		$formatdoc = GetSearchText(array('POST','Q'),'formatdoc');
@@ -81,7 +81,7 @@ class SnroController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function actionsearchsnrodet() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id = 0;	
 		if (isset($_POST['id'])) {
 			$id = $_POST['id'];
@@ -255,7 +255,7 @@ class SnroController extends Controller {
 			}	
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	public function actionPurgesnrodet() {
@@ -279,12 +279,22 @@ class SnroController extends Controller {
 			}	
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('snroid');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$this->dataprint['formatdoc'] = GetSearchText(array('GET'),'formatdoc');
+		$this->dataprint['formatno'] = GetSearchText(array('GET'),'formatno');
+		$this->dataprint['repeatby'] = GetSearchText(array('GET'),'repeatby');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'languageid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titledescription'] = GetCatalog('description');
 		$this->dataprint['titleformatdoc'] = GetCatalog('formatdoc');
 		$this->dataprint['titleformatno'] = GetCatalog('formatno');
@@ -295,10 +305,5 @@ class SnroController extends Controller {
 		$this->dataprint['titlecuryy'] = GetCatalog('curyy');
 		$this->dataprint['titlecurvalue'] = GetCatalog('curvalue');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
-    $this->dataprint['formatdoc'] = GetSearchText(array('GET'),'formatdoc');
-    $this->dataprint['formatno'] = GetSearchText(array('GET'),'formatno');
-    $this->dataprint['repeatby'] = GetSearchText(array('GET'),'repeatby');
   }
 }

@@ -8,13 +8,6 @@ class SlocController extends Controller {
 		else
 			$this->renderPartial('index',array());
 	}
-	public function actionIndexstoragebin() {
-		parent::actionIndex();
-		if(isset($_GET['grid']))
-			echo $this->searchstoragebin();
-		else
-			$this->renderPartial('index',array());
-	}
 	public function actionIndexcombo() {
 		if(isset($_GET['grid']))
 			echo $this->searchcombo();
@@ -24,6 +17,12 @@ class SlocController extends Controller {
 	public function actionIndextrxplant() {
 		if(isset($_GET['grid']))
 			echo $this->searchtrxplant();
+		else
+			$this->renderPartial('index',array());
+	}
+	public function actionIndextrxcom() {
+		if(isset($_GET['grid']))
+			echo $this->searchtrxcom();
 		else
 			$this->renderPartial('index',array());
 	}
@@ -58,7 +57,7 @@ class SlocController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$slocid = GetSearchText(array('POST','Q'),'slocid');
 		$plantcode = GetSearchText(array('POST','Q'),'plantcode');
 		$sloccode = GetSearchText(array('POST','Q'),'sloccode');
@@ -99,109 +98,8 @@ class SlocController extends Controller {
 		$result=array_merge($result,array('rows'=>$row));
 		return CJSON::encode($result);
 	}
-	public function searchstoragebin() {
-		header("Content-Type: application/json");
-		$id = 0;	
-		if (isset($_POST['id'])) {
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id'])) {
-			$id = $_GET['id'];
-		}
-		$storagebinid = GetSearchText(array('POST','Q'),'storagebinid');
-		$description = GetSearchText(array('POST','Q'),'description');
-		$sloccode = GetSearchText(array('POST','Q'),'sloccode');
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','storagebinid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		if (isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-					->select('count(1) as total')
-					->from('storagebin t')
-					->leftjoin('sloc a','a.slocid = t.slocid')
-					->where("((coalesce(t.storagebinid,'') like :storagebinid) or (coalesce(t.description,'') like :description) or (coalesce(a.sloccode,'') like :sloccode))  
-						and t.recordstatus = 1
-						and a.slocid in (".getUserObjectValues('sloc').")",
-							array(':storagebinid'=>$storagebinid,':description'=>$description,':sloccode'=>$sloccode))
-					->queryScalar();
-		}
-		else
-			if (isset($_GET['single']))
-		{
-			$cmd = Yii::app()->db->createCommand()
-					->select('count(1) as total')
-					->from('storagebin t')
-					->leftjoin('sloc a','a.slocid = t.slocid')
-					->where("((coalesce(t.storagebinid,'') like :storagebinid) or (coalesce(t.description,'') like :description) or (coalesce(a.sloccode,'') like :sloccode)) and t.recordstatus = 1",
-							array(':storagebinid'=>$storagebinid,':description'=>$description,':sloccode'=>$sloccode))
-					->queryScalar();
-		}
-		else
-		{
-			$cmd = Yii::app()->db->createCommand()
-					->select('count(1) as total')
-					->from('storagebin t')
-					->leftjoin('sloc a','a.slocid = t.slocid')
-					->where("t.slocid = :slocid",
-							array(':slocid'=>$id))
-					->queryScalar();
-		}		
-		$result['total'] = $cmd;
-		if (isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('t.*,a.sloccode')
-				->from('storagebin t')
-				->leftjoin('sloc a','a.slocid = t.slocid')
-					->where("((coalesce(t.storagebinid,'') like :storagebinid) or (coalesce(t.description,'') like :description) or (coalesce(a.sloccode,'') like :sloccode)) and t.recordstatus = 1
-						and a.slocid in (".getUserObjectValues('sloc').")",
-							array(':storagebinid'=>$storagebinid,':description'=>$description,':sloccode'=>$sloccode))
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		else
-			if (isset($_GET['single'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('t.*,a.sloccode')
-				->from('storagebin t')
-				->leftjoin('sloc a','a.slocid = t.slocid')
-					->where("((coalesce(t.storagebinid,'') like :storagebinid) or (coalesce(t.description,'') like :description) or (coalesce(a.sloccode,'') like :sloccode)) and t.recordstatus = 1",
-							array(':storagebinid'=>$storagebinid,':description'=>$description,':sloccode'=>$sloccode))
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->select('t.*,a.sloccode')
-				->from('storagebin t')
-				->leftjoin('sloc a','a.slocid = t.slocid')
-				->where("t.slocid = :slocid",
-					array(':slocid'=>$id))
-				->offset($offset)
-				->limit($rows)
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		foreach($cmd as $data) {	
-			$row[] = array(
-				'storagebinid'=>$data['storagebinid'],
-				'description'=>$data['description'],
-				'ismultiproduct'=>$data['ismultiproduct'],
-				'slocid'=>$data['slocid'],
-				'sloccode'=>$data['sloccode'],
-				'qtymax'=>Yii::app()->format->formatNumber($data['qtymax']),
-				'recordstatus'=>$data['recordstatus'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
-	}
 	public function searchcombo() {
-		header("Content-Type: application/json");			
+		header('Content-Type: application/json');			
 		$plantcode = GetSearchText(array('Q'),'plantcode');
 		$company = GetSearchText(array('Q'),'company');
 		$sloccode = GetSearchText(array('Q'),'sloccode');
@@ -242,7 +140,7 @@ class SlocController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchtrxplant() {
-		header("Content-Type: application/json");			
+		header('Content-Type: application/json');			
 		$plantid = GetSearchText(array('GET'),'plantid',0,'int');
 		$plantcode = GetSearchText(array('Q'),'plantcode');
 		$company = GetSearchText(array('Q'),'company');
@@ -285,8 +183,50 @@ class SlocController extends Controller {
 		$result=array_merge($result,array('rows'=>$row));
 		return CJSON::encode($result);
 	}
+	public function searchtrxcom() {
+		header('Content-Type: application/json');			
+		$companyid = GetSearchText(array('GET'),'companyid',0,'int');
+		$sloccode = GetSearchText(array('Q'),'sloccode');
+		$description = GetSearchText(array('Q'),'description');
+		$page = GetSearchText(array('GET'),'page',1,'int');
+		$rows = GetSearchText(array('GET'),'rows',10,'int');
+		$sort = GetSearchText(array('GET'),'sort','slocid','int');
+		$order = GetSearchText(array('GET'),'order','desc','int');
+		$offset = ($page-1) * $rows;			
+		$result = array();
+		$row = array();
+		$connection = Yii::app()->db;
+		$from = '
+			from sloc t 
+			left join plant p on p.plantid = t.plantid 
+			left join company c on c.companyid = p.companyid';
+		$where = "
+			where ((sloccode like '".$sloccode."') 
+			or (t.description like '".$description."')) and 
+			t.recordstatus=1 ";
+		(($companyid!='')? $where.=" and c.companyid = ".$companyid:'');		
+		$where .= " and c.companyid in (".getUserObjectValues('company').")";
+		$sqlcount = ' select count(1) as total '.$from.' '.$where;
+		$sql = 'select t.isprd,t.slocid,t.plantid,p.plantcode,t.sloccode,t.description,t.recordstatus '.$from.' '.$where;
+		$result['total'] = $connection->createCommand($sqlcount)->queryScalar();
+		$cmd = $connection->createCommand($sql . ' order by '.$sort . ' ' . $order)->queryAll();
+		foreach($cmd as $data)
+		{	
+			$row[] = array(
+				'slocid'=>$data['slocid'],
+				'plantid'=>$data['plantid'],
+				'plantcode'=>$data['plantcode'],
+				'sloccode'=>$data['sloccode'],
+				'description'=>$data['description'],
+				'isprd'=>$data['isprd'],
+				'recordstatus'=>$data['recordstatus'],
+			);
+		}
+		$result=array_merge($result,array('rows'=>$row));
+		return CJSON::encode($result);
+	}
 	public function searchtrxplantsource() {
-		header("Content-Type: application/json");			
+		header('Content-Type: application/json');			
 		$plantid = GetSearchText(array('GET'),'plantid',0,'int');
 		$productid = GetSearchText(array('GET'),'productid',0,'int');
 		$plantcode = GetSearchText(array('Q'),'plantcode');
@@ -339,7 +279,7 @@ class SlocController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchtrxcomsource() {
-		header("Content-Type: application/json");			
+		header('Content-Type: application/json');			
 		$productid = GetSearchText(array('GET'),'productid',0,'int');
 		$plantcode = GetSearchText(array('Q'),'plantcode');
 		$company = GetSearchText(array('Q'),'company');
@@ -388,7 +328,7 @@ class SlocController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchtrxplantsloc() {
-		header("Content-Type: application/json");			
+		header('Content-Type: application/json');			
 		$plantid = GetSearchText(array('GET'),'plantid',0,'int');
 		$productid = GetSearchText(array('GET'),'productid',0,'int');
 		$issource = GetSearchText(array('GET'),'issource',0,'int');
@@ -441,7 +381,7 @@ class SlocController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchslocfr() {
-		header("Content-Type: application/json");			
+		header('Content-Type: application/json');			
 		$plantid = GetSearchText(array('GET'),'plantid',0,'int');
 		$formrequestid = GetSearchText(array('GET'),'formrequestid',0,'int');
 		$plantcode = GetSearchText(array('Q'),'plantcode');
@@ -466,19 +406,21 @@ class SlocController extends Controller {
 			t.recordstatus=1 ";
 		(($plantid!='')? $where.=" and t.plantid = ".$plantid:'');		
 		$where .= " and t.plantid in (".getUserObjectValues('plant').")";
-		$cmd = Yii::app()->db->createCommand('select isjasa from formrequest where formrequestid = '.$formrequestid)->queryScalar();
-		if ($cmd == 0) {
-			$where .= " and t.slocid in (
-				select distinct sloctoid
-				from formrequestraw
-				where formrequestid = ".$formrequestid."			
-			)";
-		} else {
-			(($formrequestid!='')?$where .= " and t.slocid in (
-				select distinct sloctoid
-				from formrequestjasa
-				where formrequestid = ".$formrequestid."			
-			)":'');			
+		if ($formrequestid != '') {
+			$cmd = Yii::app()->db->createCommand('select isjasa from formrequest where formrequestid = '.$formrequestid)->queryScalar();
+			if ($cmd == 0) {
+				$where .= " and t.slocid in (
+					select distinct sloctoid
+					from formrequestraw
+					where formrequestid = ".$formrequestid."			
+				)";
+			} else {
+				$where .= " and t.slocid in (
+					select distinct sloctoid
+					from formrequestjasa
+					where formrequestid = ".$formrequestid."			
+				)";			
+			}
 		}
 		$sqlcount = ' select count(1) as total '.$from.' '.$where;
 		$sql = 'select t.isprd,t.slocid,t.plantid,p.plantcode,t.sloccode,t.description,t.recordstatus '.$from.' '.$where;
@@ -500,7 +442,7 @@ class SlocController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function searchslocpp() {
-		header("Content-Type: application/json");			
+		header('Content-Type: application/json');			
 		$plantid = GetSearchText(array('GET'),'plantid',0,'int');
 		$productplanid = GetSearchText(array('GET'),'productplanid',0,'int');
 		$plantcode = GetSearchText(array('Q'),'plantcode');
@@ -523,14 +465,14 @@ class SlocController extends Controller {
 			where ((p.plantcode like '".$plantcode."') or (sloccode like '".$sloccode."') 
 			or (c.companyname like '".$company."') or (t.description like '".$description."')) and 
 			t.recordstatus=1 ";
-		(($plantid != '')? $where.=" and t.plantid = ".$plantid:'');		
+		(($plantid!='')? $where.=" and t.plantid = ".$plantid:'');		
 		$where .= " and t.plantid in (".getUserObjectValues('plant').")";
-	        (($productplanid != '')?
+	 
 			$where .= " and t.slocid in (
 				select distinct slocfromid
 				from productplandetail
 				where productplanid = ".$productplanid."			
-			)":"");
+			)";
 		$sqlcount = ' select count(1) as total '.$from.' '.$where;
 		$sql = 'select t.isprd,t.slocid,t.plantid,p.plantcode,t.sloccode,t.description,t.recordstatus '.$from.' '.$where;
 		$result['total'] = $connection->createCommand($sqlcount)->queryScalar();
@@ -549,19 +491,20 @@ class SlocController extends Controller {
 		}
 		$result=array_merge($result,array('rows'=>$row));
 		return CJSON::encode($result);
-  }
-  public function actionGetData() {
-		$id = rand(-1, -1000000000);
-		echo CJSON::encode(array(
-			'slocid' => $id
-		));
 	}
 	private function ModifyData($connection,$arraydata) {
-		$id = (int)$arraydata[0];
-		$sql = 'call Modifsloc(:vid,:vplantid,:vsloccode,:vdescription,:visprd,:visbb,:visbj,:vrecordstatus,:vdatauser)';
-		$this->DeleteLock($this->menuname, $arraydata[0]);
-		$command=$connection->createCommand($sql);
-		$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
+		$id = (isset($arraydata[0])?$arraydata[0]:'');
+		if ($id == '') {
+			$sql = 'call Insertsloc(:vplantid,:vsloccode,:vdescription,:visprd,:visbb,:visbj,:vrecordstatus,:vdatauser)';
+			$command=$connection->createCommand($sql);
+		}
+		else
+		{
+			$sql = 'call Updatesloc(:vid,:vplantid,:vsloccode,:vdescription,:visprd,:visbb,:visbj,:vrecordstatus,:vdatauser)';
+			$command=$connection->createCommand($sql);
+			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
+			$this->DeleteLock($this->menuname, $arraydata[0]);
+		}
 		$command->bindvalue(':vplantid',$arraydata[1],PDO::PARAM_STR);
 		$command->bindvalue(':vsloccode',$arraydata[2],PDO::PARAM_STR);
 		$command->bindvalue(':vdescription',$arraydata[3],PDO::PARAM_STR);
@@ -570,7 +513,7 @@ class SlocController extends Controller {
 		$command->bindvalue(':visbj',$arraydata[6],PDO::PARAM_STR);
 		$command->bindvalue(':vrecordstatus',$arraydata[7],PDO::PARAM_STR);
 		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();	
+		$command->execute();			
 	}
 	public function actionUpload() {
 		parent::actionUpload();
@@ -609,49 +552,13 @@ class SlocController extends Controller {
 		$connection=Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			$this->ModifyData($connection,array((isset($_POST['sloc-slocid'])?$_POST['sloc-slocid']:''),
-				$_POST['sloc-plantid'],
-				$_POST['sloc-sloccode'],
-				$_POST['sloc-description'],
-				isset($_POST['sloc-isprd'])?1:0,
-				isset($_POST['sloc-isbb'])?1:0,
-				isset($_POST['sloc-isbj'])?1:0,
-				isset($_POST['sloc-recordstatus'])?1:0));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
-	}
-	private function ModifyDatastoragebin($connection,$arraydata) {
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql = 'call Insertstoragebin(:vdescription,:vismultiproduct,:vslocid,:vqtymax,:vrecordstatus,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else {
-			$sql = 'call Updatestoragebin(:vid,:vdescription,:vismultiproduct,:vslocid,:vqtymax,:vrecordstatus,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$this->DeleteLock($this->menuname, $arraydata[0]);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-		}
-		$command->bindvalue(':vdescription',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vismultiproduct',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vslocid',$arraydata[3],PDO::PARAM_STR);
-		$command->bindvalue(':vqtymax',$arraydata[4],PDO::PARAM_STR);
-		$command->bindvalue(':vrecordstatus',$arraydata[5],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();
-	}
-	public function actionSavestoragebin() {
-		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyDatastoragebin($connection,array((isset($_POST['storagebinid'])?$_POST['storagebinid']:''),
-				$_POST['description'], $_POST['ismultiproduct'],$_POST['slocid'],$_POST['qtymax'],
+			$this->ModifyData($connection,array((isset($_POST['slocid'])?$_POST['slocid']:''),
+				$_POST['plantid'],
+				$_POST['sloccode'],
+				$_POST['description'],
+				$_POST['isprd'],
+				$_POST['isbb'],
+				$_POST['isbj'],
 				$_POST['recordstatus']));
 			$transaction->commit();
 			GetMessage(false,getcatalog('insertsuccess'));
@@ -682,46 +589,24 @@ class SlocController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
-		}
-	}
-	public function actionPurgestoragebin() {
-		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgestoragebin(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				foreach($id as $ids) {
-					$command->bindvalue(':vid',$ids,PDO::PARAM_STR);
-					$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-					$command->execute();
-				}
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('slocid');
+		$this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$this->dataprint['sloccode'] = GetSearchText(array('GET'),'sloccode');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'slocid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titleplantcode'] = GetCatalog('plantcode');
-		$this->dataprint['titlesloccode'] = GetCatalog('sloccode');
 		$this->dataprint['titledescription'] = GetCatalog('description');
+		$this->dataprint['titlesloccode'] = GetCatalog('sloccode');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['plantcode'] = GetSearchText(array('GET'),'plantcode');
-    $this->dataprint['sloccode'] = GetSearchText(array('GET'),'sloccode');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
   }
 }
-

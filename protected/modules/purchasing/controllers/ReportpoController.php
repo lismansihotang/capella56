@@ -8,7 +8,7 @@ class ReportpoController extends Controller {
       $this->renderPartial('index', array());
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $poheaderid 		= GetSearchText(array('POST','Q'),'poheaderid');
 		$plantid     		= GetSearchText(array('POST','Q','GET'),'plantid',0,'int');
 		$plantcode     		= GetSearchText(array('POST','Q'),'plantcode');

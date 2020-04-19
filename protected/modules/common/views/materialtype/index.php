@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/materialtype/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/materialtype/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/materialtype/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/materialtype/downdoc'),
 	'columns'=>"
 		{
 			field:'materialtypeid',
@@ -54,7 +55,7 @@
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"". Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+					return '<img src=\"". Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 				} else {
 					return '';
 				}
@@ -68,7 +69,7 @@
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"". Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+					return '<img src=\"". Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 				} else {
 					return '';
 				}

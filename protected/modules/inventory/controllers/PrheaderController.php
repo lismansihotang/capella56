@@ -63,7 +63,7 @@ class PrheaderController extends Controller {
     Yii::app()->end();
   }
   public function actionsearchprpo() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $prheaderid 	= isset($_POST['prheaderid']) ? $_POST['prheaderid'] : '';
     $plantid 			= isset($_POST['plantid']) ? $_POST['plantid'] : '';
     $addressbookid 			= isset($_POST['addressbookid']) ? $_POST['addressbookid'] : '';
@@ -88,11 +88,13 @@ class PrheaderController extends Controller {
 				left join unitofmeasure d on d.unitofmeasureid = b.uomid 
 				left join mesin e on e.mesinid = b.mesinid 
 				left join sloc f on f.slocid = b.sloctoid				
-				left join productplant g on g.productid = c.productid	and g.slocid = f.slocid 	
+				left join productplant g on g.productid = c.productid	and g.slocid = f.slocid and g.uom1 = d.unitofmeasureid	
+				left join addressbook j on j.addressbookid = g.addressbookid
 				where a.recordstatus = 5 
 					and a.isjasa = 0 
 					and a.plantid = ".$plantid." 
 					and coalesce(a.prno,'') like '%".$prno."%' 
+					and j.addressbookid = ".$addressbookid." 
 					and b.qty > b.poqty
 			")->queryAll();
 		} else {
@@ -104,10 +106,12 @@ class PrheaderController extends Controller {
 				left join unitofmeasure d on d.unitofmeasureid = b.uomid 
 				left join mesin e on e.mesinid = b.mesinid 
 				left join sloc f on f.slocid = b.sloctoid
-				left join productplant g on g.productid = c.productid	and g.slocid = f.slocid 
+				left join productplant g on g.productid = c.productid	and g.slocid = f.slocid and g.uom1 = d.unitofmeasureid		
+				left join addressbook j on j.addressbookid = g.addressbookid
 				where a.recordstatus = 5 
 					and a.isjasa = 1
 					and a.plantid = ".$plantid."
+					and j.addressbookid = ".$addressbookid."
 					and coalesce(a.prno,'') like '%".$prno."%' 
 					and b.qty > b.poqty
 			")->queryAll();
@@ -135,7 +139,7 @@ class PrheaderController extends Controller {
     return CJSON::encode($result);
 	}
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $prheaderid 		= GetSearchText(array('POST','Q'),'prheaderid','','int');
     $prrawid 		= GetSearchText(array('POST','GET'),'prrawid','','int');
     $prjasaid 		= GetSearchText(array('POST','GET'),'prjasaid','','int');
@@ -469,7 +473,7 @@ class PrheaderController extends Controller {
     return CJSON::encode($result);
 	}
 	public function actionSearchRaw() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -511,13 +515,13 @@ class PrheaderController extends Controller {
 						(
 SELECT ifnull(sum(ifnull(z.qty,0)),0)
 FROM podetail z
-WHERE z.prrawid = t.prrawid AND z.productid = a.productid 
+WHERE z.prrawid = t.prrawid AND z.productid = a.productid and z.poheaderid > 0
 ) AS qtypo,
 (
 SELECT ifnull(sum(ifnull(zz.qty,0)),0)
 FROM grdetail zz
 JOIN podetail zzz ON zzz.podetailid = zz.podetailid
-WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid 
+WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid and zz.grheaderid > 0
 ) AS qtygr,
 			(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom4id) as uom4code')
 			->from('prraw t')
@@ -580,7 +584,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
     echo CJSON::encode($result);
   }
   public function actionSearchJasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -648,7 +652,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
     echo CJSON::encode($result);
   }
   public function actionSearchResult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -835,7 +839,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
 		$command->execute();
 	}
   public function actionSaveraw() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -891,7 +895,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
 		$command->execute();
 	}
   public function actionSavejasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -941,7 +945,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
 		$command->execute();
 	}
   public function actionSaveresult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1196,7 +1200,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
     }
   }
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1219,7 +1223,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
     }
   }
   public function actionPurgeAllDetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1242,7 +1246,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
     }
   }
   public function actionPurgeraw() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1265,7 +1269,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
     }
   }
   public function actionPurgejasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1288,7 +1292,7 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
     }
   }
   public function actionPurgeresult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1420,4 +1424,454 @@ WHERE zzz.prrawid = t.prrawid AND zz.productid = zzz.productid
             $i,
             $row1['productname'],
             Yii::app()->format->formatNumber($row1['qty']).' '.$row1['uomcode'],
-			Yii::app()->format->formatNumber($row1['qty2']).' '.$r
+			Yii::app()->format->formatNumber($row1['qty2']).' '.$row1['uom2code'],
+			Yii::app()->format->formatNumber($row1['qty3']).' '.$row1['uom3code'],
+			Yii::app()->format->formatNumber($row1['qty4']).' '.$row1['uom4code'],
+            $row1['namamesin'],
+						$row1['sloccode'],
+						date(Yii::app()->params['dateviewfromdb'], strtotime($row1['reqdate'])),
+            $row1['description']
+          ));
+          $totalqty += $row1['qty'];
+		  $totalqty2 += $row1['qty2'];
+		  $totalqty3 += $row1['qty3'];
+		  $totalqty4 += $row1['qty4'];
+      }
+      $this->pdf->sety($this->pdf->gety());
+      $this->pdf->setFont('Arial', 'B', 7);
+      $this->pdf->coldetailalign = array(
+        'L',
+        'R',
+        'R',
+        'R',
+        'R',
+        'C',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L'
+      );
+      $this->pdf->row(array(
+        '',
+        'TOTAL',
+        Yii::app()->format->formatNumber($totalqty),
+		Yii::app()->format->formatNumber($totalqty2),
+		Yii::app()->format->formatNumber($totalqty3),
+		Yii::app()->format->formatNumber($totalqty4),
+        '',
+        '',
+        '',
+        ''
+      ));
+      $this->pdf->text(15, $this->pdf->gety()+5, 'Jasa');
+      $i           = 0;
+      $totalqty    = 0;
+	  $totalqty2    = 0;
+	  $totalqty3    = 0;
+	  $totalqty4    = 0;
+      $sql1        = "select b.productcode,b.productname,a.qty,c.uomcode,a.description,d.namamesin,e.sloccode,a.reqdate
+							from prjasa a
+							inner join product b on b.productid = a.productid
+							inner join unitofmeasure c on c.unitofmeasureid = a.uomid
+							left join mesin d on d.mesinid = a.mesinid
+							inner join sloc e on e.slocid = a.sloctoid
+							where prheaderid = " . $row['prheaderid'] . " order by prjasaid ";
+      $command1    = $this->connection->createCommand($sql1);
+      $dataReader1 = $command1->queryAll();
+      $this->pdf->sety($this->pdf->gety() + 10);
+      $this->pdf->colalign = array(
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+		'C',
+        'C',
+        'C'
+      );
+      $this->pdf->setFont('Arial', 'B', 7);
+      $this->pdf->setwidths(array(
+        7,
+        45,
+        20,
+        40,
+				20,
+				20,
+				40,
+      ));
+      $this->pdf->colheader = array(
+        'No',
+        'Nama Barang',
+        'Qty',
+        'Mesin',
+        'Gudang',
+        'Tgl Minta',
+        'Keterangan'
+      );
+      $this->pdf->RowHeader();
+      $this->pdf->setFont('Arial', '', 7);
+      $this->pdf->coldetailalign = array(
+        'L',
+        'L',
+        'R',
+		'R',
+		'R',
+        'C',
+        'R',
+        'C',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L'
+      );
+      foreach ($dataReader1 as $row1) {
+          $i = $i + 1;
+          $this->pdf->row(array(
+            $i,
+            $row1['productname'],
+            Yii::app()->format->formatNumber($row1['qty']).' '.$row1['uomcode'],
+            $row1['namamesin'],
+						$row1['sloccode'],
+						date(Yii::app()->params['dateviewfromdb'], strtotime($row1['reqdate'])),
+            $row1['description']
+          ));
+          $totalqty += $row1['qty'];
+      }
+      $this->pdf->sety($this->pdf->gety());
+      $this->pdf->setFont('Arial', 'B', 7);
+      $this->pdf->coldetailalign = array(
+        'L',
+        'R',
+        'R',
+        'R',
+        'R',
+        'C',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L'
+      );
+      $this->pdf->row(array(
+        '',
+        'TOTAL',
+        Yii::app()->format->formatNumber($totalqty),
+        '',
+        '',
+        ''
+      ));
+			      $this->pdf->text(15, $this->pdf->gety()+5, 'Barang Hasil Jasa');
+      $totalqty    = 0;
+	  $totalqty2    = 0;
+	  $totalqty3    = 0;
+	  $totalqty4    = 0;
+      $sql1        = "select b.productcode,b.productname,a.qty1,a.qty2,a.qty3,a.qty4,c.uomcode,g.uomcode as uom2code,h.uomcode as uom3code,i.uomcode as uom4code,a.description
+							from prresult a
+							inner join product b on b.productid = a.productid
+							inner join unitofmeasure c on c.unitofmeasureid = a.uomid
+							left join unitofmeasure g on g.unitofmeasureid = a.uom2id
+							left join unitofmeasure h on h.unitofmeasureid = a.uom3id
+							left join unitofmeasure i on i.unitofmeasureid = a.uom4id
+							where prheaderid = " . $row['prheaderid'] . " order by prresultid ";
+      $command1    = $this->connection->createCommand($sql1);
+      $dataReader1 = $command1->queryAll();
+      $this->pdf->sety($this->pdf->gety() + 10);
+      $this->pdf->colalign = array(
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+        'C',
+		'C',
+        'C',
+        'C'
+      );
+      $this->pdf->setFont('Arial', 'B', 7);
+      $this->pdf->setwidths(array(
+        7,
+        45,
+        20,
+		20,
+		20,
+        15,
+        18,
+				25,
+      ));
+      $this->pdf->colheader = array(
+        'No',
+        'Nama Barang',
+        'Qty',
+		'Qty 2',
+		'Qty 3',
+		'Qty 4',
+        'Keterangan'
+      );
+      $this->pdf->RowHeader();
+      $this->pdf->setFont('Arial', '', 7);
+      $this->pdf->coldetailalign = array(
+        'L',
+        'L',
+        'R',
+		'R',
+		'R',
+        'C',
+        'R',
+        'C',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L'
+      );
+      foreach ($dataReader1 as $row1) {
+          $i = $i + 1;
+          $this->pdf->row(array(
+            $i,
+            $row1['productname'],
+            Yii::app()->format->formatNumber($row1['qty1']).' '.$row1['uomcode'],
+			Yii::app()->format->formatNumber($row1['qty2']).' '.$row1['uom2code'],
+			Yii::app()->format->formatNumber($row1['qty3']).' '.$row1['uom3code'],
+			Yii::app()->format->formatNumber($row1['qty4']).' '.$row1['uom4code'],
+            $row1['description']
+          ));
+          $totalqty += $row1['qty1'];
+		  $totalqty2 += $row1['qty2'];
+		  $totalqty3 += $row1['qty3'];
+		  $totalqty4 += $row1['qty4'];
+      }
+      $this->pdf->sety($this->pdf->gety());
+      $this->pdf->setFont('Arial', 'B', 7);
+      $this->pdf->coldetailalign = array(
+        'L',
+        'R',
+        'R',
+        'R',
+        'R',
+        'C',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L',
+        'L'
+      );
+      $this->pdf->row(array(
+        '',
+        'TOTAL',
+        Yii::app()->format->formatNumber($totalqty),
+		Yii::app()->format->formatNumber($totalqty2),
+		Yii::app()->format->formatNumber($totalqty3),
+		Yii::app()->format->formatNumber($totalqty4),
+        '',
+        ''
+      ));
+      $this->pdf->setFont('Arial', '', 7);
+      $this->pdf->colalign = array(
+        'C',
+        'C'
+      );
+      $this->pdf->setwidths(array(
+        30,
+        600
+      ));
+      $this->pdf->coldetailalign = array(
+        'L',
+        'L'
+      );
+      $this->pdf->row(array(
+        'Note',
+        $row['description']
+      ));
+			$this->pdf->checknewpage(30);
+      $this->pdf->setFont('Arial', '', 8);
+      $this->pdf->sety($this->pdf->gety() + 5);
+      $this->pdf->text(15, $this->pdf->gety(), '  Dibuat oleh,');
+      $this->pdf->text(55, $this->pdf->gety(), ' Diperiksa oleh,');
+      $this->pdf->text(96, $this->pdf->gety(), ' Diketahui oleh,');
+      $this->pdf->text(137, $this->pdf->gety(), '     Disetujui oleh,');
+      $this->pdf->text(15, $this->pdf->gety() + 18, '........................');
+      $this->pdf->text(55, $this->pdf->gety() + 18, '.........................');
+      $this->pdf->text(96, $this->pdf->gety() + 18, '.........................');
+      $this->pdf->text(137, $this->pdf->gety() + 18, '.................................');
+      $this->pdf->text(15, $this->pdf->gety() + 20, '       Admin');
+      $this->pdf->text(55, $this->pdf->gety() + 20, '    Supervisor');
+      $this->pdf->text(96, $this->pdf->gety() + 20, 'Chief Accounting');
+      $this->pdf->text(137, $this->pdf->gety() + 20, 'Manager Accounting');
+    }
+    $this->pdf->Output();
+  }
+  public function actionDownPDFminus() {
+    parent::actionDownload();
+    $sql = "select a.prheaderid,a.prno,a.prdate,b.sloccode,a.description
+						from prheader a
+						inner join sloc b on b.slocid = a.slocfromid ";
+    if ($_GET['id'] !== '') {
+      $sql = $sql . "where a.prheaderid in (" . $_GET['id'] . ")";
+    }
+    $command          = $this->connection->createCommand($sql);
+    $dataReader       = $command->queryAll();
+    $this->pdf->title = "Produk Yang Akan Minus Setelah Koreksi";
+    $this->pdf->AddPage('P', array(
+      220,
+      140
+    ));
+    $this->pdf->AliasNBPages();
+    foreach ($dataReader as $row) {
+      $this->pdf->setFont('Arial', 'B', 10);
+      $this->pdf->text(15, $this->pdf->gety() + 5, 'No ');
+      $this->pdf->text(50, $this->pdf->gety() + 5, ': ' . $row['prno']);
+      $this->pdf->text(15, $this->pdf->gety() + 10, 'Date ');
+      $this->pdf->text(50, $this->pdf->gety() + 10, ': ' . date(Yii::app()->params['dateviewfromdb'], strtotime($row['prdate'])));
+      $this->pdf->text(135, $this->pdf->gety() + 5, 'Gudang ');
+      $this->pdf->text(170, $this->pdf->gety() + 5, ': ' . $row['sloccode']);
+      $i           = 0;
+      $totalqty    = 0;
+      $totaljumlah = 0;
+      $sql1        = "select * from (select *,qty+qtystock as selisih
+						from (select prrawid,d.productname,sum(a.qty) as qty,
+						sum(a.qtystdkg) as qtystdkg,sum(a.qtystdmtr) as qtystdmtr,
+						ifnull((select ifnull(b.qty,0) from productstock b 
+						where b.productid=a.productid 
+						and b.slocid=c.slocid 
+						and b.unitofmeasureid=a.unitofmeasureid 
+						and b.storagebinid=a.storagebinid),0) as qtystock
+						from prraw a
+						join prheader c on c.prheaderid=a.prheaderid
+						join product d on d.productid=a.productid
+						where a.prheaderid in (" . $_GET['id'] . ")
+						group by a.productid,unitofmeasureid,storagebinid) z) zz
+						where selisih < 0";
+      $command1    = $this->connection->createCommand($sql1);
+      $dataReader1 = $command1->queryAll();
+        $this->pdf->sety($this->pdf->gety() + 15);
+        $this->pdf->colalign = array('C','C','C','C','C','C','C');
+        $this->pdf->setFont('Arial', 'B', 8);
+        $this->pdf->setwidths(array(7,115,30,30,30,30,30));
+        $this->pdf->colheader = array('No','Nama Barang','Qty Koreksi','Qty KG Koreksi','Qty Meter Koreksi','Qty Stock','Qty Setelah Koreksi');
+        $this->pdf->RowHeader();
+        $this->pdf->setFont('Arial', '', 8);
+        $this->pdf->coldetailalign = array('R','L','R','R','R','R','R');
+      foreach ($dataReader1 as $row1) {
+        $i                         = $i + 1;
+        $this->pdf->row(array(
+          $i,
+          $row1['productcode'] . '-' . $row1['productname'],
+          Yii::app()->format->formatNumber($row1['qty']),
+		  Yii::app()->format->formatNumber($row1['qtystdkg']),
+		  Yii::app()->format->formatNumber($row1['qtystdmtr']),
+          Yii::app()->format->formatNumber($row1['qtystock']),
+          Yii::app()->format->formatNumber($row1['selisih'])
+        ));
+      }
+    }
+    $this->pdf->Output();
+  }
+  public function actionDownxls() {
+    $this->menuname = 'prlist';
+    parent::actionDownxls();
+    $prheaderid = GetSearchText(array('POST','GET','Q'),'prheaderid');
+		$plantcode   = GetSearchText(array('POST','GET','Q'),'plantcode');
+		$productname   = GetSearchText(array('POST','GET','Q'),'productname');
+    $prdate     = GetSearchText(array('POST','GET','Q'),'prdate');
+    $sloccode = GetSearchText(array('POST','GET','Q'),'sloccode');
+    $prno = GetSearchText(array('POST','GET','Q'),'prno');
+    $description = GetSearchText(array('POST','GET','Q'),'description');
+		$sql = "select ac.formrequestno,ab.plantcode,a.prheaderid,a.prno,a.prdate,b.sloccode,a.description,aa.requestedbycode,GetStock(c.productid,c.uomid,c.sloctoid) as rawqtystock,
+			a.isjasa,d.productname as rawproductname,c.qty as rawqty,e.uomcode as rawuom,c.qty2 as rawqty2,f.uomcode as rawuom2,c.qty3 as rawqty3,g.uomcode as rawuom3,
+			c.qty4 as rawqty4,h.uomcode as rawuom4,i.sloccode as rawsloc,j.kodemesin as rawmesin,c.description as rawdescription,c.poqty as rawpoqty,c.poqty2 as rawpoqty2,
+			c.reqdate as rawreqdate,l.productname as jasaproductname,k.qty as jasaqty,m.uomcode as jasauomcode,k.reqdate as jasareqdate,k.poqty as jasapoqty,k.description as jasadescription,
+			n.kodemesin as jasamesin,o.sloccode as jasasloc
+			from prheader a
+			left join sloc b on b.slocid = a.slocfromid 
+			left join requestedby aa on aa.requestedbyid = a.requestedbyid 
+			left join plant ab on ab.plantid = a.plantid 
+			left join formrequest ac on ac.formrequestid = a.formrequestid 
+			left join prraw c on c.prheaderid = a.prheaderid 
+			left join product d on d.productid = c.productid 
+			left join unitofmeasure e on e.unitofmeasureid = c.uomid 
+			left join unitofmeasure f on f.unitofmeasureid = c.uom2id 
+			left join unitofmeasure g on g.unitofmeasureid = c.uom3id 
+			left join unitofmeasure h on h.unitofmeasureid = c.uom4id 
+			left join sloc i on i.slocid = c.sloctoid 
+			left join mesin j on j.mesinid = c.mesinid 
+			left join prjasa k on k.prheaderid = a.prheaderid 
+			left join product l on l.productid = k.productid 
+			left join unitofmeasure m on m.unitofmeasureid = k.uomid 
+			left join mesin n on n.mesinid = k.mesinid 
+			left join sloc o on o.slocid = k.sloctoid 
+		";
+		$sql .= " where coalesce(a.prheaderid,'') like '".$prheaderid."' 
+			and coalesce(ab.plantcode,'') like '".$plantcode."' 
+			and coalesce(a.prdate,'') like '".$prdate."' 
+			and coalesce(a.prno,'') like '".$prno."' 
+			and coalesce(a.description,'') like '".$description."'".
+			(($productname != '%%')?"
+				and coalesce(d.productname,'') like '".$productname."'
+			":'')
+		;
+		if ($_GET['id'] !== '') {
+      $sql = $sql . " and a.prheaderid in (" . $_GET['id'] . ")";
+    }
+    $dataReader = Yii::app()->db->createCommand($sql)->queryAll();
+    $i          = 3;$nourut=0;$oldbom='';
+    foreach ($dataReader as $row) {
+			if ($oldbom != $row['prheaderid']) {
+				$nourut+=1;
+				$oldbom = $row['prheaderid'];
+			}
+      $this->phpExcel->setActiveSheetIndex(0)
+				->setCellValueByColumnAndRow(0, $i, $nourut)
+				->setCellValueByColumnAndRow(1, $i, $row['plantcode'])
+				->setCellValueByColumnAndRow(2, $i, date(Yii::app()->params['dateviewfromdb'], strtotime($row['prdate'])))
+				->setCellValueByColumnAndRow(3, $i, $row['prno'])
+				->setCellValueByColumnAndRow(4, $i, $row['formrequestno'])
+				->setCellValueByColumnAndRow(5, $i, $row['isjasa'])
+				->setCellValueByColumnAndRow(6, $i, $row['sloccode'])
+				->setCellValueByColumnAndRow(7, $i, $row['requestedbycode'])
+				->setCellValueByColumnAndRow(8, $i, $row['description'])
+				->setCellValueByColumnAndRow(9, $i, $row['rawproductname'])
+				->setCellValueByColumnAndRow(10, $i, Yii::app()->format->formatNumber($row['rawqtystock']))
+				->setCellValueByColumnAndRow(11, $i, Yii::app()->format->formatNumber($row['rawqty']))
+				->setCellValueByColumnAndRow(12, $i, Yii::app()->format->formatNumber($row['rawpoqty']))
+				->setCellValueByColumnAndRow(13, $i, $row['rawuom'])
+				->setCellValueByColumnAndRow(14, $i, Yii::app()->format->formatNumber($row['rawqty2']))
+				->setCellValueByColumnAndRow(15, $i, $row['rawuom2'])
+				->setCellValueByColumnAndRow(16, $i, Yii::app()->format->formatNumber($row['rawqty3']))
+				->setCellValueByColumnAndRow(17, $i, $row['rawuom3'])
+				->setCellValueByColumnAndRow(18, $i, Yii::app()->format->formatNumber($row['rawqty4']))
+				->setCellValueByColumnAndRow(19, $i, $row['rawuom4'])
+				->setCellValueByColumnAndRow(20, $i, date(Yii::app()->params['dateviewfromdb'], strtotime($row['rawreqdate'])))
+				->setCellValueByColumnAndRow(21, $i, $row['rawsloc'])
+				->setCellValueByColumnAndRow(22, $i, $row['rawmesin'])
+				->setCellValueByColumnAndRow(23, $i, $row['rawdescription'])
+				->setCellValueByColumnAndRow(24, $i, $row['jasaproductname'])
+				->setCellValueByColumnAndRow(25, $i, Yii::app()->format->formatNumber($row['jasaqty']))
+				->setCellValueByColumnAndRow(26, $i, Yii::app()->format->formatNumber($row['jasapoqty']))
+				->setCellValueByColumnAndRow(27, $i, $row['jasauomcode'])
+				->setCellValueByColumnAndRow(28, $i, $row['jasamesin'])
+				->setCellValueByColumnAndRow(29, $i, $row['jasasloc'])
+				->setCellValueByColumnAndRow(30, $i, $row['jasadescription'])
+			;
+			$i++;
+    }
+    $this->getFooterXLS($this->phpExcel);
+  }
+}

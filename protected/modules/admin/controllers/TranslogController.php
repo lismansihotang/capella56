@@ -9,7 +9,7 @@ class TranslogController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$translogid = GetSearchText(array('POST','Q'),'translogid');
 		$username = GetSearchText(array('POST','Q'),'username');
 		$createddate = GetSearchText(array('POST','Q'),'createddate');
@@ -95,30 +95,26 @@ class TranslogController extends Controller {
 			}	
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('translogid');
-		$this->dataprint['titleusername'] = GetCatalog('username');
-		$this->dataprint['titlecreateddate'] = GetCatalog('createddate');
-		$this->dataprint['titleuseraction'] = GetCatalog('useraction');
-		$this->dataprint['titlenewdata'] = GetCatalog('newdata');
-		$this->dataprint['titleolddata'] = GetCatalog('olddata');
-		$this->dataprint['titlemenuname'] = GetCatalog('menuname');
-		$this->dataprint['titletableid'] = GetCatalog('tableid');
-		$this->dataprint['titleippublic'] = GetCatalog('ippublic');
-		$this->dataprint['titleiplocal'] = GetCatalog('iplocal');
-		$this->dataprint['titlelat'] = GetCatalog('lat');
-		$this->dataprint['titlelng'] = GetCatalog('lng');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['namauser'] = GetSearchText(array('GET'),'username');
-    $this->dataprint['createddate'] = GetSearchText(array('GET'),'createddate');
-    $this->dataprint['useraction'] = GetSearchText(array('GET'),'useraction');
-    $this->dataprint['newdata'] = GetSearchText(array('GET'),'newdata');
-    $this->dataprint['olddata'] = GetSearchText(array('GET'),'olddata');
-    $this->dataprint['menuname'] = GetSearchText(array('GET'),'menuname');
-    $this->dataprint['tableid'] = GetSearchText(array('GET'),'tableid');
+		$this->dataprint['namauser'] = GetSearchText(array('GET'),'username');
+		$this->dataprint['createddate'] = GetSearchText(array('GET'),'createddate');
+		$this->dataprint['useraction'] = GetSearchText(array('GET'),'useraction');
+		$this->dataprint['olddata'] = GetSearchText(array('GET'),'olddata');
+		$this->dataprint['newdata'] = GetSearchText(array('GET'),'newdata');
+		$this->dataprint['menuname'] = GetSearchText(array('GET'),'menuname');
+		$this->dataprint['tableid'] = GetSearchText(array('GET'),'tableid');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'translogid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
+		$this->dataprint['titlelanguagename'] = GetCatalog('languagename');
+		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
   }
 }

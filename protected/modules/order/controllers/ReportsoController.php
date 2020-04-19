@@ -8,7 +8,7 @@ class ReportsoController extends Controller {
       $this->renderPartial('index', array());
   }
  public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $soheaderid 		= GetSearchText(array('POST','GET','Q'),'soheaderid');
 		$plantcode     		= GetSearchText(array('POST','GET','Q'),'plantcode');
 		$productname   		= GetSearchText(array('POST','GET','Q'),'productname');

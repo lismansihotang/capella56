@@ -8,17 +8,18 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/company/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/company/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/company/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/company/downdoc'),
 	'columns'=>"
 		{
 			field:'companyid',
-			title:'".GetCatalog('companyid')."',
+			title:localStorage.getItem('catalogcompanyid'),
 			sortable: true,
 			formatter: function(value,row,index){
 				return value;
 		}},
 		{
 			field:'companyname',
-			title:'".GetCatalog('companyname')."',
+			title:localStorage.getItem('catalogcompanyname'),
 			editor:'text',
 			sortable: true,
 			width:'200px',
@@ -27,7 +28,7 @@
 		}},
 		{
 			field:'companycode',
-			title:'".GetCatalog('companycode')."',
+			title:localStorage.getItem('catalogcompanycode'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -36,7 +37,7 @@
 		}},
 		{
 			field:'address',
-			title:'".GetCatalog('address')."',
+			title:localStorage.getItem('catalogaddress'),
 			editor:'text',
 			sortable: true,
 			width:'350px',
@@ -45,7 +46,7 @@
 		}},
 		{
 			field:'cityid',
-			title:'". GetCatalog('city') ."',
+			title:localStorage.getItem('catalogcity'),
 			editor:{
 				type:'combogrid',
 				options:{
@@ -57,10 +58,10 @@
 						url:'". $this->createUrl('city/index',array('grid'=>true,'combo'=>true)) ."',
 						fitColumns:true,
 						required:true,
-						loadMsg: '". GetCatalog('pleasewait')."',
+						loadMsg: localStorage.getItem('catalogpleasewait'),
 						columns:[[
-							{field:'cityid',title:'". GetCatalog('cityid')."',width:'80px'},
-							{field:'cityname',title:'". GetCatalog('cityname')."',width:'250px'},
+							{field:'cityid',title:localStorage.getItem('catalogcityid'),width:'80px'},
+							{field:'cityname',title:localStorage.getItem('catalogcityname'),width:'250px'},
 						]]
 				}	
 			},
@@ -71,7 +72,7 @@
 		}},
 		{
 			field:'zipcode',
-			title:'".GetCatalog('zipcode')."',
+			title:localStorage.getItem('catalogzipcode'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -80,7 +81,7 @@
 		}},
 		{
 			field:'taxno',
-			title:'".GetCatalog('taxno')."',
+			title:localStorage.getItem('catalogtaxno'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -89,7 +90,7 @@
 		}},
 		{
 			field:'currencyid',
-			title:'".GetCatalog('currency')."',
+			title:localStorage.getItem('catalogcurrency'),
 			sortable: true,
 			editor:{
 				type:'combogrid',
@@ -104,9 +105,9 @@
 					fitColumns:true,
 					loadMsg: '".GetCatalog('pleasewait')."',
 					columns:[[
-						{field:'currencyid',title:'".GetCatalog('currencyid')."',width:'50px'},
-						{field:'countryname',title:'".GetCatalog('countryname')."',width:'200px'},
-						{field:'currencyname',title:'".GetCatalog('currencyname')."',width:'200px'},
+						{field:'currencyid',title:localStorage.getItem('catalogcurrencyid'),width:'50px'},
+						{field:'countryname',title:localStorage.getItem('catalogcountryname'),width:'200px'},
+						{field:'currencyname',title:localStorage.getItem('catalogcurrencyname'),width:'200px'},
 					]]
 				}	
 			},
@@ -115,7 +116,7 @@
 		}},
 		{
 			field:'faxno',
-			title:'".GetCatalog('faxno')."',
+			title:localStorage.getItem('catalogfaxno'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -124,7 +125,7 @@
 		}},
 		{
 			field:'phoneno',
-			title:'".GetCatalog('phoneno')."',
+			title:localStorage.getItem('catalogphoneno'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -133,7 +134,7 @@
 		}},
 		{
 			field:'webaddress',
-			title:'".GetCatalog('webaddress')."',
+			title:localStorage.getItem('catalogwebaddress'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -142,7 +143,7 @@
 		}},
 		{
 			field:'email',
-			title:'".GetCatalog('email')."',
+			title:localStorage.getItem('catalogemail'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -151,7 +152,7 @@
 		}},
 		{
 			field:'leftlogofile',
-			title:'".GetCatalog('leftlogofile')."',
+			title:localStorage.getItem('catalogleftlogofile'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -160,7 +161,7 @@
 		}},
 		{
 			field:'rightlogofile',
-			title:'".GetCatalog('rightlogofile')."',
+			title:localStorage.getItem('catalogrightlogofile'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -169,19 +170,19 @@
 		}},
 		{
 			field:'isholding',
-			title:'".GetCatalog('isholding')."',
+			title:localStorage.getItem('catalogisholding'),
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}
 		}},
 		{
 			field:'billto',
-			title:'".GetCatalog('billto')."',
+			title:localStorage.getItem('catalogbillto'),
 			editor:'textarea',
 			sortable: true,
 			width:'350px',
@@ -190,7 +191,7 @@
 		}},
 		{
 			field:'bankacc1',
-			title:'".GetCatalog('bankacc1')."',
+			title:localStorage.getItem('catalogbankacc1'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -199,7 +200,7 @@
 		}},
 		{
 			field:'bankacc2',
-			title:'".GetCatalog('bankacc2')."',
+			title:localStorage.getItem('catalogbankacc2'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -208,7 +209,7 @@
 		}},
 		{
 			field:'bankacc3',
-			title:'".GetCatalog('bankacc3')."',
+			title:localStorage.getItem('catalogbankacc3'),
 			editor:'text',
 			sortable: true,
 			width:'150px',
@@ -217,13 +218,13 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus')."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}

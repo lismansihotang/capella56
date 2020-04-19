@@ -29,7 +29,7 @@ class WorkflowController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$workflowid = GetSearchText(array('POST','Q'),'workflowid');
 		$wfname = GetSearchText(array('POST','Q'),'wfname');
 		$wfdesc = GetSearchText(array('POST','Q'),'wfdesc');
@@ -111,7 +111,7 @@ class WorkflowController extends Controller {
 		return CJSON::encode($result);
 	}	
 	public function actionsearchwfgroup() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id = 0;	
 		if (isset($_POST['id']))
 		{
@@ -162,7 +162,7 @@ class WorkflowController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function actionsearchwfstatus() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id = 0;	
 		if (isset($_POST['id']))
 		{
@@ -368,7 +368,7 @@ class WorkflowController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}	
 	public function actionPurgewfgroup() {
@@ -392,7 +392,7 @@ class WorkflowController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	public function actionPurgewfstatus() {
@@ -416,24 +416,29 @@ class WorkflowController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('workflowid');
+		$this->dataprint['wfname'] = GetSearchText(array('GET'),'wfname');
+		$this->dataprint['wfdesc'] = GetSearchText(array('GET'),'wfdesc');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'workflowid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlewfname'] = GetCatalog('wfname');
 		$this->dataprint['titlewfdesc'] = GetCatalog('wfdesc');
-		$this->dataprint['titlewfmaxstat'] = GetCatalog('wfmaxstat');
 		$this->dataprint['titlewfminstat'] = GetCatalog('wfminstat');
+		$this->dataprint['titlewfmaxstat'] = GetCatalog('wfmaxstat');
+		$this->dataprint['titlegroupname'] = GetCatalog('groupname');
 		$this->dataprint['titlewfbefstat'] = GetCatalog('wfbefstat');
 		$this->dataprint['titlewfrecstat'] = GetCatalog('wfrecstat');
-		$this->dataprint['titlegroupname'] = GetCatalog('groupname');
+		$this->dataprint['titlecuryy'] = GetCatalog('curyy');
+		$this->dataprint['titlecurvalue'] = GetCatalog('curvalue');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['wfname'] = GetSearchText(array('GET'),'wfname');
-    $this->dataprint['wfdesc'] = GetSearchText(array('GET'),'wfdesc');
-    $this->dataprint['wfminstat'] = GetSearchText(array('GET'),'wfminstat');
-    $this->dataprint['wfmaxstat'] = GetSearchText(array('GET'),'wfmaxstat');
   }
 }

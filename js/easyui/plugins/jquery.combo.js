@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.6.2
+ * EasyUI for jQuery 1.9.4
  * 
- * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -9,7 +9,7 @@
  */
 (function($){
 $(function(){
-$(document).unbind(".combo").bind("mousedown.combo mousewheel.combo",function(e){
+$(document)._unbind(".combo")._bind("mousedown.combo mousewheel.combo",function(e){
 var p=$(e.target).closest("span.combo,div.combo-p,div.menu");
 if(p.length){
 _1(p);
@@ -50,9 +50,9 @@ $(_3).addClass("combo-f").textbox($.extend({},_5,{icons:_a,onChange:function(){
 $(_3).attr("comboName",$(_3).attr("textboxName"));
 _4.combo=$(_3).next();
 _4.combo.addClass("combo");
-_4.panel.unbind(".combo");
+_4.panel._unbind(".combo");
 for(var _b in _5.panelEvents){
-_4.panel.bind(_b+".combo",{target:_3},_5.panelEvents[_b]);
+_4.panel._bind(_b+".combo",{target:_3},_5.panelEvents[_b]);
 }
 };
 function _c(_d){
@@ -190,12 +190,20 @@ _2b=0;
 return _2b;
 };
 function _2a(){
+if(_27.panelValign=="top"){
+var top=_25.offset().top-_26._outerHeight();
+}else{
+if(_27.panelValign=="bottom"){
+var top=_25.offset().top+_25._outerHeight();
+}else{
 var top=_25.offset().top+_25._outerHeight();
 if(top+_26._outerHeight()>$(window)._outerHeight()+$(document).scrollTop()){
 top=_25.offset().top-_26._outerHeight();
 }
 if(top<$(document).scrollTop()){
 top=_25.offset().top+_25._outerHeight();
+}
+}
 }
 return top;
 };
@@ -254,6 +262,9 @@ _43.attr("disabled","disabled");
 _43.val(_41);
 };
 var _44=(function(){
+if(_3e.onChange==$.parser.emptyFn){
+return false;
+}
 if(_3f.length!=_3b.length){
 return true;
 }
@@ -284,8 +295,7 @@ _39(_49,[_4a]);
 function _4b(_4c){
 var _4d=$.data(_4c,"combo").options;
 var _4e=_4d.onChange;
-_4d.onChange=function(){
-};
+_4d.onChange=$.parser.emptyFn;
 if(_4d.multiple){
 _39(_4c,_4d.value?_4d.value:[]);
 }else{
@@ -390,7 +400,7 @@ return $.extend({},$.fn.textbox.parseOptions(_5a),$.parser.parseOptions(_5a,["se
 $.fn.combo.defaults=$.extend({},$.fn.textbox.defaults,{inputEvents:{click:_16,keydown:_1b,paste:_1b,drop:_1b,blur:_1f},panelEvents:{mousedown:function(e){
 e.preventDefault();
 e.stopPropagation();
-}},panelWidth:null,panelHeight:300,panelMinWidth:null,panelMaxWidth:null,panelMinHeight:null,panelMaxHeight:null,panelAlign:"left",reversed:false,multiple:false,multivalue:true,selectOnNavigation:true,separator:",",hasDownArrow:true,delay:200,keyHandler:{up:function(e){
+}},panelWidth:null,panelHeight:300,panelMinWidth:null,panelMaxWidth:null,panelMinHeight:null,panelMaxHeight:null,panelAlign:"left",panelValign:"auto",reversed:false,multiple:false,multivalue:true,selectOnNavigation:true,separator:",",hasDownArrow:true,delay:200,keyHandler:{up:function(e){
 },down:function(e){
 },left:function(e){
 },right:function(e){

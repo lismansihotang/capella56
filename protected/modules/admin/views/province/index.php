@@ -8,10 +8,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/province/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/province/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/province/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/province/downdoc'),
 	'columns'=>"
 		{
 			field:'provinceid',
-			title:'".GetCatalog('provinceid')."',
+			title:localStorage.getItem('catalogprovinceid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -20,7 +21,7 @@
 		},
 		{
 			field:'countryid',
-			title:'".GetCatalog('country')."',
+			title:localStorage.getItem('catalogcountry'),
 			sortable: true,
 			width:'100px',
 			formatter:function(value,row,index){
@@ -37,18 +38,18 @@
 					required:true,
 					url:'".$this->createUrl('country/index',array('grid'=>true,'combo'=>true))."',
 					fitColumns:true,
-					loadMsg: '".GetCatalog('pleasewait')."',
+					loadMsg: localStorage.getItem('catalogpleasewait'),
 					columns:[[
-						{field:'countryid',title:'".GetCatalog('countryid')."',width:'80px'},
-						{field:'countrycode',title:'".GetCatalog('countrycode')."',width:'80px'},
-						{field:'countryname',title:'".GetCatalog('countryname')."',width:'250px'},
+						{field:'countryid',title:localStorage.getItem('catalogcountryid'),width:'80px'},
+						{field:'countrycode',title:localStorage.getItem('catalogcountrycode'),width:'80px'},
+						{field:'countryname',title:localStorage.getItem('catalogcountryname'),width:'250px'},
 					]]
 				}	
 			}
 		},
 		{
 			field:'provincecode',
-			title:'".GetCatalog('provincecode')."',
+			title:localStorage.getItem('catalogprovincecode'),
 			editor:{type:'numberbox',options:{precision:0,required:true,}},
 			sortable: true,	
 			width:'100px',			
@@ -58,7 +59,7 @@
 		},
 		{
 			field:'provincename',
-			title:'".GetCatalog('provincename')."',
+			title:localStorage.getItem('catalogprovincename'),
 			editor:'text',
 			width:'200px',
 			sortable: true,
@@ -68,13 +69,13 @@
 		},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus')."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}

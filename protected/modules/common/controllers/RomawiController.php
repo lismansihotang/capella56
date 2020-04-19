@@ -9,7 +9,7 @@ class RomawiController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$romawiid = GetSearchText(array('POST','Q'),'romawiid');
 		$monthcal = GetSearchText(array('POST','Q'),'monthcal');
 		$monthrm = GetSearchText(array('POST','Q'),'monthrm');
@@ -159,17 +159,22 @@ class RomawiController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('romawiid');
+		$this->dataprint['monthcal'] = GetSearchText(array('GET'),'monthcal');
+		$this->dataprint['monthrm'] = GetSearchText(array('GET'),'monthrm');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'romawiid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlemonthcal'] = GetCatalog('monthcal');
 		$this->dataprint['titlemonthrm'] = GetCatalog('monthrm');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['monthcal'] = GetSearchText(array('GET'),'monthcal');
-    $this->dataprint['monthrm'] = GetSearchText(array('GET'),'monthrm');
   }
 }

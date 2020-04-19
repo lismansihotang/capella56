@@ -56,7 +56,7 @@ class GrheaderController extends Controller {
     Yii::app()->end();
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
 		$grheaderid 		= GetSearchText(array('POST','Q'),'grheaderid','','int');
 		$plantid 		= GetSearchText(array('POST','GET'),'plantid','','int');
 		$plantcode 		= GetSearchText(array('POST','Q'),'plantcode');
@@ -357,7 +357,7 @@ class GrheaderController extends Controller {
     return CJSON::encode($result);
 	}
   public function actionSearchdetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -452,7 +452,7 @@ class GrheaderController extends Controller {
     echo CJSON::encode($result);
   }
   public function actionSearchGrjasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -521,7 +521,7 @@ class GrheaderController extends Controller {
     echo CJSON::encode($result);
   }
 	public function actionSearchResult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -554,7 +554,8 @@ class GrheaderController extends Controller {
 					->select('t.*,a.productcode,a.productname,e.materialtypecode,
 						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uomid) as uomcode,t.description,
 						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom2id) as uom2code,
-						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code')
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom4id) as uom4code')
 					->from('grresult t')
 					->leftjoin('grheader g', 'g.grheaderid = t.grheaderid')
 					->leftjoin('product a', 'a.productid = t.productid')
@@ -607,7 +608,7 @@ class GrheaderController extends Controller {
 				GetMessage(true,implode(" ",$e->errorInfo));
 			}
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true,getcatalog('chooseone'));
     }
   }
   public function actionApprove()  {
@@ -630,7 +631,7 @@ class GrheaderController extends Controller {
 				GetMessage(true,implode(" ",$e->errorInfo));
 			}
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true,getcatalog('chooseone'));
     }
   }
   private function ModifyData($connection,$arraydata) {
@@ -672,7 +673,7 @@ class GrheaderController extends Controller {
 			}
   }
   public function actionSavedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -711,7 +712,7 @@ class GrheaderController extends Controller {
 		}
   }
   public function actionSavegrjasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -747,7 +748,7 @@ class GrheaderController extends Controller {
 		}
   }
 	public function actionSaveresult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -782,7 +783,7 @@ class GrheaderController extends Controller {
 		}
   }
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -803,11 +804,11 @@ class GrheaderController extends Controller {
 				GetMessage(true,implode(" ",$e->errorInfo));
 			}
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true,getcatalog('chooseone'));
     }
   }
 	public function actionPurgeAllDetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -826,11 +827,11 @@ class GrheaderController extends Controller {
 				GetMessage(true,implode(" ",$e->errorInfo));
 			}
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true,getcatalog('chooseone'));
     }
   }
 	public function actionPurgedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -849,11 +850,11 @@ class GrheaderController extends Controller {
 				GetMessage(true,implode(" ",$e->errorInfo));
 			}
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true,getcatalog('chooseone'));
     }
   }
   public function actionPurgeGrjasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -872,11 +873,11 @@ class GrheaderController extends Controller {
 				GetMessage(true,implode(" ",$e->errorInfo));
 			}
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true,getcatalog('chooseone'));
     }
   }
   public function actionPurgeresult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -895,7 +896,7 @@ class GrheaderController extends Controller {
 				GetMessage(true,implode(" ",$e->errorInfo));
 			}
     } else {
-      GetMessage(true, 'chooseone');
+      GetMessage(true,getcatalog('chooseone'));
     }
   }
   public function actionDownPDF() {
@@ -970,14 +971,16 @@ class GrheaderController extends Controller {
       $totalqty    = 0;
 	  $totalqty2    = 0;
 	  $totalqty3    = 0;
-      $sql1        = "select b.productcode,b.productname,a.qty,a.qty2,a.qty3,c.uomcode,g.uomcode as uom2code,
-											h.uomcode as uom3code,
+	  $totalqty4    = 0;
+      $sql1        = "select b.productcode,b.productname,a.qty,a.qty2,a.qty3,a.qty4,c.uomcode,g.uomcode as uom2code,
+											h.uomcode as uom3code,i.uomcode as uom4code,
 											a.itemnote,j.description,e.sloccode
 											from grdetail a
 											inner join product b on b.productid = a.productid
 											inner join unitofmeasure c on c.unitofmeasureid = a.uomid
 											left join unitofmeasure g on g.unitofmeasureid = a.uom2id
 											left join unitofmeasure h on h.unitofmeasureid = a.uom3id
+											left join unitofmeasure i on i.unitofmeasureid = a.uom4id
 											inner join storagebin j on j.storagebinid = a.storagebinid
 											inner join sloc e on e.slocid = a.slocid
 											where grheaderid = " . $row['grheaderid'] . " order by grdetailid ";
@@ -1058,6 +1061,7 @@ class GrheaderController extends Controller {
             Yii::app()->format->formatNumber($row1['qty']).' '.$row1['uomcode'],
 			Yii::app()->format->formatNumber($row1['qty2']).' '.$row1['uom2code'],
 			Yii::app()->format->formatNumber($row1['qty3']).' '.$row1['uom3code'],
+			Yii::app()->format->formatNumber($row1['qty4']).' '.$row1['uom4code'],
             $row1['sloccode'],
 						$row1['description'],
             $row1['itemnote']
@@ -1066,6 +1070,7 @@ class GrheaderController extends Controller {
 					$totalqty += $row1['qty'];
 		  $totalqty2 += $row1['qty2'];
 		  $totalqty3 += $row1['qty3'];
+		  $totalqty4 += $row1['qty4'];
       }
 					$sql1        = "select b.productcode,b.productname,a.qty,c.uomcode,d.sloccode,e.namamesin,a.description as itemnote
 							from grjasa a
@@ -1145,14 +1150,15 @@ class GrheaderController extends Controller {
           $totalqty += $row1['qty'];
 		  
       }
-			$sql1        = "select b.productcode,b.productname,a.qty1,a.qty2,a.qty3,c.uomcode,g.uomcode as uom2code,
-											h.uomcode as uom3code,
+			$sql1        = "select b.productcode,b.productname,a.qty1,a.qty2,a.qty3,a.qty4,c.uomcode,g.uomcode as uom2code,
+											h.uomcode as uom3code,i.uomcode as uom4code,
 											a.description
 											from grresult a
 											inner join product b on b.productid = a.productid
 											inner join unitofmeasure c on c.unitofmeasureid = a.uomid
 											left join unitofmeasure g on g.unitofmeasureid = a.uom2id
 											left join unitofmeasure h on h.unitofmeasureid = a.uom3id
+											left join unitofmeasure i on i.unitofmeasureid = a.uom4id
 											where grheaderid = " . $row['grheaderid'] . " order by grresultid ";
       $command1    = $this->connection->createCommand($sql1);
       $dataReader1 = $command1->queryAll();
@@ -1223,12 +1229,14 @@ class GrheaderController extends Controller {
             Yii::app()->format->formatNumber($row1['qty1']).' '.$row1['uomcode'],
 			Yii::app()->format->formatNumber($row1['qty2']).' '.$row1['uom2code'],
 			Yii::app()->format->formatNumber($row1['qty3']).' '.$row1['uom3code'],
+			Yii::app()->format->formatNumber($row1['qty4']).' '.$row1['uom4code'],
             $row1['description']
           ));
 					
 					$totalqty += $row1['qty1'];
 		  $totalqty2 += $row1['qty2'];
 		  $totalqty3 += $row1['qty3'];
+		  $totalqty4 += $row1['qty4'];
       }
       $this->pdf->sety($this->pdf->gety());
       $this->pdf->setFont('Arial', 'B', 7);
@@ -1252,6 +1260,7 @@ class GrheaderController extends Controller {
         Yii::app()->format->formatNumber($totalqty),
 		Yii::app()->format->formatNumber($totalqty2),
 		Yii::app()->format->formatNumber($totalqty3),
+		Yii::app()->format->formatNumber($totalqty4),
         '',
         '',
         '',
@@ -1297,7 +1306,7 @@ class GrheaderController extends Controller {
     $this->menuname = 'grheaderlist';
     parent::actionDownxls();
     $sql = "select a.grheaderid,a.grno,a.grdate,i.sloccode,a.headernote,a.isjasa,d.pono,k.fullname as supplier,a.pibno,i.sloccode,
-			a.kendaraanno,f.productname,e.qty,e.qty2,e.qty3,g.uomcode,l.uomcode as uom2code,m.uomcode as uom3code,
+			a.kendaraanno,f.productname,e.qty,e.qty2,e.qty3,e.qty4,g.uomcode,l.uomcode as uom2code,m.uomcode as uom3code,n.uomcode as uom4code,
 			o.description as storagedesc,c.plantcode,a.sjsupplier,a.kendaraanno,a.supir,e.itemnote,q.productname as productjasa,p.qty as qtyjasa,r.uomcode as uomjasa,
 			p.reqdate,s.sloccode as slocjasa,t.kodemesin,p.description as itemjasa
 			from grheader a
@@ -1311,6 +1320,7 @@ class GrheaderController extends Controller {
 			left join addressbook k on k.addressbookid = d.addressbookid
 			left join unitofmeasure l on l.unitofmeasureid = e.uom2id
 			left join unitofmeasure m on m.unitofmeasureid = e.uom3id
+			left join unitofmeasure n on n.unitofmeasureid = e.uom4id
 			left join storagebin o on o.storagebinid = e.storagebinid 
 			left join grjasa p on p.grheaderid = a.grheaderid 
 			left join product q on q.productid = p.productid 
@@ -1390,6 +1400,8 @@ class GrheaderController extends Controller {
 				->setCellValueByColumnAndRow(16, $i, $row['uom2code'])
 				->setCellValueByColumnAndRow(17, $i, $row['qty3'])
 				->setCellValueByColumnAndRow(18, $i, $row['uom3code'])
+				->setCellValueByColumnAndRow(19, $i, $row['qty4'])
+				->setCellValueByColumnAndRow(20, $i, $row['uom4code'])
 				->setCellValueByColumnAndRow(21, $i, $row['sloccode'])
 				->setCellValueByColumnAndRow(22, $i, $row['storagedesc'])
 				->setCellValueByColumnAndRow(23, $i, $row['itemnote'])
@@ -1403,4 +1415,3 @@ class GrheaderController extends Controller {
     $this->getFooterXLS($this->phpExcel);
   }
 }
-

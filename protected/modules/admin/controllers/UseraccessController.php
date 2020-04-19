@@ -23,7 +23,7 @@ class UseraccessController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$useraccessid	= GetSearchText(array('POST','Q'),'useraccessid');
 		$username = GetSearchText(array('POST','Q'),'username');
 		$realname = GetSearchText(array('POST','Q'),'realname');
@@ -40,101 +40,46 @@ class UseraccessController extends Controller {
 		$offset = ($page-1) * $rows;
 		$result = array();
 		$row = array();
+		$selectcount = 'select count(1) as total';
+		$select = 'select t.*,l.languagename,h.themename, (select count(1) from usergroup a where a.useraccessid = t.useraccessid) as jumlah ';
+		$from = ' from useraccess t 
+			left join language l on l.languageid=t.languageid
+			left join theme h on h.themeid=t.themeid';
+		$where = ' where ';
 		if (isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')	
-				->from('useraccess t')
-				->leftjoin('language l', 'l.languageid=t.languageid')
-				->leftjoin('theme h', 'h.themeid=t.themeid')
-				->where("
-					((coalesce(t.useraccessid,'') like :useraccessid) 
-					or (coalesce(t.username,'') like :username) 
-					or (coalesce(t.realname,'') like :realname) 
-					or (coalesce(t.email,'') like :email) 
-					or (coalesce(t.phoneno,'') like :phoneno) 
-					or (coalesce(l.languagename,'') like :languagename) 
-					or (coalesce(h.themename,'') like :themename)) 
-					and t.recordstatus=1",
-						array(':useraccessid'=>$useraccessid,':username'=>$username,':realname'=>$realname,':email'=>$email,':phoneno'=>$phoneno,':languagename'=>$languagename,':themename'=>$themename,':groupname'=>$groupname))
-				->queryScalar();
+			$where .= " ((coalesce(t.useraccessid,'') like '".$useraccessid."') 
+				or (coalesce(t.username,'') like '".$username."') 
+				or (coalesce(t.realname,'') like '".$realname."') 
+				or (coalesce(t.email,'') like '".$email."') 
+				or (coalesce(t.phoneno,'') like '".$phoneno."') 
+				or (coalesce(l.languagename,'') like '".$languagename."') 
+				or (coalesce(h.themename,'') like '".$themename."')) 
+				and t.recordstatus=1";
+		} else {			
+			$where .= " (coalesce(t.useraccessid,'') like '".$useraccessid."') 
+			and (coalesce(t.username,'') like '".$username."') 
+			and (coalesce(t.realname,'') like '".$realname."') 
+			and (coalesce(t.email,'') like '".$email."') 
+			and (coalesce(t.phoneno,'') like '".$phoneno."') 
+			and (coalesce(l.languagename,'') like '".$languagename."') 
+			and (coalesce(h.themename,'') like '".$themename."') 
+			and t.useraccessid in 
+			(
+			select distinct p.useraccessid 
+			from usergroup p 
+			left join groupaccess q on q.groupaccessid = p.groupaccessid
+			where (coalesce(q.groupname,'') like '".$groupname."')
+			) ";
 		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')	
-				->from('useraccess t')
-				->leftjoin('language l', 'l.languageid=t.languageid')
-				->leftjoin('theme h', 'h.themeid=t.themeid')
-				->where("
-					(coalesce(t.useraccessid,'') like :useraccessid) 
-					and (coalesce(t.username,'') like :username) 
-					and (coalesce(t.realname,'') like :realname) 
-					and (coalesce(t.email,'') like :email) 
-					and (coalesce(t.phoneno,'') like :phoneno) 
-					and (coalesce(l.languagename,'') like :languagename) 
-          and (coalesce(h.themename,'') like :themename)".
-          (($groupname != '%%')?"
-					and t.useraccessid in 
-					(
-					select distinct p.useraccessid 
-					from usergroup p 
-					left join groupaccess q on q.groupaccessid = p.groupaccessid
-					where (coalesce(q.groupname,'') like '".$groupname."')
-					) ":""),
-						array(':useraccessid'=>$useraccessid,':username'=>$username,':realname'=>$realname,':email'=>$email,':phoneno'=>$phoneno,':languagename'=>$languagename,':themename'=>$themename))
-				->queryScalar();
-		}
+		$sql = $selectcount . $from . $where;
+		$cmd = Yii::app()->db->createCommand($sql)->queryScalar();
 		$result['total'] = $cmd;
 		if (isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->selectdistinct("t.*,l.languagename,h.themename, (select count(1) from usergroup a where a.useraccessid = t.useraccessid) as jumlah")			
-				->from('useraccess t')
-				->leftjoin('language l', 'l.languageid=t.languageid')
-				->leftjoin('theme h', 'h.themeid=t.themeid')
-				->where("
-					((coalesce(t.useraccessid,'') like :useraccessid) 
-					or (coalesce(t.username,'') like :username) 
-					or (coalesce(t.realname,'') like :realname) 
-					or (coalesce(t.email,'') like :email) 
-					or (coalesce(t.phoneno,'') like :phoneno) 
-					or (coalesce(l.languagename,'') like :languagename) 
-					or (coalesce(h.themename,'') like :themename)) 
-					and t.recordstatus=1",
-            array(':useraccessid'=>$useraccessid,':username'=>$username,':realname'=>$realname,
-              ':email'=>$email,':phoneno'=>$phoneno,':languagename'=>$languagename,':themename'=>$themename,
-              ':groupname'=>$groupname))
-				->order($sort.' '.$order)
-				->queryAll();
+			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order;
+		} else {
+			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order . ' limit ' . $offset . ',' . $rows;
 		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->selectdistinct('t.*,l.languagename,h.themename,(select count(1) from usergroup a where a.useraccessid = t.useraccessid) as jumlah')			
-				->from('useraccess t')
-				->leftjoin('language l', 'l.languageid=t.languageid')
-				->leftjoin('theme h', 'h.themeid=t.themeid')
-				->leftjoin('usergroup p', 'p.useraccessid=t.useraccessid')
-				->leftjoin('groupaccess q', 'q.groupaccessid=p.groupaccessid')
-				->where("
-					(coalesce(t.useraccessid,'') like :useraccessid) 
-					and (coalesce(t.username,'') like :username) 
-					and (coalesce(t.realname,'') like :realname) 
-					and (coalesce(t.email,'') like :email) 
-					and (coalesce(t.phoneno,'') like :phoneno) 
-					and (coalesce(l.languagename,'') like :languagename) 
-					and (coalesce(h.themename,'') like :themename)".
-					(($groupname != '%%')?"
-					and t.useraccessid in 
-					(
-					select distinct p.useraccessid 
-					from usergroup p 
-					left join groupaccess q on q.groupaccessid = p.groupaccessid
-					where (coalesce(q.groupname,'') like '".$groupname."')
-					)":""),
-						array(':useraccessid'=>$useraccessid,':username'=>$username,':realname'=>$realname,':email'=>$email,':phoneno'=>$phoneno,':languagename'=>$languagename,':themename'=>$themename))
-				->order($sort.' '.$order)
-				->offset($offset)
-				->limit($rows)
-				->queryAll();
-		}
+		$cmd = Yii::app()->db->createCommand($sql)->queryAll();
 		foreach($cmd as $data) {	
 			$row[] = array(
 				'useraccessid'=>$data['useraccessid'],
@@ -156,7 +101,7 @@ class UseraccessController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function actionsearchusergroup() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id = 0;	
 		if (isset($_POST['id'])) {
 			$id = $_POST['id'];
@@ -165,15 +110,10 @@ class UseraccessController extends Controller {
 		if (isset($_GET['id'])) {
 			$id = $_GET['id'];
 		}
-		$page = isset($_POST['page']) ? intval($_POST['page']) : 1;
-		$rows = isset($_POST['rows']) ? intval($_POST['rows']) : 10;
-		$sort = isset($_POST['sort']) ? strval($_POST['sort']) : 't.usergroupid';
-		$order = isset($_POST['order']) ? strval($_POST['order']) : 'desc';
-		$offset = ($page-1) * $rows;
-		$page = isset($_GET['page']) ? intval($_GET['page']) : $page;
-		$rows = isset($_GET['rows']) ? intval($_GET['rows']) : $rows;
-		$sort = isset($_GET['sort']) ? strval($_GET['sort']) : $sort;
-		$order = isset($_GET['order']) ? strval($_GET['order']) : $order;
+		$page = GetSearchText(array('POST','GET'),'page',1,'int');
+		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
+		$sort = GetSearchText(array('POST','GET'),'sort','usergroupid','int');
+		$order = GetSearchText(array('POST','GET'),'order','desc','int');
 		$offset = ($page-1) * $rows;
 		$result = array();
 		$row = array();
@@ -208,7 +148,7 @@ class UseraccessController extends Controller {
 		return CJSON::encode($result);
 	}	
 	public function actionsearchuserfav() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id = 0;	
 		if (isset($_POST['id'])) {
 			$id = $_POST['id'];
@@ -217,30 +157,26 @@ class UseraccessController extends Controller {
 		if (isset($_GET['id'])) {
 			$id = $_GET['id'];
 		}
-		$page = isset($_POST['page']) ? intval($_POST['page']) : 1;
-		$rows = isset($_POST['rows']) ? intval($_POST['rows']) : 10;
-		$sort = isset($_POST['sort']) ? strval($_POST['sort']) : 't.userfavid';
-		$order = isset($_POST['order']) ? strval($_POST['order']) : 'desc';
-		$offset = ($page-1) * $rows;
-		$page = isset($_GET['page']) ? intval($_GET['page']) : $page;
-		$rows = isset($_GET['rows']) ? intval($_GET['rows']) : $rows;
-		$sort = isset($_GET['sort']) ? strval($_GET['sort']) : $sort;
-		$order = isset($_GET['order']) ? strval($_GET['order']) : $order;
+		$page = GetSearchText(array('POST','GET'),'page',1,'int');
+		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
+		$sort = GetSearchText(array('POST','GET'),'sort','userfavid','int');
+		$order = GetSearchText(array('POST','GET'),'order','desc','int');
 		$offset = ($page-1) * $rows;
 		$result = array();
 		$row = array();
 		$cmd = Yii::app()->db->createCommand()
 			->select('count(1) as total')	
 			->from('userfav t')
-			->leftjoin('menuaccess p', 'p.menuaccessid=t.menuaccessid')
+			->leftjoin('useraccess p', 'p.useraccessid=t.useraccessid')
+			->leftjoin('menuaccess q', 'q.menuaccessid=t.menuaccessid')
 			->where('t.useraccessid = '.$id)
 			->queryScalar();
 		$result['total'] = $cmd;
 		$cmd = Yii::app()->db->createCommand()
 			->select()	
-			->from('usergroup t')
 			->from('userfav t')
-			->leftjoin('menuaccess p', 'p.menuaccessid=t.menuaccessid')
+			->leftjoin('useraccess p', 'p.useraccessid=t.useraccessid')
+			->leftjoin('menuaccess q', 'q.menuaccessid=t.menuaccessid')
 			->where('t.useraccessid = '.$id)
 			->offset($offset)
 			->limit($rows)
@@ -431,7 +367,7 @@ class UseraccessController extends Controller {
 			}	
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	public function actionPurgeUserGroup() {
@@ -455,7 +391,7 @@ class UseraccessController extends Controller {
 			}	
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	public function actionPurgeUserfav() {
@@ -479,28 +415,32 @@ class UseraccessController extends Controller {
 			}	
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('useraccessid');
+		$this->dataprint['namauser'] = GetSearchText(array('GET'),'username');
+		$this->dataprint['realname'] = GetSearchText(array('GET'),'realname');
+		$this->dataprint['email'] = GetSearchText(array('GET'),'email');
+		$this->dataprint['phoneno'] = GetSearchText(array('GET'),'phoneno');
+		$this->dataprint['languagename'] = GetSearchText(array('GET'),'languagename');
+		$this->dataprint['themename'] = GetSearchText(array('GET'),'themename');
+		$this->dataprint['groupname'] = GetSearchText(array('GET'),'groupname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'useraccessid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
+		$this->dataprint['titlelanguagename'] = GetCatalog('languagename');
 		$this->dataprint['titleusername'] = GetCatalog('username');
-		$this->dataprint['titlegroupname'] = GetCatalog('groupname');
 		$this->dataprint['titlerealname'] = GetCatalog('realname');
-		$this->dataprint['titlepassword'] = GetCatalog('password');
 		$this->dataprint['titleemail'] = GetCatalog('email');
 		$this->dataprint['titlephoneno'] = GetCatalog('phoneno');
-		$this->dataprint['titlelanguagename'] = GetCatalog('languagename');
 		$this->dataprint['titlethemename'] = GetCatalog('themename');
+		$this->dataprint['titlegroupname'] = GetCatalog('groupname');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['namauser'] = GetSearchText(array('GET'),'username');
-    $this->dataprint['realname'] = GetSearchText(array('GET'),'realname');
-    $this->dataprint['email'] = GetSearchText(array('GET'),'email');
-    $this->dataprint['phoneno'] = GetSearchText(array('GET'),'phoneno');
-    $this->dataprint['languagename'] = GetSearchText(array('GET'),'languagename');
-    $this->dataprint['themename'] = GetSearchText(array('GET'),'themename');
-    $this->dataprint['groupname'] = GetSearchText(array('GET'),'groupname');
   }
 }

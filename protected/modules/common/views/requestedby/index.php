@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/requestedby/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/requestedby/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/requestedby/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/requestedby/downdoc'),
 	'columns'=>"
 		{
 			field:'requestedbyid',
@@ -57,7 +58,7 @@
 			sortable:'true',
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}

@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.6.2
+ * EasyUI for jQuery 1.9.4
  * 
- * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -80,11 +80,12 @@
 
 	$.parser = {
 		auto: true,
+		emptyFn: function(){},
 		onComplete: function(context){},
 		plugins:['draggable','droppable','resizable','pagination','tooltip',
 		         'linkbutton','menu','sidemenu','menubutton','splitbutton','switchbutton','progressbar','radiobutton','checkbox',
 				 'tree','textbox','passwordbox','maskedbox','filebox','combo','combobox','combotree','combogrid','combotreegrid','tagbox','numberbox','validatebox','searchbox',
-				 'spinner','numberspinner','timespinner','datetimespinner','calendar','datebox','datetimebox','slider',
+				 'spinner','numberspinner','timespinner','datetimespinner','calendar','datebox','datetimebox','timepicker','slider',
 				 'layout','panel','datagrid','propertygrid','treegrid','datalist','tabs','accordion','window','dialog','form'
 		],
 		parse: function(context){
@@ -129,8 +130,10 @@
 			if (endchar == '%'){
 				v = parseFloat(v.substr(0, v.length-1));
 				if (property.toLowerCase().indexOf('width') >= 0){
+					delta += parent[0].offsetWidth-parent[0].clientWidth;
 					v = Math.floor((parent.width()-delta) * v / 100.0);
 				} else {
+					delta += parent[0].offsetHeight-parent[0].clientHeight;
 					v = Math.floor((parent.height()-delta) * v / 100.0);
 				}
 			} else {
@@ -190,16 +193,18 @@
 				$.extend(options, opts);
 			}
 			return options;
+		},
+		parseVars: function(){
+			var d = $('<div style="position:absolute;top:-1000px;width:100px;height:100px;padding:5px"></div>').appendTo('body');
+			$._boxModel = d.outerWidth()!=100;
+			d.remove();
+			d = $('<div style="position:fixed"></div>').appendTo('body');
+			$._positionFixed = (d.css('position') == 'fixed');
+			d.remove();
 		}
 	};
 	$(function(){
-		var d = $('<div style="position:absolute;top:-1000px;width:100px;height:100px;padding:5px"></div>').appendTo('body');
-		$._boxModel = d.outerWidth()!=100;
-		d.remove();
-		d = $('<div style="position:fixed"></div>').appendTo('body');
-		$._positionFixed = (d.css('position') == 'fixed');
-		d.remove();
-		
+		$.parser.parseVars();
 		if (!window.easyloader && $.parser.auto){
 			$.parser.parse();
 		}
@@ -240,6 +245,8 @@
 	};
 	
 	$.fn._propAttr = $.fn.prop || $.fn.attr;
+	$.fn._bind = $.fn.on;
+	$.fn._unbind = $.fn.off;
 	
 	$.fn._size = function(options, parent){
 		if (typeof options == 'string'){

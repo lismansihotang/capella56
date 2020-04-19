@@ -3633,8 +3633,8 @@ class PHPExcel_Calculation {
 	{
 		$from = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 		$to = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$inversedStr1 = strtr($str1, $from, $to);
-		$inversedStr2 = strtr($str2, $from, $to);
+		$inversedStr1 = strtr($str1, array($from=>$to));
+		$inversedStr2 = strtr($str2, array($from=>$to));
 
 		return strcmp($inversedStr1, $inversedStr2);
 	}

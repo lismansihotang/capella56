@@ -28,7 +28,7 @@ class SoheaderController extends Controller {
 			));
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $soheaderid 		= GetSearchText(array('POST','GET','Q'),'soheaderid');
 		$plantid     		= GetSearchText(array('POST','GET'),'plantid',0,'int');
 		$productid     		= GetSearchText(array('POST','GET'),'productid',0,'int');
@@ -642,7 +642,7 @@ class SoheaderController extends Controller {
     echo CJSON::encode($items);
   }
 	public function actionSearchdetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -720,7 +720,6 @@ class SoheaderController extends Controller {
         'qty3' => Yii::app()->format->formatNumber($data['qty3']),
         'uom3id' => $data['uom3id'],
         'uom3code' => $data['uom3code'],
-        'uom4code' => $data['uom4code'],
 				'delvdate' => date(Yii::app()->params['dateviewfromdb'], strtotime($data['delvdate'])),
 				'price' => Yii::app()->format->formatCurrency($data['price']),
 				'totprice' => Yii::app()->format->formatCurrency($data['totprice']),
@@ -747,7 +746,7 @@ class SoheaderController extends Controller {
     echo CJSON::encode($result);
   }
   public function actionSearchTaxso() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -1020,13 +1019,10 @@ class SoheaderController extends Controller {
 						$qty3 = $objWorksheet->getCellByColumnAndRow(22, $row)->getValue(); //T
 						$uomcode = $objWorksheet->getCellByColumnAndRow(23, $row)->getValue(); //U
 						$uom3id = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
-						$qty4 = $objWorksheet->getCellByColumnAndRow(24, $row)->getValue(); //T
-						$uomcode = $objWorksheet->getCellByColumnAndRow(25, $row)->getValue(); //U
-						$uom4id = Yii::app()->db->createCommand("select unitofmeasureid from unitofmeasure where uomcode = '".$uomcode."'")->queryScalar();
-						$price = $objWorksheet->getCellByColumnAndRow(26, $row)->getValue(); //V
-						$toleransi = $objWorksheet->getCellByColumnAndRow(27, $row)->getValue(); //W
-						$delvdate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(23, $row)->getValue())); //X
-						$bomversion = $objWorksheet->getCellByColumnAndRow(29, $row)->getValue(); //Y
+						$price = $objWorksheet->getCellByColumnAndRow(24, $row)->getValue(); //V
+						$toleransi = $objWorksheet->getCellByColumnAndRow(25, $row)->getValue(); //W
+						$delvdate = date(Yii::app()->params['datetodb'], strtotime($objWorksheet->getCellByColumnAndRow(26, $row)->getValue())); //X
+						$bomversion = $objWorksheet->getCellByColumnAndRow(27, $row)->getValue(); //Y
 						$sql = "select bomid from billofmaterial where bomversion = :bomversion and productid = :productid and plantid = :plantid";
 						$command=$connection->createCommand($sql);
 						$command->bindvalue(':bomversion',$bomversion,PDO::PARAM_STR);
@@ -1047,8 +1043,6 @@ class SoheaderController extends Controller {
 							$uom2id,
 							$qty3,
 							$uom3id,
-							$qty4,
-							$uom4id,
 							$price,
 							$bomid,
 							$toleransi,
@@ -1118,7 +1112,7 @@ class SoheaderController extends Controller {
 		$command->execute();
 	}
   public function actionSavedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1165,7 +1159,7 @@ class SoheaderController extends Controller {
 		$command->execute();
 	}
   public function actionSavetaxso() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1185,7 +1179,7 @@ class SoheaderController extends Controller {
 		}
   }
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1208,7 +1202,7 @@ class SoheaderController extends Controller {
     }
   }
   public function actionPurgedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1231,7 +1225,7 @@ class SoheaderController extends Controller {
     }
   }
   public function actionPurgeTaxso() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;

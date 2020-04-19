@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/addressbook/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/addressbook/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/addressbook/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/addressbook/downdoc'),
 	'columns'=>"
 		{
 			field:'addressbookid',

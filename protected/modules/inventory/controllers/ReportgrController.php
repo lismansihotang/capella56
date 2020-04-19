@@ -8,7 +8,7 @@ class ReportgrController extends Controller {
       $this->renderPartial('index', array());
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
 		$grheaderid 		= GetSearchText(array('POST','Q'),'grheaderid','','int');
 		$plantid 		= GetSearchText(array('POST','GET'),'plantid','','int');
 		$plantcode 		= GetSearchText(array('POST','Q'),'plantcode');
@@ -155,7 +155,7 @@ class ReportgrController extends Controller {
     return CJSON::encode($result);
 	}
 	public function actionSearchdetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];

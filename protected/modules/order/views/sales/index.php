@@ -1,8 +1,6 @@
 <?php $this->widget('Form',	array('menuname'=>$this->menuname,
 	'idfield'=>'salesid',
 	'formtype'=>'master',
-	'ispdf'=>1,
-	'isxls'=>1,
 	'url'=>Yii::app()->createUrl('order/sales/index',array('grid'=>true)),
 	'saveurl'=>Yii::app()->createUrl('order/sales/save',array('grid'=>true)),
 	'updateurl'=>Yii::app()->createUrl('order/sales/save',array('grid'=>true)),

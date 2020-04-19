@@ -71,7 +71,15 @@
 			sortable: true,
 			width:'80px',
 			formatter: function(value,row,index){
-				return formatnumber('',row.qtyview,row.uomcode);
+				return formatnumber('',row.qtyview);
+		}},
+		{ 
+			field:'uomid',
+			title:'".getCatalog('uomcode') ."',
+			sortable: true,
+			width:'80px',
+			formatter: function(value,row,index){
+				return row.uomcode;
 		}},
 		{
 			field:'qty2',
@@ -79,7 +87,15 @@
 			sortable: true,
 			width:'80px',
 			formatter: function(value,row,index){
-						return formatnumber('',row.qty2view,row.uom2code);
+						return formatnumber('',row.qty2view);
+		}},
+		{
+			field:'uom2id',
+			title:'".getCatalog('uom2code') ."',
+			sortable: true,
+			width:'80px',
+			formatter: function(value,row,index){
+				return row.uom2code;
 		}},
 		{
 			field:'qty3',
@@ -87,7 +103,15 @@
 			sortable: true,
 			width:'80px',
 			formatter: function(value,row,index){
-						return formatnumber('',row.qty3view,row.uom3code);
+						return formatnumber('',row.qty3view);
+		}},
+		{
+			field:'uom3id',
+			title:'".getCatalog('uom3code') ."',
+			sortable: true,
+			width:'80px',
+			formatter: function(value,row,index){
+				return row.uom3code;
 		}},
 		{
 			field:'mesinid',
@@ -134,15 +158,16 @@
 					return '';
 				}
 		}},",
-'addload'=>"
-  $('#bom-plantid').combogrid('setValue',".Yii::app()->user->defaultplant.");
-",
-	'searchfield'=> array ('bomid','plantcode','customer','bomversion','bomdate','materialtypecode','productname','kodemesin','namamesin','processprd','description'),
+	'searchfield'=> array ('bomid','plantcode','bomversion','bomdate','materialtypecode','productname','kodemesin','namamesin','processprd','description'),
 	'headerform'=> "
 		<table cellpadding='5'>
 		<tr>
 				<td>".getCatalog('bomdate')."</td>
 				<td><input class='easyui-datebox' type='text' id='bom-bomdate' name='bom-bomdate' data-options='readonly:true,formatter:dateformatter,required:true,parser:dateparser' ></input></td>
+				<td>".getCatalog('bomversion')."</td>
+				<td><input class='easyui-textbox' type='text' id='bom-bomversion' name='bom-bomversion' data-options='required:true' style='width:280px'></input></td>
+			</tr>
+			<tr>
 				<td>".getCatalog('plant')."</td>
 				<td><select class='easyui-combogrid' id='bom-plantid' name='bom-plantid' style='width:150px' data-options=\"
 								panelWidth: '500px',
@@ -152,6 +177,19 @@
 								mode: 'remote',
 								url: '".Yii::app()->createUrl('common/plant/index',array('grid'=>true,'combo'=>true)) ."',
 								method: 'get',
+								onHidePanel: function(){
+									jQuery.ajax({'url':'".Yii::app()->createUrl('common/plant/index',array('grid'=>true,'getdata'=>true)) ."',
+										'data':{
+											'plantid':$('#bom-plantid').combogrid('getValue'),
+										},
+										'type':'post',
+										'dataType':'json',
+										'success':function(data)
+										{
+											$('#bom-companyname').textbox('setValue',data.companyname);
+										},
+										'cache':false});
+								},
 								columns: [[
 										{field:'plantid',title:'".getCatalog('plantid') ."',width:'50px'},
 										{field:'plantcode',title:'".getCatalog('plantcode') ."',width:'100px'},
@@ -160,14 +198,16 @@
 								fitColumns: true
 						\">
 				</select></td>
+				<td>".GetCatalog('company')."</td>
+				<td><input class='easyui-textbox' id='bom-companyname' name='bom-companyname' style='width:280px' data-options='readonly:true'></input></td>
 			</tr>
 			<tr>
 				<td>".getCatalog('product')."</td>
-				<td><select class='easyui-combogrid' id='bom-productid' name='bom-productid' style='width:250px' data-options=\"
+				<td><select class='easyui-combogrid' id='bom-productid' name='bom-productid' style='width:150px' data-options=\"
 								panelWidth: '600px',
 								idField: 'productid',
 								required: true,
-								textField: 'productname',
+								textField: 'productcode',
 								mode: 'remote',
 								url: '".Yii::app()->createUrl('common/product/index',array('grid'=>true,'plantplanhp'=>true)) ."',
 								onShowPanel:function() {
@@ -178,7 +218,7 @@
 								},
 								method: 'get',
 								onHidePanel: function() {
-									jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/indexproductplant',array('grid'=>true,'getdata'=>true)) ."',
+									jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/getproductplant') ."',
 										'data':{
 											'productid':$('#bom-productid').combogrid('getValue'),
 										},
@@ -186,7 +226,7 @@
 										'dataType':'json',
 										'success':function(data)
 										{
-											$('#bom-bomversion').textbox('setValue',data.productname + 'x');
+											$('#bom-bomversion').textbox('setValue',data.productcode + 'x');
 											$('#bom-productname').textbox('setValue',data.productname);
 											$('#bom-uomid').val(data.uom1);
 											$('#bom-uomcode').textbox('setValue',data.uom1code);	
@@ -194,23 +234,23 @@
 											$('#bom-uom2code').textbox('setValue',data.uom2code);	
 											$('#bom-uom3id').val(data.uom3);
 											$('#bom-uom3code').textbox('setValue',data.uom3code);	
-											$('#bom-stdqty').val(data.qty1);	
+											$('#bom-stdqty').val(data.qty);	
 											$('#bom-stdqty2').val(data.qty2);	
 											$('#bom-stdqty3').val(data.qty3);	
-											
 										},
 										'cache':false});
 								},
 								columns: [[
 										{field:'productid',title:'".getCatalog('productid') ."',width:'50px'},
 										{field:'materialtypecode',title:'".getCatalog('materialtypecode') ."',width:'100px'},
+										{field:'productcode',title:'".getCatalog('productcode') ."',width:'120px'},
 										{field:'productname',title:'".getCatalog('productname') ."',width:'450px'},
 								]],
 								fitColumns: true
 						\">
 				</select></td>
-				<td>".getCatalog('bomversion')."</td>
-				<td><input class='easyui-textbox' type='text' id='bom-bomversion' name='bom-bomversion' data-options='required:true' style='width:280px'></input></td>
+				<td>".GetCatalog('productname')."</td>
+				<td><input class='easyui-textbox' id='bom-productname' name='bom-productname' style='width:280px' data-options='readonly:true'></input></td>
 			</tr>
 			<tr>
 				<td>".getCatalog('qty')."</td>
@@ -250,8 +290,6 @@
 				<input class='easyui-textbox' id='bom-uom3code' name='bom-uom3code' style='width:280px' data-options='readonly:true'></input></td>
 			</tr>
 			<tr>
-			</tr>			
-			<tr>
 				<td>".getCatalog('mesin')."</td>
 				<td><select class='easyui-combogrid' id='bom-mesinid' name='bom-mesinid' style='width:200px' data-options=\"
 								panelWidth: '500px',
@@ -282,8 +320,8 @@
 								},
 								columns: [[
 										{field:'mesinid',title:'".getCatalog('mesinid') ."',width:'80px'},
-										{field:'kodemesin',title:'".getCatalog('kodemesi') ."',width:'100px'},
-										{field:'namamesin',title:'".getCatalog('namamesin') ."',width:'150px'},
+										{field:'kodemesin',title:'".getCatalog('kodemesin') ."',width:'100px'},
+										{field:'namamesin',title:'".getCatalog('namamesin') ."',width:'250px'},
 								]],
 								fitColumns: true
 						\">
@@ -308,7 +346,7 @@
 								method: 'get',
 								columns: [[
 										{field:'processprdid',title:'".getCatalog('processprdid') ."',width:'80px'},
-										{field:'processprdname',title:'".getCatalog('processprdname') ."',width:'100px'},
+										{field:'processprdname',title:'".getCatalog('processprdname') ."',width:'250px'},
 								]],
 								fitColumns: true
 						\">
@@ -359,16 +397,19 @@
 				{field:'productname',title:'".getCatalog('productname') ."',width:'500px'},
 				{field:'qty',title:'".getCatalog('qty') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uomcode);
+						return formatnumber('',value);
 					},width:'80px'},
+				{field:'uomcode',title:'".getCatalog('uomcode') ."',width:'80px'},
 				{field:'qty2',title:'".getCatalog('qty2') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom2code);
+						return formatnumber('',value);
 					},width:'80px'},
+				{field:'uom2code',title:'".getCatalog('uom2code') ."',width:'80px'},
 				{field:'qty3',title:'".getCatalog('qty3') ."',
 					formatter: function(value,row,index){
-						return formatnumber('',value,row.uom3code);
+						return formatnumber('',value);
 					}, width:'80px'},
+				{field:'uom3code',title:'".getCatalog('uom3code') ."',width:'80px'},
 				{field:'productbomversion',title:'".getCatalog('bom') ."',width:'300px'},
 			",
 			'columns'=>"
@@ -487,7 +528,7 @@
 								var uom2id = $('#dg-bom-bomdetail').datagrid('getEditor', {index: index, field:'uom2id'});
 								var uom3id = $('#dg-bom-bomdetail').datagrid('getEditor', {index: index, field:'uom3id'});
 								var productbomid = $('#dg-bom-bomdetail').datagrid('getEditor', {index: index, field:'productbomid'});
-								jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/indexproductplant',array('grid'=>true,'getdata'=>true)) ."',
+								jQuery.ajax({'url':'".Yii::app()->createUrl('common/product/getproductplant') ."',
 									'data':{'productid':$(productid.target).combogrid('getValue')},
 									'type':'post','dataType':'json',
 									'success':function(data)
@@ -534,10 +575,8 @@
 								var stdqty = $('#dg-bom-bomdetail').datagrid('getEditor', {index: index, field:'stdqty'});
 								var stdqty2 = $('#dg-bom-bomdetail').datagrid('getEditor', {index: index, field:'stdqty2'});
 								var stdqty3 = $('#dg-bom-bomdetail').datagrid('getEditor', {index: index, field:'stdqty3'});
-						
 								var qty2 = $('#dg-bom-bomdetail').datagrid('getEditor', {index: index, field:'qty2'});								
 								var qty3 = $('#dg-bom-bomdetail').datagrid('getEditor', {index: index, field:'qty3'});								
-			
 								$(qty2.target).numberbox('setValue',$(stdqty2.target).numberbox('getValue') * (newValue / $(stdqty.target).numberbox('getValue')));
 								$(qty3.target).numberbox('setValue',$(stdqty3.target).numberbox('getValue') * (newValue / $(stdqty.target).numberbox('getValue')));
 							}

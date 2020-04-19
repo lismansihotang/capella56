@@ -33,9 +33,9 @@ class FormrequestController extends Controller {
 		echo CJSON::encode(array(
 			'formrequestid' => $id,
 		));
-  }
+	}
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $formrequestid 		= GetSearchText(array('POST','GET','Q'),'formrequestid','','int');
 		$plantid     		= GetSearchText(array('POST','GET'),'plantid',0,'int');
 		$plantcode     		= GetSearchText(array('POST','Q'),'plantcode');
@@ -54,7 +54,7 @@ class FormrequestController extends Controller {
 		$order = GetSearchText(array('POST','GET'),'order','desc','int');
     $offset     = ($page - 1) * $rows;
     $result     = array();
-    $row        = array();
+		$row        = array();
 		if (!isset($_GET['getdataTS'])) {
     if (!isset($_GET['getdata'])) {
 			if (isset($_GET['fpp'])) {
@@ -76,8 +76,8 @@ class FormrequestController extends Controller {
 						and t.formrequestno is not null 
 						and t.recordstatus in (".getUserRecordStatus('listda').")
 						and b.plantid in (".getUserObjectValues('plant').")".
-(($plantid != '')? "and t.plantid = ".$plantid:'')."
-						and t.isjasa = 0
+						(($plantid != '')?" and t.plantid = ".$plantid:'').
+						" and t.isjasa = 0
 						",
 					array(
 						':formrequestid' => '%' . $formrequestid . '%',
@@ -106,8 +106,8 @@ class FormrequestController extends Controller {
 						and t.formrequestno is not null 
 						and t.recordstatus in (".getUserRecordStatus('listda').")
 						and b.plantid in (".getUserObjectValues('plant').")".
-(($plantid != '')? "and t.plantid = ".$plantid:'')."						
-and t.isjasa = 1
+						(($plantid != '')?" and t.plantid = ".$plantid:'').
+						" and t.isjasa = 1
 						",
 					array(
 						':formrequestid' => '%' . $formrequestid . '%',
@@ -136,8 +136,8 @@ and t.isjasa = 1
 						and t.formrequestno is not null 
 						and t.recordstatus in (".getUserRecordStatus('listda').")
 						and t.slocfromid in (".getUserObjectValues('sloc').")".
-(($plantid != '')? "and t.plantid = ".$plantid:'')."
-						and t.formrequestid in (
+						(($plantid != '')? " and t.plantid = ".$plantid:" and t.plantid like '%%' ").
+						" and t.formrequestid in (
 										select zz.formrequestid
 										from formrequestraw zz
 										where zz.qty > zz.tsqty and zz.formrequestid > 0)
@@ -158,9 +158,9 @@ and t.isjasa = 1
 						) 
 						and zt.formrequestno is not null 
 						and zt.recordstatus in (".getUserRecordStatus('listda').")
-						and zt.slocfromid in (".getUserObjectValues('sloc').")". 
-(($plantid != '')? "and zt.plantid = ".$plantid:'')."
-						and zt.formrequestid in (
+						and zt.slocfromid in (".getUserObjectValues('sloc').")".
+						(($plantid != '')? " and t.plantid = ".$plantid:" and t.plantid like '%%' ").
+						" and zt.formrequestid in (
 										select zz.formrequestid
 										from formrequestjasa zz
 										where zz.qty > zz.tsqty and zz.formrequestid > 0)
@@ -188,8 +188,8 @@ and t.isjasa = 1
 						and t.formrequestno is not null 
 						and t.recordstatus in (".getUserRecordStatus('listda').")
 						and t.slocfromid in (".getUserObjectValues('sloc').")".
-(($plantid != '')? "and t.plantid = ".$plantid:'')."
-						and t.formrequestid in (
+						(($plantid != '')? " and t.plantid = ".$plantid:" and t.plantid like '%%' ").
+						" and t.formrequestid in (
 										select zz.formrequestid
 										from formrequestraw zz
 										where zz.tsqty > 0 and zz.formrequestid > 0)
@@ -207,8 +207,8 @@ and t.isjasa = 1
 						zt.formrequestno is not null 
 						and zt.recordstatus in (".getUserRecordStatus('listda').")
 						and zt.slocfromid in (".getUserObjectValues('sloc').")".
-(($plantid != '')? "and zt.plantid = ".$plantid:'')."
-						and zt.formrequestid in (
+						(($plantid != '')? " and t.plantid = ".$plantid:" and t.plantid like '%%' ").
+						" and zt.formrequestid in (
 										select zz.formrequestid
 										from formrequestjasa zz
 										where zz.tsqty > 0 and zz.formrequestid > 0)
@@ -300,7 +300,7 @@ and t.isjasa = 1
 					':requestedbycode' => '%' . $requestedbycode . '%',
 					':formrequestdate' => '%' . $formrequestdate . '%'
 				))->queryScalar();
-				}
+			}
 			$result['total'] = $cmd;
 			if (isset($_GET['fpp'])) {
 				if ($isjasa == '0') {
@@ -321,8 +321,8 @@ and t.isjasa = 1
 						and t.formrequestno is not null 
 						and t.recordstatus in (".getUserRecordStatus('listda').")
 						and b.plantid in (".getUserObjectValues('plant').")".
-(($plantid != '')? "and t.plantid = ".$plantid:'')."
-						and t.isjasa = 0
+						(($plantid != '')? " and t.plantid = ".$plantid:'').
+						" and t.isjasa = 0
 						",
 					array(
 						':formrequestid' => '%' . $formrequestid . '%',
@@ -351,8 +351,8 @@ and t.isjasa = 1
 						and t.formrequestno is not null 
 						and t.recordstatus in (".getUserRecordStatus('listda').")
 						and b.plantid in (".getUserObjectValues('plant').")".
-(($plantid != '')? "and t.plantid = ".$plantid:'')."						
-and t.isjasa = 1
+						(($plantid != '')? " and t.plantid = ".$plantid:'').
+						" and t.isjasa = 1
 						",
 					array(
 						':formrequestid' => '%' . $formrequestid . '%',
@@ -381,7 +381,8 @@ and t.isjasa = 1
 						and t.formrequestno is not null 
 						and t.recordstatus in (".getUserRecordStatus('listda').")
 						and t.slocfromid in (".getUserObjectValues('sloc').")".
-(($plantid != '')? "and t.plantid = ".$plantid:'')."						and t.formrequestid in (
+						(($plantid != '')? " and t.plantid = ".$plantid:" and t.plantid like '%%' ").
+						" and t.formrequestid in (
 										select zz.formrequestid
 										from formrequestraw zz
 										where zz.qty > zz.tsqty and zz.formrequestid > 0)
@@ -403,7 +404,8 @@ and t.isjasa = 1
 						and zt.formrequestno is not null 
 						and zt.recordstatus in (".getUserRecordStatus('listda').")
 						and zt.slocfromid in (".getUserObjectValues('sloc').")".
-(($plantid != '')? "and zt.plantid = ".$plantid:'')."						and zt.formrequestid in (
+						(($plantid != '')? " and zt.plantid = ".$plantid:" and zt.plantid like '%%' ").
+						" and zt.formrequestid in (
 										select zz.formrequestid
 										from formrequestjasa zz
 										where zz.qty > zz.tsqty and zz.formrequestid > 0)
@@ -412,7 +414,8 @@ and t.isjasa = 1
 					array(
 						':formrequestno' => '%' . $formrequestno . '%',
 						':formrequestid' => '%' . $formrequestid . '%',
-					))->queryAll();
+					))->Text;//->queryAll();
+					$result = $cmd;
 				} else {
 					$cmd = Yii::app()->db->createCommand()->select('t.*,a.sloccode,b.plantcode,a.description as slocdesc,c.companyid,c.companyname,d.requestedbycode')
 						->from('formrequest t')
@@ -431,7 +434,8 @@ and t.isjasa = 1
 						and t.formrequestno is not null 
 						and t.recordstatus in (".getUserRecordStatus('listda').")
 						and t.slocfromid in (".getUserObjectValues('sloc').")".
-(($plantid != '')? "and t.plantid = ".$plantid:'')."						and t.formrequestid in (
+						(($plantid != '')? " and t.plantid = ".$plantid:'').
+						" and t.formrequestid in (
 										select zz.formrequestid
 										from formrequestraw zz
 										where zz.tsqty > 0 and zz.formrequestid > 0)
@@ -449,7 +453,8 @@ and t.isjasa = 1
 						zt.formrequestno is not null 
 						and zt.recordstatus in (".getUserRecordStatus('listda').")
 						and zt.slocfromid in (".getUserObjectValues('sloc').")".
-(($plantid != '')? "and zb.plantid = ".$plantid:'')."							and zt.formrequestid in (
+						(($plantid != '')? " and zb.plantid = ".$plantid:'').
+						" and zt.formrequestid in (
 										select zz.formrequestid
 										from formrequestjasa zz
 										where zz.tsqty > 0 and zz.formrequestid > 0)
@@ -541,7 +546,7 @@ and t.isjasa = 1
 					':formrequestdate' => '%' . $formrequestdate . '%'
 					))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
 			}
-			foreach ($cmd as $data) {
+			/*foreach ($cmd as $data) {
 				$row[] = array(
 					'formrequestid' => $data['formrequestid'],
 					'formrequestdate' => date(Yii::app()->params['dateviewfromdb'], strtotime($data['formrequestdate'])),
@@ -562,7 +567,7 @@ and t.isjasa = 1
 			}
 			$result = array_merge($result, array(
 				'rows' => $row
-			));
+			));*/
 		} else {
 			$formrequestid     		= GetSearchText(array('POST','GET'),'formrequestid',0,'int');
 			$cmd = Yii::app()->db->createCommand("
@@ -577,6 +582,7 @@ and t.isjasa = 1
 		}
 		} else {
 			$formrequestid     		= GetSearchText(array('POST','GET'),'formrequestid',0,'int');
+			if ($formrequestid != '') {
 			$cmd = Yii::app()->db->createCommand("
 				select a.formrequestid, b.productplanno, c.sono, d.fullname, a.slocfromid,
 				(select z.sloctoid
@@ -601,12 +607,15 @@ and t.isjasa = 1
 				where a.isjasa = 0 and a.formrequestid = ".$formrequestid
 				)
 				->queryRow();
+			} else {
+				$cmd = '';
+			}
 			$result = $cmd;
 		}
     return CJSON::encode($result);
 	}
 	public function actionSearchRaw() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -701,7 +710,7 @@ and t.isjasa = 1
     echo CJSON::encode($result);
   }
   public function actionSearchJasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -771,7 +780,7 @@ and t.isjasa = 1
     echo CJSON::encode($result);
   }
   public function actionSearchResult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -804,7 +813,8 @@ and t.isjasa = 1
 					->select('t.*,a.productcode,a.productname,e.materialtypecode,
 						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uomid) as uomcode,t.description,
 						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom2id) as uom2code,
-						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code')
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code,
+						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom4id) as uom4code')
 					->from('formrequestresult t')
 					->leftjoin('formrequest g', 'g.formrequestid = t.formrequestid')
 					->leftjoin('product a', 'a.productid = t.productid')
@@ -823,12 +833,15 @@ and t.isjasa = 1
         'qty' => Yii::app()->format->formatNumber($data['qty']),
 				'qty2' => Yii::app()->format->formatNumber($data['qty2']),
 				'qty3' => Yii::app()->format->formatNumber($data['qty3']),
+				'qty4' => Yii::app()->format->formatNumber($data['qty4']),
         'uomid' => $data['uomid'],
 				'uom2id' => $data['uom2id'],
 				'uom3id' => $data['uom3id'],
+				'uom4id' => $data['uom4id'],
         'uomcode' => $data['uomcode'],
 				'uom2code' => $data['uom2code'],
 				'uom3code' => $data['uom3code'],
+				'uom4code' => $data['uom4code'],
 				'description' => $data['description']
       );
     }
@@ -1114,7 +1127,7 @@ and t.isjasa = 1
 		$command->execute();
 	}
   public function actionSaveraw() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1169,7 +1182,7 @@ and t.isjasa = 1
 		$command->execute();
 	}
   public function actionSavejasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1219,7 +1232,7 @@ and t.isjasa = 1
 		$command->execute();
 	}
   public function actionSaveresult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -1271,7 +1284,7 @@ and t.isjasa = 1
     }
   }
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1294,7 +1307,7 @@ and t.isjasa = 1
     }
   }
   public function actionPurgeAllDetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1317,7 +1330,7 @@ and t.isjasa = 1
     }
   }
   public function actionPurgeraw() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1341,7 +1354,7 @@ and t.isjasa = 1
   }
 	
   public function actionPurgejasa() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -1364,7 +1377,7 @@ and t.isjasa = 1
     }
   }
   public function actionPurgeresult() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;

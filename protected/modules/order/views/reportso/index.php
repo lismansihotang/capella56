@@ -158,7 +158,8 @@
 			formatter: function(value,row,index){
 			return row.recordstatusname;
 		}},",
-	'searchfield'=> array ('soheaderid','plantcode','sodate','sono','customer','sales','pocustno','headernote','productname','recordstatus'),
+	'searchfield'=> array ('soheaderid','plantcode','sodate','sono','customer','sales','pocustno',
+		'headernote','productname','recordstatus'),
 	'columndetails'=> array (
 		array(
 			'id'=>'taxso',

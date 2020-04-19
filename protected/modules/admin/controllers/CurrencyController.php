@@ -9,7 +9,7 @@ class CurrencyController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$currencyid = GetSearchText(array('POST','Q'),'currencyid');
 		$countryname = GetSearchText(array('POST','Q'),'countryname');
 		$currencyname = GetSearchText(array('POST','Q'),'currencyname');
@@ -172,19 +172,24 @@ class CurrencyController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('currencyid');
-		$this->dataprint['titlecurrencyname'] = GetCatalog('currencyname');
+		$this->dataprint['countryname'] = GetSearchText(array('GET'),'countryname');
+		$this->dataprint['currencyname'] = GetSearchText(array('GET'),'currencyname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'currencyid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlecountryname'] = GetCatalog('countryname');
+		$this->dataprint['titlecurrencyname'] = GetCatalog('currencyname');
 		$this->dataprint['titlesymbol'] = GetCatalog('symbol');
 		$this->dataprint['titlei18n'] = GetCatalog('i18n');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['countryname'] = GetSearchText(array('GET'),'countryname');
-    $this->dataprint['currencyname'] = GetSearchText(array('GET'),'currencyname');
   }
 }

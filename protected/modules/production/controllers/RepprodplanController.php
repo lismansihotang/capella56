@@ -8,7 +8,7 @@ class RepprodplanController extends Controller {
       $this->renderPartial('index', array());
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $productplanid = GetSearchText(array('POST','Q'),'productplanid');
 		$sono = GetSearchText(array('POST','Q'),'sono');
 		$customer = GetSearchText(array('POST','Q'),'customer');
@@ -68,7 +68,9 @@ class RepprodplanController extends Controller {
 				':productplandate' => '%' . $productplandate . '%'
 				))->queryScalar();
     $result['total'] = $cmd;
-		$cmd = Yii::app()->db->createCommand()->select('t.*,a.sono,b.plantcode,b.companyid,c.companyname,d.fullname,e.productplanno as parentplanno')
+		$cmd = Yii::app()->db->createCommand()->select('t.*,a.sono,b.plantcode,b.companyid,c.companyname,d.fullname,e.productplanno as parentplanno,
+		(select sum(z.qty) from productplandetail z where z.productplanid = t.productplanid) as qty,
+			(select sum(z.qtyres) from productplandetail z where z.productplanid = t.productplanid) as qtyres')
 				->from('productplan t')
 				->leftjoin('soheader a', 'a.soheaderid = t.soheaderid')
 				->leftjoin('plant b', 'b.plantid = t.plantid')
@@ -120,6 +122,8 @@ class RepprodplanController extends Controller {
 				'companyname' => $data['companyname'],
 				'soheaderid' => $data['soheaderid'],
 				'sono' => $data['sono'],
+				'qty' => $data['qty'],
+				'qtyres' => $data['qtyres'],
 				'addressbookid' => $data['addressbookid'],
 				'fullname' => $data['fullname'],
 				'description' => $data['description'],

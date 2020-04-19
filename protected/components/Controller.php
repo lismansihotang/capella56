@@ -46,7 +46,7 @@ class Controller extends CController {
     } else {
 			if(!Yii::app()->request->isPostRequest)
 				throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-			header("Content-Type: application/json");
+			header('Content-Type: application/json');
 		}
   }
   public function actionUpdate() {
@@ -55,7 +55,7 @@ class Controller extends CController {
     } else {
 			if(!Yii::app()->request->isPostRequest)
 				throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-			header("Content-Type: application/json");
+			header('Content-Type: application/json');
 		}
   }
   public function actionWrite() {
@@ -64,7 +64,7 @@ class Controller extends CController {
     } else {
 			if(!Yii::app()->request->isPostRequest)
 				throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-			header("Content-Type: application/json");
+			header('Content-Type: application/json');
 		}
   }
   public function actionDelete() {
@@ -73,7 +73,7 @@ class Controller extends CController {
     } else {
 			if(!Yii::app()->request->isPostRequest)
 				throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-			header("Content-Type: application/json");
+			header('Content-Type: application/json');
 		}
   }
   public function actionApprove() {
@@ -82,7 +82,7 @@ class Controller extends CController {
     } else {
 			if(!Yii::app()->request->isPostRequest)
 				throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-			header("Content-Type: application/json");
+			header('Content-Type: application/json');
 		}
   }
   public function actionHistory() {
@@ -91,7 +91,7 @@ class Controller extends CController {
     } else {
 			if(!Yii::app()->request->isPostRequest)
 				throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-			header("Content-Type: application/json");
+			header('Content-Type: application/json');
 		}
   }
   public function actionPurge() {
@@ -100,7 +100,7 @@ class Controller extends CController {
     } else {
 			if(!Yii::app()->request->isPostRequest)
 				throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-			header("Content-Type: application/json");
+			header('Content-Type: application/json');
 		}
   }
   public function actionUpload() {
@@ -137,6 +137,14 @@ class Controller extends CController {
 		} else {
       $this->actionDataPrint();
       PrintXLS($this->menuname,$this->dataprint);
+		}
+  }
+  public function actionDowndoc() {
+		if ((Yii::app()->user->id == '') || (Yii::app()->user->id == null)) {
+			$this->redirect(Yii::app()->createUrl('site/login'));
+		} else {
+      $this->actionDataPrint();
+      PrintDoc($this->menuname,$this->dataprint);
 		}
   }
   public function actionHelp() {

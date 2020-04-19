@@ -11,6 +11,7 @@ class Form extends CPortlet {
   public $isdownload = 1;
 	public $ispdf = 1;
 	public $isxls = 1;
+	public $isdoc = 1;
 	public $writebuttons = '';
 	public $postbuttons = '';
 	public $rejectbuttons = '';
@@ -41,6 +42,7 @@ class Form extends CPortlet {
 	public $rejecturl = '';
 	public $downpdf = '';
 	public $downxls = '';
+	public $downdoc = '';
 	public $columndetails = null; //array column details
   protected function renderContent() {
 		$this->render('form');

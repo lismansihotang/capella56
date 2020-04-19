@@ -23,7 +23,7 @@ class GroupaccessController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$groupaccessid = GetSearchText(array('POST','Q'),'groupaccessid');
 		$groupname = GetSearchText(array('POST','Q'),'groupname');
 		$menuname = GetSearchText(array('POST','Q'),'menuname');
@@ -96,7 +96,7 @@ class GroupaccessController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function actionsearchgroupmenu() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id=0;
 		if (isset($_POST['id']))
 		{
@@ -152,14 +152,8 @@ class GroupaccessController extends Controller {
 		$result=array_merge($result,array('rows'=>$row));
 		return CJSON::encode($result);
 	}
-	public function actionGetData() {
-		$id = rand(-1, -1000000000);
-		echo CJSON::encode(array(
-			'groupaccessid' => $id
-		));
-	}
 	public function actionsearchuserdash() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id=0;
 		if (isset($_POST['id']))
 		{
@@ -173,14 +167,7 @@ class GroupaccessController extends Controller {
 		{
 			$id = $_POST['groupaccessid'];
 		}
-		$userdashid = GetSearchText(array('POST','Q'),'userdashid');
-		$groupname = GetSearchText(array('POST','Q'),'groupname');
-		$menuname = GetSearchText(array('POST','Q'),'menuname');
-		$widget = GetSearchText(array('POST','Q'),'widget');
-		$width = GetSearchText(array('POST','Q'),'width');
-		$height = GetSearchText(array('POST','Q'),'height');
-		$left = GetSearchText(array('POST','Q'),'left');
-		$top = GetSearchText(array('POST','Q'),'top');
+		$menuname = GetSearchText(array('POST','GET'),'menuname');
 		$page = GetSearchText(array('POST','GET'),'page',1,'int');
 		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
 		$sort = GetSearchText(array('POST','GET'),'sort','userdashid','int');
@@ -189,44 +176,41 @@ class GroupaccessController extends Controller {
 		$result = array();
 		$row = array();
 		$cmd = Yii::app()->db->createCommand()
-			->select('count(1) as total')
+			->select('count(1) as total')	
 			->from('userdash t')
-			->leftjoin('groupaccess a','a.groupaccessid = t.groupaccessid')
-			->leftjoin('widget b','b.widgetid = t.widgetid')
-			->leftjoin('menuaccess c','c.menuaccessid = t.menuaccessid')
-			->where('(t.groupaccessid = :groupaccessid)',
-					array(':groupaccessid'=>$id))
+			->leftjoin('menuaccess q','q.menuaccessid=t.menuaccessid')
+			->leftjoin('widget r','r.widgetid=t.widgetid')
+			->where("t.groupaccessid = ".$id)			
 			->queryScalar();
 		$result['total'] = $cmd;
 		$cmd = Yii::app()->db->createCommand()
-			->select('t.userdashid,t.groupaccessid,t.width,t.height,t.left,t.top,b.widgetid,b.widgetname,c.menuaccessid,c.menuname')			
+			->select('t.*,r.widgetname,q.menuname')	
 			->from('userdash t')
-			->leftjoin('groupaccess a','a.groupaccessid = t.groupaccessid')
-			->leftjoin('widget b','b.widgetid = t.widgetid')
-			->leftjoin('menuaccess c','c.menuaccessid = t.menuaccessid')
-			->where('(t.groupaccessid = :groupaccessid)',
-				array(':groupaccessid'=>$id))
+			->leftjoin('menuaccess q','q.menuaccessid=t.menuaccessid')
+			->leftjoin('widget r','r.widgetid=t.widgetid')
+			->where('t.groupaccessid = '.$id)
 			->offset($offset)
 			->limit($rows)
 			->order($sort.' '.$order)
-			->queryAll();
+			->queryAll();		
 		foreach($cmd as $data) {	
 			$row[] = array(
-			'userdashid'=>$data['userdashid'],
-			'groupaccessid'=>$data['groupaccessid'],
-			'groupname'=>$data['groupname'],
-			'menuaccessid'=>$data['menuaccessid'],
-			'menuname'=>$data['menuname'],
-			'widgetid'=>$data['widgetid'],
-			'widgetname'=>$data['widgetname'],
-			'width'=>$data['width'],
-			'height'=>$data['height'],
-			'left'=>$data['left'],
-			'top'=>$data['top'],
+				'userdashid'=>$data['userdashid'],
+				'groupaccessid'=>$data['groupaccessid'],
+				'widgetid'=>$data['widgetid'],
+				'widgetname'=>$data['widgetname'],
+				'menuaccessid'=>$data['menuaccessid'],
+				'menuname'=>$data['menuname'],
 			);
 		}
 		$result=array_merge($result,array('rows'=>$row));
 		return CJSON::encode($result);
+	}
+	public function actionGetData() {
+		$id = rand(-1, -1000000000);
+		echo CJSON::encode(array(
+			'groupaccessid' => $id
+		));
 	}
 	private function ModifyData($connection,$arraydata) {
 		$id = (int)$arraydata[0];
@@ -293,7 +277,6 @@ class GroupaccessController extends Controller {
 			$sql = 'call Updategroupmenu(:vid,:vmenuaccessid,:vgroupaccessid,:visread,:viswrite,:vispost,:visreject,:visupload,:visdownload,:vispurge,:vdatauser)';
 			$command=$connection->createCommand($sql);
 			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-			$this->DeleteLock($this->menuname, $arraydata[0]);
 		}
 		$command->bindvalue(':vgroupaccessid',$arraydata[1],PDO::PARAM_STR);
 		$command->bindvalue(':vmenuaccessid',$arraydata[2],PDO::PARAM_STR);
@@ -324,49 +307,39 @@ class GroupaccessController extends Controller {
 			GetMessage(true,implode(" ",$e->errorInfo));
 		}
 	}
-	private function ModifyDataUserdash($connection,$arraydata) {
+	private function ModifyDataUserDash($connection,$arraydata) {	
 		$id = (isset($arraydata[0])?$arraydata[0]:'');
 		if ($id == '') {
-			$sql = 'insert into userdash (groupaccessid, widgetid,menuaccessid, width, height, `left`, top) 
-				values (:vgroupaccessid, :vwidgetid, :vmenuaccessid, :vwidth, :vheight, :vleft, :vtop)';
+			$sql = 'call Insertuserdash(:vgroupaccessid,:vwidgetid,:vmenuaccessid,:vdatauser)';
 			$command=$connection->createCommand($sql);
 		}
 		else {
-			$sql = 'update userdash set groupaccessid = :vgroupaccessid, widgetid = :vwidgetid, menuaccessid = :vmenuaccessid, width = :vwidth, 
-				height = :vheight, `left` = :vleft, top = :vtop where userdashid = :vid';
+			$sql = 'call Updateuserdash(:vid,:vgroupaccessid,:vwidgetid,:vmenuaccessid,:vdatauser)';
 			$command=$connection->createCommand($sql);
 			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-			$this->DeleteLock($this->menuname, $arraydata[0]);
 		}
 		$command->bindvalue(':vgroupaccessid',$arraydata[1],PDO::PARAM_STR);
 		$command->bindvalue(':vwidgetid',$arraydata[2],PDO::PARAM_STR);
 		$command->bindvalue(':vmenuaccessid',$arraydata[3],PDO::PARAM_STR);
-		$command->bindvalue(':vwidth',$arraydata[4],PDO::PARAM_STR);
-		$command->bindvalue(':vheight',$arraydata[5],PDO::PARAM_STR);
-		$command->bindvalue(':vleft',$arraydata[6],PDO::PARAM_STR);
-		$command->bindvalue(':vtop',$arraydata[7],PDO::PARAM_STR);
+		$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 		$command->execute();
 	}
-	public function actionSaveuserdash() {
+	public function actionSaveUserDash() {
 		parent::actionWrite();
 		$connection=Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			$this->ModifyDataUserdash($connection,array((isset($_POST['userdashid'])?$_POST['userdashid']:''),
+			$this->ModifyDataUserDash($connection,array((isset($_POST['userdashid'])?$_POST['userdashid']:''),
 				$_POST['groupaccessid'],
 				$_POST['widgetid'],
-				$_POST['menuaccessid'],
-				$_POST['width'],
-				$_POST['height'],
-        $_POST['left'],
-        $_POST['top']));
+				$_POST['menuaccessid']));
 			$transaction->commit();
 			GetMessage(false,getcatalog('insertsuccess'));
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
 			GetMessage(true,implode(" ",$e->errorInfo));
-		}	
+		}
 	}
 	public function actionPurge() {
 		parent::actionPurge();
@@ -389,12 +362,12 @@ class GroupaccessController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	public function actionPurgegroupmenu() {
 		parent::actionPurge();
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		if (isset($_POST['id'])) {
 			$id=$_POST['id'];
 			$connection=Yii::app()->db;
@@ -414,11 +387,12 @@ class GroupaccessController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}	
 	public function actionPurgeuserdash() {
 		parent::actionPurge();
+		header('Content-Type: application/json');
 		if (isset($_POST['id'])) {
 			$id=$_POST['id'];
 			$connection=Yii::app()->db;
@@ -434,22 +408,27 @@ class GroupaccessController extends Controller {
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
-				GetMessage(true,implode($e->errorInfo));
+				GetMessage(true,implode(" ",$e->errorInfo));
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
-	}
+	}	
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('groupaccessid');
+		$this->dataprint['groupname'] = GetSearchText(array('GET'),'groupname');
+		$this->dataprint['menuname'] = GetSearchText(array('GET'),'menuname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'groupaccessid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlegroupname'] = GetCatalog('groupname');
 		$this->dataprint['titlemenuname'] = GetCatalog('menuname');
 		$this->dataprint['titlemenuurl'] = GetCatalog('menuurl');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['groupname'] = GetSearchText(array('GET'),'groupname');
-    $this->dataprint['menuname'] = GetSearchText(array('GET'),'menuname');
   }
 }

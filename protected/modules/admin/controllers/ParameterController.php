@@ -9,7 +9,7 @@ class ParameterController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$parameterid = GetSearchText(array('POST','Q'),'parameterid');
 		$paramname = GetSearchText(array('POST','Q'),'paramname');
 		$paramvalue = GetSearchText(array('POST','Q'),'paramvalue');
@@ -165,21 +165,26 @@ class ParameterController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('languageid');
+		$this->dataprint['paramname'] = GetSearchText(array('GET'),'paramname');
+		$this->dataprint['paramvalue'] = GetSearchText(array('GET'),'paramvalue');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$this->dataprint['modulename'] = GetSearchText(array('GET'),'modulename');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'paramid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titleparamname'] = GetCatalog('paramname');
 		$this->dataprint['titleparamvalue'] = GetCatalog('paramvalue');
 		$this->dataprint['titledescription'] = GetCatalog('description');
 		$this->dataprint['titlemodulename'] = GetCatalog('modulename');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['paramname'] = GetSearchText(array('GET'),'paramname');
-    $this->dataprint['paramvalue'] = GetSearchText(array('GET'),'paramvalue');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
-    $this->dataprint['modulename'] = GetSearchText(array('GET'),'modulename');
   }
 }

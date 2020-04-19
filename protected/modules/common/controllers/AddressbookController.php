@@ -9,7 +9,7 @@ class AddressbookController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$addressbookid = GetSearchText(array('POST','Q'),'addressbookid');
 		$fullname = GetSearchText(array('POST','Q'),'fullname');
 		$taxno = GetSearchText(array('POST','Q'),'taxno');
@@ -240,15 +240,22 @@ class AddressbookController extends Controller {
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('addressbookid');
+		$this->dataprint['fullname'] = GetSearchText(array('GET'),'fullname');
+		$this->dataprint['taxno'] = GetSearchText(array('GET'),'taxno');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'languageid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlefullname'] = GetCatalog('fullname');
 		$this->dataprint['titletaxno'] = GetCatalog('taxno');
 		$this->dataprint['titleiscustomer'] = GetCatalog('iscustomer');
+		$this->dataprint['titleisemployee'] = GetCatalog('isemployee');
 		$this->dataprint['titleisvendor'] = GetCatalog('isvendor');
+		$this->dataprint['titleishospital'] = GetCatalog('ishospital');
 		$this->dataprint['titleisexpedisi'] = GetCatalog('isexpedisi');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['fullname'] = GetSearchText(array('GET'),'fullname');
-    $this->dataprint['taxno'] = GetSearchText(array('GET'),'taxno');
   }
 }

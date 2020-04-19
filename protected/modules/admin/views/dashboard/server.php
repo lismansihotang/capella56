@@ -1,10 +1,10 @@
 <script>
-setInterval(GetDataServer,50000);
+setInterval(GetDataServer,500000);
 $(document).ready(function() {
   GetDataServer();
 });
-function GetDataServer() {
-  jQuery.ajax({'url':'<?php echo Yii::app()->params['SysInfoServer']?>',
+async function GetDataServer() {
+  const result = await jQuery.ajax({'url':'<?php echo Yii::app()->params['SysInfoServer']?>',
 		'type':'post','dataType':'json',
 		'success':function(data)
 		{
@@ -58,7 +58,8 @@ function GetDataServer() {
       };
       document.getElementById("filesystem").innerHTML	= ContentFile;
 		},
-		'cache':false});
+    'cache':false});
+    return result;
 }
 </script>
 <div class="card">

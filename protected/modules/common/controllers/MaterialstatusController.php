@@ -9,7 +9,7 @@ class MaterialstatusController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$materialstatusid = GetSearchText(array('POST','Q'),'materialstatusid');
 		$materialstatusname = GetSearchText(array('POST','Q'),'materialstatusname');
 		$page = GetSearchText(array('POST','GET'),'page',1,'int');
@@ -155,10 +155,15 @@ class MaterialstatusController extends Controller {
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('materialstatusid');
+		$this->dataprint['materialstatusname'] = GetSearchText(array('GET'),'materialstatusname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'materialstatusid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlematerialstatusname'] = GetCatalog('materialstatusname');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['materialstatusname'] = GetSearchText(array('GET'),'materialstatusname');
   }
 }

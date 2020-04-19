@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/identitytype/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/identitytype/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/identitytype/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/identitytype/downdoc'),
 	'columns'=>"
 		{
 			field:'identitytypeid',
@@ -36,7 +37,7 @@
 			sortable:'true',
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}

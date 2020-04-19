@@ -9,10 +9,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/groupaccess/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/groupaccess/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/groupaccess/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/groupaccess/downdoc'),
 	'columns'=>"
 		{
 			field:'groupaccessid',
-			title:'".GetCatalog('groupaccessid')."',
+			title:localStorage.getItem('cataloggroupaccessid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -20,7 +21,7 @@
 		}},
 		{
 			field:'groupname',
-			title:'".GetCatalog('groupname')."',
+			title:localStorage.getItem('cataloggroupname'),
 			editor:'text',
 			width:'600px',
 			sortable: true,
@@ -29,14 +30,14 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus')."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}
@@ -45,14 +46,22 @@
 	'headerform'=>"
 		<table cellpadding='5'>
 			<tr>
-				<td>".GetCatalog('groupname')."</td>
+				<td id='groupaccesstext-groupname'></td>
 				<td><input class='easyui-textbox' id='groupaccess-groupname' name='groupaccess-groupname' data-options=\"required:true,width:'300px'\"></input></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('recordstatus')."</td>
+				<td id='groupaccesstext-recordstatus'></td>
 				<td><input id='groupaccess-recordstatus' name='groupaccess-recordstatus' type='checkbox'></input></td>
 			</tr>
 		</table>
+	",
+	'addonscripts'=> "
+	$(document).ready(function(){
+		var parel = document.getElementById('groupaccesstext-groupname');
+		parel.innerHTML = localStorage.getItem('cataloggroupname');
+		parel = document.getElementById('groupaccesstext-recordstatus');
+		parel.innerHTML = localStorage.getItem('catalogrecordstatus');
+	});
 	",
 	'loadsuccess' => "
 		$('#groupaccess-groupname').textbox('setValue',data.groupname);
@@ -77,91 +86,91 @@
 				{field:'description',title:'".GetCatalog('menudesc')."',width:'300px'},
 				{
 					field:'isread',
-					title:'".GetCatalog('isread')."',
+					title:localStorage.getItem('catalogisread'),
 					align:'center',
 					width:'50px',
 					sortable: true,
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'iswrite',
-					title:'".GetCatalog('iswrite')."',
+					title:localStorage.getItem('catalogiswrite'),
 					align:'center',
 					width:'50px',
 					sortable: true,
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'ispost',
-					title:'".GetCatalog('ispost')."',
+					title:localStorage.getItem('catalogispost'),
 					align:'center',
 					width:'50px',
 					sortable: true,
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'isreject',
-					title:'".GetCatalog('isreject')."',
+					title:localStorage.getItem('catalogisreject'),
 					align:'center',
 					width:'50px',
 					sortable: true,
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'isupload',
-					title:'".GetCatalog('isupload')."',
+					title:localStorage.getItem('catalogisupload'),
 					align:'center',
 					width:'50px',
 					sortable: true,
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'isdownload',
-					title:'".GetCatalog('isdownload')."',
+					title:localStorage.getItem('catalogisdownload'),
 					align:'center',
 					width:'50px',
 					sortable: true,
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'ispurge',
-					title:'".GetCatalog('ispurge')."',
+					title:localStorage.getItem('catalogispurge'),
 					align:'center',
 					width:'50px',
 					sortable: true,
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
@@ -171,7 +180,7 @@
 			'columns'=>"
 				{
 					field:'groupmenuid',
-					title:'".GetCatalog('groupmenuid')."',
+					title:localStorage.getItem('cataloggroupmenuid'),
 					width:'80px',
 					hidden:true,
 					sortable: true,
@@ -181,7 +190,7 @@
 				},
 				{
 					field:'groupaccessid',
-					title:'".GetCatalog('groupaccessid')."',
+					title:localStorage.getItem('cataloggroupaccessid'),
 					width:'80px',
 					hidden:true,
 					sortable: true,
@@ -191,7 +200,7 @@
 				},
 				{
 					field:'menuaccessid',
-					title:'".GetCatalog('menuaccess') ."',
+					title:localStorage.getItem('catalogmenuaccess'),
 					editor:{
 						type:'combogrid',
 						options:{
@@ -203,12 +212,12 @@
 							textField:'menuname',
 							url:'".$this->createUrl('menuaccess/index',array('grid'=>true,'combo'=>true)) ."',
 							fitColumns:true,
-							loadMsg: '".GetCatalog('pleasewait')."',
+							loadMsg: localStorage.getItem('catalogpleasewait'),
 							columns:[[
-								{field:'menuaccessid',title:'".GetCatalog('menuaccessid')."',width:'50px'},
-								{field:'menuname',title:'".GetCatalog('menuname')."',width:'200px'},
-								{field:'description',title:'".GetCatalog('description')."',width:'300px'},
-								{field:'menuurl',title:'".GetCatalog('description')."',width:'250px'},
+								{field:'menuaccessid',title:localStorage.getItem('catalogmenuaccessid'),width:'50px'},
+								{field:'menuname',title:localStorage.getItem('catalogmenuname'),width:'200px'},
+								{field:'description',title:localStorage.getItem('catalogdescription'),width:'300px'},
+								{field:'menuurl',title:localStorage.getItem('catalogmenuurl'),width:'250px'},
 							]]
 						}	
 					},
@@ -219,98 +228,98 @@
 				}},
 				{
 					field:'isread',
-					title:'".GetCatalog('isread')."',
+					title:localStorage.getItem('catalogisread'),
 					editor:{type:'checkbox',options:{on:'1',off:'0'}},
 					sortable: true,
 					width:'50px',
 					align: 'center',
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'iswrite',
-					title:'".GetCatalog('iswrite')."',
+					title:localStorage.getItem('catalogiswrite'),
 					editor:{type:'checkbox',options:{on:'1',off:'0'}},
 					sortable: true,
 					width:'50px',
 					align: 'center',
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'ispost',
-					title:'".GetCatalog('ispost')."',
+					title:localStorage.getItem('catalogispost'),
 					editor:{type:'checkbox',options:{on:'1',off:'0'}},
 					sortable: true,
 					width:'50px',
 					align: 'center',
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'isreject',
-					title:'".GetCatalog('isreject')."',
+					title:localStorage.getItem('catalogisreject'),
 					editor:{type:'checkbox',options:{on:'1',off:'0'}},
 					sortable: true,
 					width:'50px',
 					align: 'center',
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'isupload',
-					title:'".GetCatalog('isupload')."',
+					title:localStorage.getItem('catalogisupload'),
 					editor:{type:'checkbox',options:{on:'1',off:'0'}},
 					sortable: true,
 					width:'50px',
 					align: 'center',
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'isdownload',
-					title:'".GetCatalog('isdownload')."',
+					title:localStorage.getItem('catalogisdownload'),
 					editor:{type:'checkbox',options:{on:'1',off:'0'}},
 					sortable: true,
 					width:'50px',
 					align: 'center',
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
 				}},
 				{
 					field:'ispurge',
-					title:'".GetCatalog('ispurge')."',
+					title:localStorage.getItem('catalogispurge'),
 					editor:{type:'checkbox',options:{on:'1',off:'0'}},
 					sortable: true,
 					width:'50px',
 					align: 'center',
 					formatter: function(value,row,index){
 						if (value == 1){
-							return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+							return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 						} else {
 							return '';
 						}
@@ -326,181 +335,85 @@
 			'updateurl'=>Yii::app()->createUrl('admin/groupaccess/saveuserdash'),
 			'destroyurl'=>Yii::app()->createUrl('admin/groupaccess/purgeuserdash'),
 			'subs'=>"
+				{field:'widgetname',title:localStorage.getItem('catalogwidgetname'),width:'300px'},
+				{field:'menuname',title:localStorage.getItem('catalogmenuname'),width:'300px'},
+			",
+			'columns'=>"
+				{
+					field:'userdashid',
+					title:localStorage.getItem('cataloguserdashid'),
+					width:'80px',
+					hidden:true,
+					sortable: true,
+					formatter: function(value,row,index){
+						return value;
+					}
+				},
+				{
+					field:'groupaccessid',
+					title:localStorage.getItem('cataloggroupaccessid'),
+					width:'80px',
+					hidden:true,
+					sortable: true,
+					formatter: function(value,row,index){
+						return value;
+					}
+				},
 				{
 					field:'widgetid',
-					title:'".GetCatalog('widget') ."',
+					title:localStorage.getItem('catalogwidget'),
+					editor:{
+						type:'combogrid',
+						options:{
+							panelWidth:'450px',
+							mode : 'remote',
+							method:'get',
+							idField:'widgetid',
+							textField:'widgetname',
+							pagination:true,
+							required:true,
+							url:'".$this->createUrl('widget/index',array('grid'=>true,'combo'=>true)) ."',
+							fitColumns:true,
+							loadMsg: localStorage.getItem('catalogpleasewait'),
+							columns:[[
+								{field:'widgetid',title:localStorage.getItem('catalogwidgetid'),width:'50px'},
+								{field:'widgetname',title:localStorage.getItem('catalogwidgetname'),width:'150px'},
+							]]
+						}	
+					},
+					width:'250px',
+					sortable: true,
 					formatter: function(value,row,index){
 						return row.widgetname;
 				}},
 				{
-					field:'width',
-					title:'".GetCatalog('width') ."',
-					width:'80px',
+					field:'menuaccessid',
+					title:localStorage.getItem('catalogmenuaccess'),
+					editor:{
+						type:'combogrid',
+						options:{
+							panelWidth:'450px',
+							mode : 'remote',
+							method:'get',
+							idField:'menuaccessid',
+							textField:'menuname',
+							pagination:true,
+							required:true,
+							url:'".$this->createUrl('menuaccess/index',array('grid'=>true,'combo'=>true)) ."',
+							fitColumns:true,
+							loadMsg: localStorage.getItem('catalogpleasewait'),
+							columns:[[
+								{field:'menuaccessid',title:localStorage.getItem('catalogmenuaccessid'),width:'50px'},
+								{field:'menuname',title:localStorage.getItem('catalogmenuname'),width:'150px'},
+							]]
+						}	
+					},
+					width:'200px',
 					sortable: true,
 					formatter: function(value,row,index){
-						return row.width;
+						return row.menuname;
 				}},
-				{
-					field:'height',
-					title:'".GetCatalog('height') ."',
-					width:'100px',
-					sortable: true,
-					formatter: function(value,row,index){
-						return row.height;
-				}},
-				{
-					field:'left',
-					title:'".GetCatalog('left') ."',
-					width:'100px',
-					sortable: true,
-					formatter: function(value,row,index){
-						return row.left;
-				}},
-				{
-					field:'top',
-					title:'".GetCatalog('top') ."',
-					width:'100px',
-					sortable: true,
-					formatter: function(value,row,index){
-						return row.top;
-				}},
-			",
-			'searchfield'=> array ('menuname'),
-			'columns'=>"
-			{
-				field:'userdashid',
-				title:'".GetCatalog('userdashid') ."',
-				sortable: true,
-				width:'50px',
-				formatter: function(value,row,index){
-						return value;
-			}},
-			{
-				field:'groupaccessid',
-				title:'".GetCatalog('groupaccessid')."',
-				width:'80px',
-				hidden:true,
-				sortable: true,
-				formatter: function(value,row,index){
-					return value;
-				}
-			},
-			{
-				field:'widgetid',
-				title:'".GetCatalog('widget') ."',
-				editor:{
-					type:'combogrid',
-					options:{
-						panelWidth:'450px',
-						mode : 'remote',
-						method:'get',
-						idField:'widgetid',
-						textField:'widgetname',
-						pagination:true,
-						required:true,
-						queryParams: {
-							combo:true,
-						},
-						url:'".$this->createUrl('widget/index',array('grid'=>true)) ."',
-						fitColumns:true,
-						loadMsg: '".GetCatalog('pleasewait')."',
-						columns:[[
-							{field:'widgetid',title:'".GetCatalog('widgetid')."',width:'50px'},
-							{field:'widgetname',title:'".GetCatalog('widgetname')."',width:'150px'},
-						]]
-					}	
-				},
-				width:'250px',
-				sortable: true,
-				formatter: function(value,row,index){
-					return row.widgetname;
-			}},
-			{
-				field:'menuaccessid',
-				title:'".GetCatalog('menuaccess') ."',
-				editor:{
-					type:'combogrid',
-					options:{
-						panelWidth:'450px',
-						mode : 'remote',
-						method:'get',
-						idField:'menuaccessid',
-						textField:'menuname',
-						pagination:true,
-						required:true,
-						queryParams: {
-							combo:true,
-						},
-						url:'".$this->createUrl('menuaccess/index',array('grid'=>true)) ."',
-						fitColumns:true,
-						loadMsg: '".GetCatalog('pleasewait')."',
-						columns:[[
-							{field:'menuaccessid',title:'".GetCatalog('menuaccessid')."',width:'50px'},
-							{field:'menuname',title:'".GetCatalog('menuname')."',width:'150px'},
-						]]
-					}	
-				},
-				width:'200px',
-				sortable: true,
-				formatter: function(value,row,index){
-					return row.menuname;
-			}},
-			{
-				field:'width',
-				title:'".GetCatalog('width') ."',
-				editor:{
-					type:'validatebox',
-					options:{
-						required:true,
-					}
-				},
-				width:'80px',
-				sortable: true,
-				formatter: function(value,row,index){
-					return value;
-			}},
-			{
-				field:'height',
-				title:'".GetCatalog('height') ."',
-				editor:{
-					type:'validatebox',
-					options:{
-						required:true,
-					}
-				},
-				width:'100px',
-				sortable: true,
-				formatter: function(value,row,index){
-					return value;
-			}},
-			{
-				field:'left',
-				title:'".GetCatalog('left') ."',
-				editor:{
-					type:'validatebox',
-					options:{
-						required:true,
-					}
-				},
-				width:'100px',
-				sortable: true,
-				formatter: function(value,row,index){
-					return value;
-			}},
-			{
-				field:'top',
-				title:'".GetCatalog('top') ."',
-				editor:{
-					type:'validatebox',
-					options:{
-						required:true,
-					}
-				},
-				width:'100px',
-				sortable: true,
-				formatter: function(value,row,index){
-					return value;
-			}},"
+			"
 		)
 	)
 ));

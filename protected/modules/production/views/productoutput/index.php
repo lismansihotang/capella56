@@ -96,7 +96,7 @@
 		});
 	",
 	'searchfield'=> array ('productoutputid','plantcode','productoutputno','productoutputdate','sono','productplanno','customer','headernote',
-		'processprdname','recordstatus'),
+		'processprdname','sloccode','recordstatus'),
 	'headerform'=> "
 		<table cellpadding='5'>
 		<tr>

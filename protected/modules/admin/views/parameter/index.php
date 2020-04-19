@@ -8,10 +8,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/parameter/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/parameter/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/parameter/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/parameter/downdoc'),
 	'columns'=>"
 		{
 		field:'parameterid',
-		title:'".GetCatalog('parameterid') ."',
+		title:localStorage.getItem('catalogparameterid'),
 		sortable: true,
 		width:'80px',
 		formatter: function(value,row,index){
@@ -19,7 +20,7 @@
 	}},
 	{
 		field:'paramname',
-		title:'".GetCatalog('paramname') ."',
+		title:localStorage.getItem('catalogparamname'),
 		editor:'text',
 		width:'250px',
 		sortable: true,
@@ -28,7 +29,7 @@
 	}},
 	{
 		field:'paramvalue',
-		title:'".GetCatalog('paramvalue') ."',
+		title:localStorage.getItem('catalogparamvalue'),
 		editor:'text',
 		width:'150px',
 		sortable: true,
@@ -37,7 +38,7 @@
 	}},
 	{
 		field:'description',
-		title:'".GetCatalog('description') ."',
+		title:localStorage.getItem('catalogdescription'),
 		editor:'text',
 		width:'300px',
 		sortable: true,
@@ -46,7 +47,7 @@
 	}},
 	{
 		field:'moduleid',
-		title:'".GetCatalog('module') ."',
+		title:localStorage.getItem('catalogmodule'),
 		editor:{
 			type:'combogrid',
 			options:{
@@ -58,11 +59,11 @@
 				url:'".$this->createUrl('modules/index',array('grid'=>true)) ."',
 				fitColumns:true,
 				required:true,
-				loadMsg: '".GetCatalog('pleasewait')."',
+				loadMsg: localStorage.getItem('catalogpleasewait'),
 				columns:[[
-					{field:'moduleid',title:'".GetCatalog('moduleid')."',width:'50px'},
-					{field:'modulename',title:'".GetCatalog('modulename')."',width:'100px'},
-					{field:'moduledesc',title:'".GetCatalog('moduledesc')."',width:'250px'},
+					{field:'moduleid',title:localStorage.getItem('catalogmoduleid'),width:'50px'},
+					{field:'modulename',title:localStorage.getItem('catalogrmodulename'),width:'100px'},
+					{field:'moduledesc',title:localStorage.getItem('catalogmoduledesc'),width:'250px'},
 				]]
 			}	
 		},
@@ -73,14 +74,14 @@
 	}},
 	{
 		field:'recordstatus',
-		title:'".GetCatalog('recordstatus') ."',
+		title:localStorage.getItem('catalogrecordstatus'),
 		align:'center',
 		width:'80px',
 		editor:{type:'checkbox',options:{on:'1',off:'0'}},
 		sortable: true,
 		formatter: function(value,row,index){
 			if (value == 1){
-				return '<img src=\"".Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
+				return '<img src=\"".Yii::app()->request->baseUrl."/images/ok.png"."\"></img>';
 			} else {
 				return '';
 			}

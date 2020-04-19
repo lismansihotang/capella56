@@ -1,7 +1,7 @@
 /**
- * EasyUI for jQuery 1.6.2
+ * EasyUI for jQuery 1.9.4
  * 
- * Copyright (c) 2009-2018 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2020 www.jeasyui.com. All rights reserved.
  *
  * Licensed under the freeware license: http://www.jeasyui.com/license_freeware.php
  * To use it on other terms please contact us: info@jeasyui.com
@@ -9,7 +9,7 @@
  */
 (function($){
 var _1;
-$(document).unbind(".propertygrid").bind("mousedown.propertygrid",function(e){
+$(document)._unbind(".propertygrid")._bind("mousedown.propertygrid",function(e){
 var p=$(e.target).closest("div.datagrid-view,div.combo-panel");
 if(p.length){
 return;
@@ -172,7 +172,7 @@ var _30=$.data(_2f,"datagrid");
 var dc=_30.dc;
 var _31=dc.body1.add(dc.body2);
 var _32=($.data(_31[0],"events")||$._data(_31[0],"events")).click[0].handler;
-_31.unbind("click").bind("click",function(e){
+_31._unbind("click")._bind("click",function(e){
 var tt=$(e.target);
 var _33=tt.closest("span.datagrid-row-expander");
 if(_33.length){

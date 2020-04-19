@@ -14,7 +14,7 @@ class MenuauthController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$menuauthid = GetSearchText(array('POST','Q'),'menuauthid');
 		$menuobject = GetSearchText(array('POST','Q'),'menuobject');
 		$menuvalueid = GetSearchText(array('POST','Q'),'menuvalueid');
@@ -76,7 +76,7 @@ class MenuauthController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function actionsearchgroupmenuauth() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id = 0;	
 		if (isset($_POST['id'])) {
 			$id = $_POST['id'];
@@ -242,11 +242,11 @@ class MenuauthController extends Controller {
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
+				GetMessage(true,implode($e->errorInfo));
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	public function actionPurgeGroupmenuauth() {
@@ -256,7 +256,7 @@ class MenuauthController extends Controller {
 			$connection=Yii::app()->db;
 			$transaction=$connection->beginTransaction();
 			try {
-				$sql = 'call Purgegroupmenuauth(:vid,:vdatauser)';
+				$sql = 'call Purgegroupmenuauth(:vid,:vcreatedby)';
 				$command=$connection->createCommand($sql);
 				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
@@ -266,22 +266,27 @@ class MenuauthController extends Controller {
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
+				GetMessage(true,implode($e->errorInfo));
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('menuauthid');
+		$this->dataprint['menuobject'] = GetSearchText(array('GET'),'menuobject');
+		$this->dataprint['groupname'] = GetSearchText(array('GET'),'groupname');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'menuauthid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlemenuobject'] = GetCatalog('menuobject');
 		$this->dataprint['titlegroupname'] = GetCatalog('groupname');
-		$this->dataprint['titlemenuvalue'] = GetCatalog('menuvalueid');
+		$this->dataprint['titlemenuvalue'] = GetCatalog('menuvalue');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['menuobject'] = GetSearchText(array('GET'),'menuobject');
-    $this->dataprint['groupname'] = GetSearchText(array('GET'),'groupname');
   }
 }

@@ -22,29 +22,8 @@ class SupplierController extends Controller {
 		else
 			$this->renderPartial('index',array());
 	}
-	public function actionIndexpurchinforec() {
-		parent::actionIndex();
-		if(isset($_GET['grid']))
-			echo $this->actionSearchpurchinforec();
-		else
-			$this->renderPartial('index',array());
-	}
-	public function actionIndexsupplierpo() {
-		parent::actionIndex();
-		if(isset($_GET['grid']))
-			echo $this->actionsearchsupplierpo();
-		else
-			$this->renderPartial('index',array());
-  }
-  public function actionIndexinvoiceap() {
-		parent::actionIndex();
-		if(isset($_GET['grid']))
-			echo $this->actionsearchinvoiceap();
-		else
-			$this->renderPartial('index',array());
-	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$addressbookid = GetSearchText(array('POST','Q'),'addressbookid');
 		$fullname = GetSearchText(array('POST','Q'),'fullname');
 		$bankname = GetSearchText(array('POST','Q'),'bankname');
@@ -63,143 +42,143 @@ class SupplierController extends Controller {
     $row        = array();
 		$dependency = new CDbCacheDependency('SELECT MAX(updatedate) FROM addressbook');
 		if (!isset($_GET['getdata'])) {
-      if (isset($_GET['combo'])) {
-        $cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-          ->select('count(1) as total')
-          ->from('addressbook t')
-          ->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
-          ->where("((coalesce(fullname,'') like :fullname) 
-          or (coalesce(addressbookid,'') like :addressbookid)
-          or (coalesce(bankname,'') like :bankname)
-          or (coalesce(accountowner,'') like :accountowner)
-          ) 
-          and t.isvendor = 1 and t.recordstatus = 1",
-              array(
-              ':fullname'=>$fullname,
-              ':addressbookid'=>$addressbookid,
-              ':bankname'=>$bankname,
-              ':accountowner'=>$accountowner
-              ))
-          ->queryScalar();
-      }
-      else if (isset($_GET['expedisi'])) {
-        $cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-          ->select('count(1) as total')
-          ->from('addressbook t')
-          ->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
-          ->where("((coalesce(fullname,'') like :fullname) 
-          or (coalesce(addressbookid,'') like :addressbookid)
-          or (coalesce(bankname,'') like :bankname)
-          or (coalesce(accountowner,'') like :accountowner)
-          ) 
-          and t.isexpedisi = 1 and t.recordstatus = 1",
-              array(
-              ':fullname'=>$fullname,
-              ':addressbookid'=>$addressbookid,
-              ':bankname'=>$bankname,
-              ':accountowner'=>$accountowner
-              ))
-          ->queryScalar();
-		  }
-		  else {
-        $cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-          ->select('count(1) as total')
-          ->from('addressbook t')
-          ->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
-          ->where("coalesce(addressbookid,'') like :addressbookid 
-            and coalesce(fullname,'') like :fullname 
-            and coalesce(bankname,'') like :bankname 
-            and coalesce(accountowner,'') like :accountowner
-            and isvendor = 1",
-              array(
-              ':addressbookid'=>$addressbookid,
-              ':fullname'=>$fullname,
-              ':bankname'=>$bankname,
-              ':accountowner'=>$accountowner
-              ))
-          ->queryScalar();
-		  }
-      $result['total'] = $cmd;
-      if (isset($_GET['combo'])) {
-        $cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-          ->select('t.*,b.paycode')			
-          ->from('addressbook t')
-          ->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
-          ->where("((coalesce(fullname,'') like :fullname) 
-          or (coalesce(addressbookid,'') like :addressbookid)
-          or (coalesce(bankname,'') like :bankname)
-          or (coalesce(accountowner,'') like :accountowner)
-          ) 
-          and t.isvendor = 1 and t.recordstatus = 1",
-              array(
-              ':fullname'=>$fullname,
-              ':addressbookid'=>$addressbookid,
-              ':bankname'=>$bankname,
-              ':accountowner'=>$accountowner
-              ))
-          ->order($sort.' '.$order)
-          ->queryAll();			
-      }
-      else if (isset($_GET['expedisi'])) {
-        $cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-          ->select('t.*,b.paycode')			
-          ->from('addressbook t')
-          ->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
-          ->where("((coalesce(fullname,'') like :fullname) 
-          or (coalesce(addressbookid,'') like :addressbookid)
-          or (coalesce(bankname,'') like :bankname)
-          or (coalesce(accountowner,'') like :accountowner)
-          ) 
-          and t.isexpedisi = 1 and t.recordstatus = 1",
-              array(
-              ':fullname'=>$fullname,
-              ':addressbookid'=>$addressbookid,
-              ':bankname'=>$bankname,
-              ':accountowner'=>$accountowner
-              ))
-          ->order($sort.' '.$order)
-          ->queryAll();			
-      }
-      else 
-      {
-        $cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
-          ->select('t.*,b.paycode')			
-          ->from('addressbook t')
-          ->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
-          ->where("coalesce(addressbookid,'') like :addressbookid 
-            and coalesce(fullname,'') like :fullname 
-            and coalesce(bankname,'') like :bankname 
-            and coalesce(accountowner,'') like :accountowner
-            and isvendor = 1",
-              array(
-              ':addressbookid'=>$addressbookid,
-              ':fullname'=>$fullname,
-              ':bankname'=>$bankname,
-              ':accountowner'=>$accountowner
-              ))
-          ->offset($offset)
-          ->limit($rows)
-          ->order($sort.' '.$order)
-          ->queryAll();
-      }
-      foreach($cmd as $data) {	
-        $row[] = array(
-        'addressbookid'=>$data['addressbookid'],
-        'fullname'=>$data['fullname'],
-        'taxno'=>$data['taxno'],
-        'bankaccountno'=>$data['bankaccountno'],
-        'bankname'=>$data['bankname'],
-        'accountowner'=>$data['accountowner'],
-        'paymentmethodid'=>$data['paymentmethodid'],
-        'paycode'=>$data['paycode'],
-        'recordstatus'=>$data['recordstatus'],
-        );
-        }
-        $result = array_merge($result, array(
-          'rows' => $row
-        ));
-    } else {
-		  $addressbookid = GetSearchText(array('POST','Q','GET'),'addressbookid',0,'int');
+		if (isset($_GET['combo'])) {
+			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
+				->select('count(1) as total')
+				->from('addressbook t')
+				->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
+				->where("((coalesce(fullname,'') like :fullname) 
+				or (coalesce(addressbookid,'') like :addressbookid)
+				or (coalesce(bankname,'') like :bankname)
+				or (coalesce(accountowner,'') like :accountowner)
+				) 
+				and t.isvendor = 1 and t.recordstatus = 1",
+						array(
+						':fullname'=>$fullname,
+						':addressbookid'=>$addressbookid,
+						':bankname'=>$bankname,
+						':accountowner'=>$accountowner
+						))
+				->queryScalar();
+		}
+		else if (isset($_GET['expedisi'])) {
+			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
+				->select('count(1) as total')
+				->from('addressbook t')
+				->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
+				->where("((coalesce(fullname,'') like :fullname) 
+				or (coalesce(addressbookid,'') like :addressbookid)
+				or (coalesce(bankname,'') like :bankname)
+				or (coalesce(accountowner,'') like :accountowner)
+				) 
+				and t.isexpedisi = 1 and t.recordstatus = 1",
+						array(
+						':fullname'=>$fullname,
+						':addressbookid'=>$addressbookid,
+						':bankname'=>$bankname,
+						':accountowner'=>$accountowner
+						))
+				->queryScalar();
+		}
+		else {
+			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
+				->select('count(1) as total')
+				->from('addressbook t')
+				->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
+				->where("coalesce(addressbookid,'') like :addressbookid 
+					and coalesce(fullname,'') like :fullname 
+					and coalesce(bankname,'') like :bankname 
+					and coalesce(accountowner,'') like :accountowner
+					and isvendor = 1",
+						array(
+						':addressbookid'=>$addressbookid,
+						':fullname'=>$fullname,
+						':bankname'=>$bankname,
+						':accountowner'=>$accountowner
+						))
+				->queryScalar();
+		}
+		$result['total'] = $cmd;
+		if (isset($_GET['combo'])) {
+			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
+				->select('t.*,b.paycode')			
+				->from('addressbook t')
+				->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
+				->where("((coalesce(fullname,'') like :fullname) 
+				or (coalesce(addressbookid,'') like :addressbookid)
+				or (coalesce(bankname,'') like :bankname)
+				or (coalesce(accountowner,'') like :accountowner)
+				) 
+				and t.isvendor = 1 and t.recordstatus = 1",
+						array(
+						':fullname'=>$fullname,
+						':addressbookid'=>$addressbookid,
+						':bankname'=>$bankname,
+						':accountowner'=>$accountowner
+						))
+				->order($sort.' '.$order)
+				->queryAll();			
+		}
+		else if (isset($_GET['expedisi'])) {
+			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
+				->select('t.*,b.paycode')			
+				->from('addressbook t')
+				->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
+				->where("((coalesce(fullname,'') like :fullname) 
+				or (coalesce(addressbookid,'') like :addressbookid)
+				or (coalesce(bankname,'') like :bankname)
+				or (coalesce(accountowner,'') like :accountowner)
+				) 
+				and t.isexpedisi = 1 and t.recordstatus = 1",
+						array(
+						':fullname'=>$fullname,
+						':addressbookid'=>$addressbookid,
+						':bankname'=>$bankname,
+						':accountowner'=>$accountowner
+						))
+				->order($sort.' '.$order)
+				->queryAll();			
+		}
+		else 
+		{
+			$cmd = Yii::app()->db->cache(1000,$dependency)->createCommand()
+				->select('t.*,b.paycode')			
+				->from('addressbook t')
+				->leftjoin('paymentmethod b','b.paymentmethodid = t.paymentmethodid')
+				->where("coalesce(addressbookid,'') like :addressbookid 
+					and coalesce(fullname,'') like :fullname 
+					and coalesce(bankname,'') like :bankname 
+					and coalesce(accountowner,'') like :accountowner
+					and isvendor = 1",
+						array(
+						':addressbookid'=>$addressbookid,
+						':fullname'=>$fullname,
+						':bankname'=>$bankname,
+						':accountowner'=>$accountowner
+						))
+				->offset($offset)
+				->limit($rows)
+				->order($sort.' '.$order)
+				->queryAll();
+		}
+		foreach($cmd as $data) {	
+			$row[] = array(
+			'addressbookid'=>$data['addressbookid'],
+			'fullname'=>$data['fullname'],
+			'taxno'=>$data['taxno'],
+			'bankaccountno'=>$data['bankaccountno'],
+			'bankname'=>$data['bankname'],
+			'accountowner'=>$data['accountowner'],
+			'paymentmethodid'=>$data['paymentmethodid'],
+			'paycode'=>$data['paycode'],
+			'recordstatus'=>$data['recordstatus'],
+			);
+			}
+			$result = array_merge($result, array(
+				'rows' => $row
+			));
+	} else {
+		$addressbookid = GetSearchText(array('POST','Q','GET'),'addressbookid',0,'int');
 			$cmd = Yii::app()->db->createCommand("
 				select a.addressbookid,a.paymentmethodid, b.paycode
 				from addressbook a
@@ -210,7 +189,7 @@ class SupplierController extends Controller {
     return CJSON::encode($result);
 	}
 	public function actionSearchAddress() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id = 0;	
 		if (isset($_POST['id']))
 		{
@@ -267,7 +246,7 @@ class SupplierController extends Controller {
 		echo CJSON::encode($result);
 	}
 	public function actionSearchcontact() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id=0;	
 		if (isset($_POST['id']))
 		{
@@ -317,177 +296,7 @@ class SupplierController extends Controller {
 		}
 		$result=array_merge($result,array('rows'=>$row));;
 		echo CJSON::encode($result);
-  }
-  public function actionsearchpurchinforec() {
-    header("Content-Type: application/json");
-		$id = 0;	
-		if (isset($_POST['id'])) {
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id'])) {
-			$id = $_GET['id'];
-		}
-    $purchinforecid    = GetSearchText(array('POST','Q'),'purchinforecid');
-    $supplier     = GetSearchText(array('POST','Q'),'supplier');
-    $productname         = GetSearchText(array('POST','Q'),'productname');
-		$page = GetSearchText(array('GET'),'page',1,'int');
-		$rows = GetSearchText(array('GET'),'rows',10,'int');
-		$sort = GetSearchText(array('GET'),'sort','purchinforecid','int');
-		$order = GetSearchText(array('GET'),'order','desc','int');
-    $offset            = ($page - 1) * $rows;
-    $result            = array();
-    $row               = array();
-    $cmd               = Yii::app()->db->createCommand()->select('count(1) as total')->from('purchinforec t')
-		->leftjoin('addressbook a', 'a.addressbookid = t.addressbookid')
-		->leftjoin('product b', 'b.productid = t.productid')
-		->leftjoin('poheader c', 'c.poheaderid = t.poheaderid')
-		->leftjoin('currency d', 'd.currencyid = t.currencyid')
-		->where("t.poheaderid is null and (a.addressbookid = :addressbookid)", array(
-      ':addressbookid' =>  $id 
-      
-    ))->queryScalar();
-    $result['total']   = $cmd;
-    $cmd               = Yii::app()->db->createCommand()->select('t.*,b.productcode,a.fullname,b.productname,c.pono,d.currencyname')->from('purchinforec t')
-		->leftjoin('addressbook a', 'a.addressbookid = t.addressbookid')
-		->leftjoin('product b', 'b.productid = t.productid')
-		->leftjoin('poheader c', 'c.poheaderid = t.poheaderid')
-		->leftjoin('currency d', 'd.currencyid = t.currencyid')
-		->where("t.poheaderid is null and (a.addressbookid = :addressbookid)", array(
-      ':addressbookid' =>  $id))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
-    foreach ($cmd as $data) {
-      $row[] = array(
-        'purchinforecid' => $data['purchinforecid'],
-        'addressbookid' => $data['addressbookid'],
-        'fullname' => $data['fullname'],
-        'productid' => $data['productid'],
-        'productcode' => $data['productcode'],
-        'productname' => $data['productname'],
-        'toleransidown' => Yii::app()->format->formatNumber($data['toleransidown']),
-        'toleransiup' => Yii::app()->format->formatNumber($data['toleransiup']),
-        'price' => Yii::app()->format->formatCurrency($data['price']),
-        'currencyid' => $data['currencyid'],
-        'currencyname' => $data['currencyname'],
-        'biddate' => date(Yii::app()->params['dateviewfromdb'], strtotime($data['biddate'])),
-      );
-    }
-    $result = array_merge($result, array(
-      'rows' => $row
-    ));
-    echo CJSON::encode($result);
-  }
-  public function actionsearchsupplierpo() {
-    header("Content-Type: application/json");
-		$id = 0;	
-		if (isset($_POST['id'])) {
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id'])) {
-			$id = $_GET['id'];
-		}
-    $purchinforecid    = GetSearchText(array('POST','Q'),'purchinforecid');
-    $supplier     = GetSearchText(array('POST','Q'),'supplier');
-    $productname         = GetSearchText(array('POST','Q'),'productname');
-		$page = GetSearchText(array('GET'),'page',1,'int');
-		$rows = GetSearchText(array('GET'),'rows',10,'int');
-		$sort = GetSearchText(array('GET'),'sort','purchinforecid','int');
-		$order = GetSearchText(array('GET'),'order','desc','int');
-    $offset            = ($page - 1) * $rows;
-    $result            = array();
-    $row               = array();
-    $cmd               = Yii::app()->db->createCommand()->select('count(1) as total')->from('purchinforec t')
-		->leftjoin('addressbook a', 'a.addressbookid = t.addressbookid')
-		->leftjoin('product b', 'b.productid = t.productid')
-		->leftjoin('poheader c', 'c.poheaderid = t.poheaderid')
-		->leftjoin('currency d', 'd.currencyid = t.currencyid')
-		->where("t.poheaderid is not null and (a.addressbookid = :addressbookid)", array(
-      ':addressbookid' =>  $id 
-      
-    ))->queryScalar();
-    $result['total']   = $cmd;
-    $cmd               = Yii::app()->db->createCommand()->select('t.*,a.fullname,b.productcode,b.productname,c.pono,d.currencyname')->from('purchinforec t')
-		->leftjoin('addressbook a', 'a.addressbookid = t.addressbookid')
-		->leftjoin('product b', 'b.productid = t.productid')
-		->leftjoin('poheader c', 'c.poheaderid = t.poheaderid')
-		->leftjoin('currency d', 'd.currencyid = t.currencyid')
-		->where("t.poheaderid is not null and (a.addressbookid = :addressbookid)", array(
-      ':addressbookid' =>  $id))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
-    foreach ($cmd as $data) {
-      $row[] = array(
-        'purchinforecid' => $data['purchinforecid'],
-        'addressbookid' => $data['addressbookid'],
-        'fullname' => $data['fullname'],
-        'poheaderid' => $data['poheaderid'],
-        'pono' => $data['pono'],
-        'productid' => $data['productid'],
-        'productcode' => $data['productcode'],
-        'productname' => $data['productname'],
-        'toleransidown' => Yii::app()->format->formatNumber($data['toleransidown']),
-        'toleransiup' => Yii::app()->format->formatNumber($data['toleransiup']),
-        'price' => Yii::app()->format->formatCurrency($data['price']),
-        'currencyid' => $data['currencyid'],
-        'currencyname' => $data['currencyname'],
-        'biddate' => date(Yii::app()->params['dateviewfromdb'], strtotime($data['biddate'])),
-      );
-    }
-    $result = array_merge($result, array(
-      'rows' => $row
-    ));
-    echo CJSON::encode($result);
-  }
-  public function actionsearchinvoiceap() {
-    header("Content-Type: application/json");
-		$id = 0;	
-		if (isset($_POST['id'])) {
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id'])) {
-			$id = $_GET['id'];
-		}
-		$page = GetSearchText(array('GET'),'page',1,'int');
-		$rows = GetSearchText(array('GET'),'rows',10,'int');
-		$sort = GetSearchText(array('GET'),'sort','invoiceapid','int');
-		$order = GetSearchText(array('GET'),'order','desc','int');
-    $offset            = ($page - 1) * $rows;
-    $result            = array();
-    $row               = array();
-    $cmd               = Yii::app()->db->createCommand()->select('count(1) as total')
-    ->from('invoiceap t')
-		->leftjoin('addressbook a', 'a.addressbookid = t.addressbookid')
-		->leftjoin('poheader b', 'b.poheaderid = t.poheaderid')
-		->leftjoin('plant c', 'c.plantid = t.plantid')
-		->leftjoin('paymentmethod d', 'd.paymentmethodid = t.paymentmethodid')
-		->where("(a.addressbookid = :addressbookid)", array(
-      ':addressbookid' =>  $id 
-      
-    ))->queryScalar();
-    $result['total']   = $cmd;
-    $cmd               = Yii::app()->db->createCommand()->select('t.*,c.plantcode,d.paycode,b.pono')
-    ->from('invoiceap t')
-		->leftjoin('addressbook a', 'a.addressbookid = t.addressbookid')
-		->leftjoin('poheader b', 'b.poheaderid = t.poheaderid')
-		->leftjoin('plant c', 'c.plantid = t.plantid')
-		->leftjoin('paymentmethod d', 'd.paymentmethodid = t.paymentmethodid')
-		->where("(a.addressbookid = :addressbookid)", array(
-      ':addressbookid' =>  $id))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
-    foreach ($cmd as $data) {
-      $row[] = array(
-        'invoiceapid' => $data['invoiceapid'],
-        'addressbookid' => $data['addressbookid'],
-        'pono' => $data['pono'],
-        'invoiceapno' => $data['invoiceapno'],
-        'contractno' => $data['contractno'],
-        'amount' => Yii::app()->format->formatCurrency($data['amount']),
-        'payamount' => Yii::app()->format->formatCurrency($data['payamount']),
-      );
-    }
-    $result = array_merge($result, array(
-      'rows' => $row
-    ));
-    echo CJSON::encode($result);
-  }
+	}
 	public function actiongetdata() {
 		$id = rand(-1, -1000000000);
 		echo CJSON::encode(array(
@@ -669,44 +478,6 @@ class SupplierController extends Controller {
 			$transaction->rollBack();
 			GetMessage(true,implode(" ",$e->errorInfo));
 		}
-  }
-  private function ModifyDataPurchinforec($connection,$arraydata) {		
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql     = 'call Insertpurchinforec(:vaddressbookid,:vproductid,:vtoleransidown,:vtoleransiup,:vprice,:vcurrencyid,:vbiddate,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else
-		{
-			$sql     = 'call Updatepurchinforec(:vid,:vaddressbookid,:vproductid,:vtoleransidown,:vtoleransiup,:vprice,:vcurrencyid,:vbiddate,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-		}
-    $command->bindvalue(':vaddressbookid', $arraydata[1], PDO::PARAM_STR);
-    $command->bindvalue(':vproductid',$arraydata[2] , PDO::PARAM_STR);
-    $command->bindvalue(':vtoleransidown', $arraydata[3], PDO::PARAM_STR);
-    $command->bindvalue(':vtoleransiup', $arraydata[4], PDO::PARAM_STR);
-    $command->bindvalue(':vprice', $arraydata[5], PDO::PARAM_STR);
-    $command->bindvalue(':vcurrencyid', $arraydata[6], PDO::PARAM_STR);
-    $command->bindvalue(':vbiddate', $arraydata[7], PDO::PARAM_STR);
-    $command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
-		$command->execute();
-	}
-	public function actionsavepurchinforec() {
-		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-      $this->ModifyDataPurchinforec($connection,array((isset($_POST['purchinforecid'])?$_POST['purchinforecid']:''),
-        $_POST['addressbookid'],$_POST['productid'],$_POST['toleransidown'],
-				$_POST['toleransiup'],$_POST['price'],$_POST['currencyid'],date(Yii::app()->params['datetodb'], strtotime($_POST['biddate']))));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
 	}
 	public function actionPurge() {
 		parent::actionPurge();
@@ -807,33 +578,26 @@ class SupplierController extends Controller {
       ));
 		}
      Yii::app()->end();
-	}
+  }
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('addressbookid');
+		$this->dataprint['fullname'] = GetSearchText(array('GET'),'fullname');
+		$this->dataprint['bankname'] = GetSearchText(array('GET'),'bankname');
+		$this->dataprint['accountowner'] = GetSearchText(array('GET'),'accountowner');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'addressbookid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlefullname'] = GetCatalog('fullname');
 		$this->dataprint['titlebankname'] = GetCatalog('bankname');
 		$this->dataprint['titleaccountowner'] = GetCatalog('accountowner');
-		$this->dataprint['titlebankaccountno'] = GetCatalog('bankaccountno');
 		$this->dataprint['titletaxno'] = GetCatalog('taxno');
-		$this->dataprint['titleaddresstypename'] = GetCatalog('addresstypename');
-		$this->dataprint['titleaddressname'] = GetCatalog('addressname');
-		$this->dataprint['titlert'] = GetCatalog('rt');
-		$this->dataprint['titlerw'] = GetCatalog('rw');
-		$this->dataprint['titlecityname'] = GetCatalog('cityname');
-		$this->dataprint['titlephoneno'] = GetCatalog('phoneno');
-		$this->dataprint['titlefaxno'] = GetCatalog('faxno');
-		$this->dataprint['titlelat'] = GetCatalog('lat');
-		$this->dataprint['titlelng'] = GetCatalog('lng');
-		$this->dataprint['titlecontacttypename'] = GetCatalog('contacttypename');
-		$this->dataprint['titleaddresscontactname'] = GetCatalog('addresscontactname');
-		$this->dataprint['titleemailaddress'] = GetCatalog('emailaddress');
-		$this->dataprint['titlektp'] = GetCatalog('ktp');
-		$this->dataprint['titlemobilephone'] = GetCatalog('mobilephone');
+		$this->dataprint['titlebankname'] = GetCatalog('bankname');
+		$this->dataprint['titleaccountowner'] = GetCatalog('accountowner');
+		$this->dataprint['titlebankaccountno'] = GetCatalog('bankaccountno');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['fullname'] = GetSearchText(array('GET'),'fullname');
-    $this->dataprint['bankname'] = GetSearchText(array('GET'),'bankname');
-    $this->dataprint['accountowner'] = GetSearchText(array('GET'),'accountowner');
   }
 }

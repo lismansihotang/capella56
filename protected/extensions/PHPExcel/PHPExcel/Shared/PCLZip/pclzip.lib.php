@@ -1637,7 +1637,7 @@
           if (is_string($p_options_list[$i+1])) {
 
               // ----- Remove spaces
-              $p_options_list[$i+1] = strtr($p_options_list[$i+1], ' ', '');
+              $p_options_list[$i+1] = strtr($p_options_list[$i+1], array(' '=>''));
 
               // ----- Parse items
               $v_work_list = explode(",", $p_options_list[$i+1]);
@@ -5683,7 +5683,7 @@
       }
       // ----- Change potential windows directory separator
       if ((strpos($p_path, '\\') > 0) || (substr($p_path, 0,1) == '\\')) {
-          $p_path = strtr($p_path, '\\', '/');
+          $p_path = strtr($p_path, array('\\'=>'/'));
       }
     }
     return $p_path;

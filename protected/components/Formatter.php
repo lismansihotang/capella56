@@ -68,8 +68,8 @@ class Formatter extends CFormatter
     if (is_float($formatted_number))
       return $formatted_number; // only 'unformat' if parameter is not float already
     
-    $value = str_replace($this->numberFormat['thousandSeparator'], '', $formatted_number);
-    $value = str_replace($this->numberFormat['decimalSeparator'], '.', $value);
+    $value = strtr($formatted_number,array($this->numberFormat['thousandSeparator']=>''));
+    $value = strtr($value,array($this->numberFormat['decimalSeparator']=>'.'));
     return (float) $value;
   }
 }

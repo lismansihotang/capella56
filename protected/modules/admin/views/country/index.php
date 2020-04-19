@@ -8,10 +8,11 @@
 	'uploadurl'=>Yii::app()->createUrl('admin/country/upload'),
 	'downpdf'=>Yii::app()->createUrl('admin/country/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/country/downxls'),
+	'downdoc'=>Yii::app()->createUrl('admin/country/downdoc'),
 	'columns'=>"
 		{
 			field:'countryid',
-			title:'".GetCatalog('countryid')."',
+			title:localStorage.getItem('catalogcountryid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -20,7 +21,7 @@
 		},
 		{
 			field:'countrycode',
-			title:'".GetCatalog('countrycode')."',
+			title:localStorage.getItem('catalogcountrycode'),
 			editor:'text',
 			width:'80px',
 			sortable: true,
@@ -30,7 +31,7 @@
 		},
 		{
 			field:'countryname',
-			title:'".GetCatalog('countryname')."',
+			title:localStorage.getItem('catalogcountryname'),
 			editor:'text',
 			width:'150px',
 			sortable: true,
@@ -40,14 +41,14 @@
 		},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus')."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}

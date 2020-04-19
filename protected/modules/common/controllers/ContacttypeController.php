@@ -8,7 +8,7 @@ class ContacttypeController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$contacttypeid = GetSearchText(array('POST','Q'),'contacttypeid');
 		$contacttypename = GetSearchText(array('POST','Q'),'contacttypename');
 		$page = GetSearchText(array('POST','GET'),'page',1,'int');
@@ -112,7 +112,7 @@ class ContacttypeController extends Controller {
     }
 	}
 	public function actionSave() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		if(!Yii::app()->request->isPostRequest)
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 		$connection=Yii::app()->db;
@@ -128,7 +128,7 @@ class ContacttypeController extends Controller {
 		}
 	}
 	public function actionPurge() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		if (isset($_POST['id'])) {
 			$id=$_POST['id'];
 			$connection=Yii::app()->db;
@@ -148,15 +148,20 @@ class ContacttypeController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('contacttypeid');
+		$this->dataprint['contacttypename'] = GetSearchText(array('GET'),'contacttypename');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'contacttypeid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlecontacttypename'] = GetCatalog('contacttypename');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['contacttypename'] = GetSearchText(array('GET'),'contacttypename');
   }
 }

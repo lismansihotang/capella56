@@ -11,7 +11,7 @@
 	'columns'=>"
 		{
 			field:'famethodid',
-			title:'".GetCatalog('famethodid') ."',
+			title:localStorage.getItem('catalogfamethodid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -20,7 +20,7 @@
 		},
 		{
 			field:'methodname',
-			title:'".GetCatalog('methodname') ."',
+			title:localStorage.getItem('catalogmethodname'),
 			editor:{
 				type: 'textbox',
 				options: {
@@ -35,7 +35,7 @@
 		},
 		{
 			field:'recordstatus',
-			title:'".GetCatalog('recordstatus') ."',
+			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

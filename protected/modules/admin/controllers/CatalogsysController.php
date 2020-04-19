@@ -9,7 +9,7 @@ class CatalogsysController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$catalogsysid = GetSearchText(array('POST'),'catalogsysid');
 		$languagename = GetSearchText(array('POST'),'languagename');
 		$catalogname = GetSearchText(array('POST'),'catalogname');
@@ -21,24 +21,18 @@ class CatalogsysController extends Controller {
 		$offset = ($page-1) * $rows;
 		$result = array();
 		$row = array();
-		$cmd = Yii::app()->db->createCommand()
-			->select('count(1) as total')	
-			->from('catalogsys t')
-			->leftjoin('language p', 't.languageid=p.languageid')
-			->where('((p.languageid like :languagename) and (catalogname like :catalogname) and (catalogval like :catalogval))',
-					array(':languagename'=>$languagename,':catalogname'=>$catalogname,':catalogval'=>$catalogval))
-			->queryScalar();
+		$selectcount = ' select count(1) as total ';
+		$select = ' select t.*,p.languagename ';
+		$from = ' from catalogsys t 
+			left join language p on t.languageid = p.languageid ';
+		$where = " where ((p.languagename like '". $languagename ."') 
+			and (catalogname like '". $catalogname ."') 
+			and (catalogval like '". $catalogval ."')) ";
+		$sql = $selectcount . $from . $where;
+		$cmd = Yii::app()->db->createCommand($sql)->queryScalar();
 		$result['total'] = $cmd;
-		$cmd = Yii::app()->db->createCommand()
-			->select('t.*,p.languagename')	
-			->from('catalogsys t')
-			->leftjoin('language p', 't.languageid=p.languageid')
-			->where('((p.languagename like :languagename) and (catalogname like :catalogname) and (catalogval like :catalogval))',
-					array(':languagename'=>$languagename,':catalogname'=>$catalogname,':catalogval'=>$catalogval))
-			->offset($offset)
-			->limit($rows)
-			->order($sort.' '.$order)
-			->queryAll();
+		$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order . ' limit ' . $offset . ',' . $rows;
+		$cmd = Yii::app()->db->createCommand($sql)->queryAll();
 		foreach($cmd as $data) {	
 			$row[] = array(
 				'catalogsysid'=>$data['catalogsysid'],
@@ -118,7 +112,7 @@ class CatalogsysController extends Controller {
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		if (isset($_POST['id'])) {
 			$id=$_POST['id'];
 			$connection=Yii::app()->db;
@@ -138,18 +132,24 @@ class CatalogsysController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('languageid');
+		$this->dataprint['languagename'] = GetSearchText(array('GET'),'languagename');
+		$this->dataprint['catalogname'] = GetSearchText(array('GET'),'catalogname');
+		$this->dataprint['catalogval'] = GetSearchText(array('GET'),'catalogval');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'languageid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlelanguagename'] = GetCatalog('languagename');
 		$this->dataprint['titlecatalogname'] = GetCatalog('catalogname');
 		$this->dataprint['titlecatalogval'] = GetCatalog('catalogval');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['languagename'] = GetSearchText(array('GET'),'languagename');
-    $this->dataprint['catalogname'] = GetSearchText(array('GET'),'catalogname');
-		$this->dataprint['catalogval'] = GetSearchText(array('GET'),'catalogval');
+		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
   }
 }

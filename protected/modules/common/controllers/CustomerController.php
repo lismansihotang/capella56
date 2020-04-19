@@ -8,10 +8,24 @@ class CustomerController extends Controller {
 		else
 			$this->renderPartial('index',array());
 	}
+	public function actionIndexaddressto() {
+		parent::actionIndex();
+		if(isset($_GET['grid']))
+			echo $this->actionSearchAddressto();
+		else
+			$this->renderPartial('index',array());
+	}
 	public function actionIndexaddress() {
 		parent::actionIndex();
 		if(isset($_GET['grid']))
 			echo $this->actionSearchAddress();
+		else
+			$this->renderPartial('index',array());
+	}
+	public function actionIndexaddresspay() {
+		parent::actionIndex();
+		if(isset($_GET['grid']))
+			echo $this->actionSearchAddresspay();
 		else
 			$this->renderPartial('index',array());
 	}
@@ -23,7 +37,7 @@ class CustomerController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$addressbookid = GetSearchText(array('POST','Q'),'addressbookid',0,'int');
 		$fullname = GetSearchText(array('POST','Q'),'fullname');
 		$page = GetSearchText(array('POST','GET'),'page',1,'int');
@@ -124,7 +138,7 @@ class CustomerController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function actionSearchAddress() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id = 0;	
 		if (isset($_POST['id'])) {
 			$id = $_POST['id'];
@@ -182,8 +196,126 @@ class CustomerController extends Controller {
 		$result=array_merge($result,array('rows'=>$row));;
 		echo CJSON::encode($result);
 	}
+	public function actionSearchAddressto() {
+		header('Content-Type: application/json');
+		$id = 0;	
+		if (isset($_POST['id'])) {
+			$id = $_POST['id'];
+		}
+		else 
+		if (isset($_GET['id'])) {
+			$id = $_GET['id'];
+		}
+		else 
+		if (isset($_GET['addressbookid'])) {
+			$id = $_GET['addressbookid'];
+		}
+		$page = GetSearchText(array('POST','GET'),'page',1,'int');
+		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
+		$sort = GetSearchText(array('POST','GET'),'sort','addressid','int');
+		$order = GetSearchText(array('POST','GET'),'order','desc','int');
+		$offset = ($page-1) * $rows;
+		$result = array();
+		$row = array();
+		$cmd = Yii::app()->db->createCommand()
+				->select('count(1) as total')
+				->from('address t')
+				->join('addresstype b','b.addresstypeid = t.addresstypeid')
+				->join('city c','c.cityid = t.cityid')
+				->where('b.addresstypeid = 2 and addressbookid = :abid',
+						array(':abid'=>$id))
+				->queryScalar();
+		$result['total'] = $cmd;
+		$cmd = Yii::app()->db->createCommand()
+				->select('t.*,b.addresstypename,c.cityname')			
+				->from('address t')
+				->join('addresstype b','b.addresstypeid = t.addresstypeid')
+				->join('city c','c.cityid = t.cityid')
+				->where('b.addresstypeid = 2 and addressbookid = :abid',
+						array(':abid'=>$id))
+				->order($sort.' '.$order)
+				->queryAll();
+		foreach($cmd as $data) {	
+			$row[] = array(
+			'addressid'=>$data['addressid'],
+			'addressbookid'=>$data['addressbookid'],
+			'addressname'=>$data['addressname'],
+			'addresstypeid'=>$data['addresstypeid'],
+			'addresstypename'=>$data['addresstypename'],
+			'rt'=>$data['rt'],
+			'rw'=>$data['rw'],
+			'cityid'=>$data['cityid'],
+			'cityname'=>$data['cityname'],
+			'phoneno'=>$data['phoneno'],
+			'faxno'=>$data['faxno'],
+			'lat'=>$data['lat'],
+			'lng'=>$data['lng']
+			);
+		}
+		$result=array_merge($result,array('rows'=>$row));;
+		echo CJSON::encode($result);
+	}
+	public function actionSearchAddresspay() {
+		header('Content-Type: application/json');
+		$id = 0;	
+		if (isset($_POST['id'])) {
+			$id = $_POST['id'];
+		}
+		else 
+		if (isset($_GET['id'])) {
+			$id = $_GET['id'];
+		}
+		else 
+		if (isset($_GET['addressbookid'])) {
+			$id = $_GET['addressbookid'];
+		}
+		$page = GetSearchText(array('POST','GET'),'page',1,'int');
+		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
+		$sort = GetSearchText(array('POST','GET'),'sort','addressid','int');
+		$order = GetSearchText(array('POST','GET'),'order','desc','int');
+		$offset = ($page-1) * $rows;
+		$result = array();
+		$row = array();
+		$cmd = Yii::app()->db->createCommand()
+				->select('count(1) as total')
+				->from('address t')
+				->join('addresstype b','b.addresstypeid = t.addresstypeid')
+				->join('city c','c.cityid = t.cityid')
+				->where('b.addresstypeid = 1 and addressbookid = :abid',
+						array(':abid'=>$id))
+				->queryScalar();
+		$result['total'] = $cmd;
+		$cmd = Yii::app()->db->createCommand()
+				->select('t.*,b.addresstypename,c.cityname')			
+				->from('address t')
+				->join('addresstype b','b.addresstypeid = t.addresstypeid')
+				->join('city c','c.cityid = t.cityid')
+				->where('b.addresstypeid = 1 and addressbookid = :abid',
+						array(':abid'=>$id))
+				->order($sort.' '.$order)
+				->queryAll();
+		foreach($cmd as $data) {	
+			$row[] = array(
+			'addressid'=>$data['addressid'],
+			'addressbookid'=>$data['addressbookid'],
+			'addressname'=>$data['addressname'],
+			'addresstypeid'=>$data['addresstypeid'],
+			'addresstypename'=>$data['addresstypename'],
+			'rt'=>$data['rt'],
+			'rw'=>$data['rw'],
+			'cityid'=>$data['cityid'],
+			'cityname'=>$data['cityname'],
+			'phoneno'=>$data['phoneno'],
+			'faxno'=>$data['faxno'],
+			'lat'=>$data['lat'],
+			'lng'=>$data['lng']
+			);
+		}
+		$result=array_merge($result,array('rows'=>$row));;
+		echo CJSON::encode($result);
+	}
 	public function actionSearchcontact() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$id=0;	
 		if (isset($_POST['id']))
 		{
@@ -604,33 +736,33 @@ class CustomerController extends Controller {
       ));
       Yii::app()->end();
     }
-	}
+  }
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('addressbookid');
+		$this->dataprint['fullname'] = GetSearchText(array('GET'),'fullname');
+		$this->dataprint['bankname'] = GetSearchText(array('GET'),'bankname');
+		$this->dataprint['accountowner'] = GetSearchText(array('GET'),'accountowner');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'addressbookid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlefullname'] = GetCatalog('fullname');
 		$this->dataprint['titlebankname'] = GetCatalog('bankname');
 		$this->dataprint['titleaccountowner'] = GetCatalog('accountowner');
-		$this->dataprint['titlebankaccountno'] = GetCatalog('bankaccountno');
 		$this->dataprint['titletaxno'] = GetCatalog('taxno');
-		$this->dataprint['titleaddresstypename'] = GetCatalog('addresstypename');
+		$this->dataprint['titlebankaccountno'] = GetCatalog('bankaccountno');
 		$this->dataprint['titleaddressname'] = GetCatalog('addressname');
-		$this->dataprint['titlert'] = GetCatalog('rt');
-		$this->dataprint['titlerw'] = GetCatalog('rw');
-		$this->dataprint['titlecityname'] = GetCatalog('cityname');
-		$this->dataprint['titlephoneno'] = GetCatalog('phoneno');
-		$this->dataprint['titlefaxno'] = GetCatalog('faxno');
-		$this->dataprint['titlelat'] = GetCatalog('lat');
-		$this->dataprint['titlelng'] = GetCatalog('lng');
-		$this->dataprint['titlecontacttypename'] = GetCatalog('contacttypename');
+		$this->dataprint['titleaddresstypename'] = GetCatalog('addresstypename');
 		$this->dataprint['titleaddresscontactname'] = GetCatalog('addresscontactname');
+		$this->dataprint['titlecontacttypename'] = GetCatalog('contacttypename');
+		$this->dataprint['titlemobilephone'] = GetCatalog('mobilephone');
 		$this->dataprint['titleemailaddress'] = GetCatalog('emailaddress');
 		$this->dataprint['titlektp'] = GetCatalog('ktp');
-		$this->dataprint['titlemobilephone'] = GetCatalog('mobilephone');
+		$this->dataprint['titlephoneno'] = GetCatalog('phoneno');
+		$this->dataprint['titlefaxno'] = GetCatalog('faxno');
 		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['fullname'] = GetSearchText(array('GET'),'fullname');
-    $this->dataprint['bankname'] = GetSearchText(array('GET'),'bankname');
-    $this->dataprint['accountowner'] = GetSearchText(array('GET'),'accountowner');
   }
 }

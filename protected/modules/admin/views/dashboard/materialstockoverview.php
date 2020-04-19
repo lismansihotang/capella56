@@ -8,15 +8,15 @@
 	'columns'=>"
 		{
 			field:'productstockid',
-			title:'".getCatalog('productstockid') ."',
+			title: localStorage.getItem('catalogproductstockid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
 				return value;
-		}},
+		}},		
 		{
 			field:'materialtypecode',
-			title:'".getCatalog('materialtypecode') ."',
+			title:localStorage.getItem('catalogmaterialtypecode'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -24,15 +24,23 @@
 		}},
 		{
 			field:'materialgroupcode',
-			title:'".getCatalog('materialgroupcode') ."',
+			title:localStorage.getItem('catalogmaterialgroupcode'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
 				return row.materialgroupcode;
 		}},
 		{
+			field:'productcode',
+			title:localStorage.getItem('catalogproductcode'),
+			width:'150px',
+			sortable: true,
+			formatter: function(value,row,index){
+				return value;
+		}},
+		{
 			field:'productname',
-			title:'".getCatalog('productname') ."',
+			title:localStorage.getItem('catalogproductname'),
 			width:'550px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -40,7 +48,7 @@
 		}},
 		{
 			field:'slocid',
-			title:'".getCatalog('sloc') ."',
+			title:localStorage.getItem('catalogsloc'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -48,7 +56,7 @@
 		}},
 		{
 			field:'storagebinid',
-			title:'".getCatalog('storagebin') ."',
+			title:localStorage.getItem('catalogstoragebin'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -56,39 +64,63 @@
 		}},
 		{
 			field:'qty',
-			title:'".getCatalog('qty') ."',
-			width:'130px',
+			title:localStorage.getItem('catalogqty'),
+			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
-				return formatnumber('',value,row.uomcode);
+				return formatnumber('',value);
+		}},
+		{
+			field:'unitofmeasureid',
+			title:localStorage.getItem('catalogunitofmeasure'),
+			width:'80px',
+			sortable: true,
+			formatter: function(value,row,index){
+				return row.uomcode;
 		}},
 		{
 			field:'qty2',
-			title:'".getCatalog('qty2') ."',
+			title:localStorage.getItem('catalogqty2'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
-				return formatnumber('',value,row.uom2code);
+				return formatnumber('',value);
+		}},
+		{
+			field:'uom2code',
+			title:localStorage.getItem('cataloguom2code'),
+			width:'80px',
+			sortable: true,
+			formatter: function(value,row,index){
+				return row.uom2code;
 		}},
 		{
 			field:'qty3',
-			title:'".getCatalog('qty3') ."',
+			title:localStorage.getItem('catalogqty3'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
-				return formatnumber('',value,row.uom3code);
+				return formatnumber('',value);
+		}},
+		{
+			field:'uom3code',
+			title:localStorage.getItem('cataloguom3code'),
+			width:'100px',
+			sortable: true,
+			formatter: function(value,row,index){
+				return row.uom3code;
 		}},
 		{
 			field:'qtyinprogress',
-			title:'".getCatalog('qtyinprogress') ."',
+			title:localStorage.getItem('catalogqtyinprogress'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
-				return formatnumber('',value,row.uomcode);
+				return formatnumber('',value);
 		}},
 		{
 			field:'buyprice',
-			title:'".getCatalog('buyprice') ."',
+			title:localStorage.getItem('catalogbuyprice'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -115,29 +147,29 @@
 			'idfield'=>'productstockdetid',
 			'urlsub'=>Yii::app()->createUrl('inventory/productstock/indexdetail',array('grid'=>true)),
 			'subs'=>"
-				{field:'referenceno',title:'".getCatalog('referenceno') ."',width:'150px'},
-				{field:'transdate',title:'".getCatalog('transdate') ."',width:'100px'},
-				{field:'qty',title:'".getCatalog('qty') ."',
+				{field:'referenceno',title:localStorage.getItem('catalogreferenceno'),width:'150px'},
+				{field:'transdate',title:localStorage.getItem('catalogtransdate'),width:'100px'},
+				{field:'qty',title:localStorage.getItem('catalogqty'),
 					formatter: function(value,row,index){
 						return formatnumber('',value);
 					},width:'100px'},
-				{field:'uomcode',title:'".getCatalog('uomcode') ."',width:'80px'},
-				{field:'qty2',title:'".getCatalog('qty2') ."',
+				{field:'uomcode',title:localStorage.getItem('cataloguomcode'),width:'80px'},
+				{field:'qty2',title:localStorage.getItem('catalogqty2'),
 					formatter: function(value,row,index){
 						return formatnumber('',value);
 					},width:'100px'},
-				{field:'uom2code',title:'".getCatalog('uom2code') ."',width:'80px'},
-				{field:'qty3',title:'".getCatalog('qty3') ."',
+				{field:'uom2code',title:localStorage.getItem('cataloguom2code'),width:'80px'},
+				{field:'qty3',title:localStorage.getItem('catalogqty3'),
 					formatter: function(value,row,index){
 						return formatnumber('',value);
 					},width:'100px'},
-				{field:'uom3code',title:'".getCatalog('uom3code') ."',width:'80px'},
-				{field:'qty4',title:'".getCatalog('qty4') ."',
+				{field:'uom3code',title:localStorage.getItem('cataloguom3code'),width:'80px'},
+				{field:'qty4',title:localStorage.getItem('catalogqty4'),
 					formatter: function(value,row,index){
 						return formatnumber('',value);
 					},width:'100px'},
-				{field:'uom4code',title:'".getCatalog('uom4code') ."',width:'80px'},
+				{field:'uom4code',title:localStorage.getItem('cataloguom4code'),width:'80px'},
 			",
 		),
 	),	
-));
+));?>

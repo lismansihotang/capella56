@@ -8,6 +8,7 @@
 	'uploadurl'=>Yii::app()->createUrl('common/materialstatus/upload'),
 	'downpdf'=>Yii::app()->createUrl('common/materialstatus/downpdf'),
 	'downxls'=>Yii::app()->createUrl('common/materialstatus/downxls'),
+	'downdoc'=>Yii::app()->createUrl('common/materialstatus/downdoc'),
 	'columns'=>"
 		{
 			field:'materialstatusid',
@@ -36,7 +37,7 @@
 			sortable:'true',
 			formatter: function(value,row,index){
 				if (value == 1){
-					return '<img src=\"".Yii::app()->request->baseUrl.'/images/icons/ok.png'."\"></img>';
+					return '<img src=\"".Yii::app()->request->baseUrl.'/images/ok.png'."\"></img>';
 				} else {
 					return '';
 				}

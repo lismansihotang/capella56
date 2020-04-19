@@ -8,7 +8,7 @@ class MenuaccessController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header("Content-Type: application/json");
+		header('Content-Type: application/json');
 		$menuaccessid = GetSearchText(array('POST','Q'),'menuaccessid');
 		$menuname = GetSearchText(array('POST','Q'),'menuname');
 		$description = GetSearchText(array('POST','Q'),'description');
@@ -106,9 +106,6 @@ class MenuaccessController extends Controller {
 				'moduleid'=>$data['moduleid'],
 				'modulename'=>$data['modulename'],
 				'sortorder'=>$data['sortorder'],
-				'viewcode'=>$data['viewcode'],
-				'menudep'=>$data['menudep'],
-				'controllercode'=>$data['controllercode'],
 				'recordstatus'=>$data['recordstatus'],
 			);
 		}
@@ -118,11 +115,11 @@ class MenuaccessController extends Controller {
 	private function ModifyData($connection,$arraydata) {
 		$id = (isset($arraydata[0])?$arraydata[0]:'');
 		if ($id == '') {
-			$sql = 'call Insertmenuaccess(:vmenuname,:vdescription,:vmenuurl,:vmenuicon,:vparentid,:vmoduleid,:vsortorder,:vviewcode,:vcontrollercode,:vmenudep,:vrecordstatus,:vdatauser)';
+			$sql = 'call Insertmenuaccess(:vmenuname,:vdescription,:vmenuurl,:vmenuicon,:vparentid,:vmoduleid,:vsortorder,:vrecordstatus,:vdatauser)';
 			$command=$connection->createCommand($sql);
 		}
 		else {
-			$sql = 'call Updatemenuaccess(:vid,:vmenuname,:vdescription,:vmenuurl,:vmenuicon,:vparentid,:vmoduleid,:vsortorder,:vviewcode,:vcontrollercode,:vmenudep,:vrecordstatus,:vdatauser)';
+			$sql = 'call Updatemenuaccess(:vid,:vmenuname,:vdescription,:vmenuurl,:vmenuicon,:vparentid,:vmoduleid,:vsortorder,:vrecordstatus,:vdatauser)';
 			$command=$connection->createCommand($sql);
 			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
 			$this->DeleteLock($this->menuname, $arraydata[0]);
@@ -134,10 +131,7 @@ class MenuaccessController extends Controller {
 		$command->bindvalue(':vparentid',$arraydata[5],PDO::PARAM_STR);
 		$command->bindvalue(':vmoduleid',$arraydata[6],PDO::PARAM_STR);
 		$command->bindvalue(':vsortorder',$arraydata[7],PDO::PARAM_STR);
-		$command->bindvalue(':vviewcode',$arraydata[8],PDO::PARAM_STR);
-		$command->bindvalue(':vcontrollercode',$arraydata[9],PDO::PARAM_STR);
-		$command->bindvalue(':vmenudep',$arraydata[10],PDO::PARAM_STR);
-		$command->bindvalue(':vrecordstatus',$arraydata[11],PDO::PARAM_STR);
+		$command->bindvalue(':vrecordstatus',$arraydata[8],PDO::PARAM_STR);
 		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
 		$command->execute();			
 	}
@@ -165,11 +159,8 @@ class MenuaccessController extends Controller {
 					$modulename = $objWorksheet->getCellByColumnAndRow(6, $row)->getValue();
 					$moduleid = Yii::app()->db->createCommand("select moduleid from modules where modulename = '".$modulename."'")->queryScalar();
 					$sortorder = $objWorksheet->getCellByColumnAndRow(7, $row)->getValue();
-					$viewcode = $objWorksheet->getCellByColumnAndRow(8, $row)->getValue();
-					$controllercode = $objWorksheet->getCellByColumnAndRow(9, $row)->getValue();
-					$menudep= $objWorksheet->getCellByColumnAndRow(10, $row)->getValue();
-					$recordstatus = $objWorksheet->getCellByColumnAndRow(11, $row)->getValue();
-					$this->ModifyData($connection,array($id,$menuname,$description,$menuurl,$menuicon,$parentid,$moduleid,$sortorder,$viewcode,$controllercode,$menudep,$recordstatus));
+					$recordstatus = $objWorksheet->getCellByColumnAndRow(8, $row)->getValue();
+					$this->ModifyData($connection,array($id,$menuname,$description,$menuurl,$menuicon,$parentid,$moduleid,$sortorder,$recordstatus));
 				}
 				$transaction->commit();
 				GetMessage(false,getcatalog('insertsuccess'));
@@ -185,9 +176,8 @@ class MenuaccessController extends Controller {
 		$connection=Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			CreateCode($_POST['menuname']);
 			$this->ModifyData($connection,array((isset($_POST['menuaccessid'])?$_POST['menuaccessid']:''),$_POST['menuname'],$_POST['description'],$_POST['menuurl'],
-				$_POST['menuicon'],$_POST['parentid'],$_POST['moduleid'],$_POST['sortorder'],$_POST['viewcode'],$_POST['controllercode'],$_POST['menudep'],$_POST['recordstatus']));
+				$_POST['menuicon'],$_POST['parentid'],$_POST['moduleid'],$_POST['sortorder'],$_POST['recordstatus']));
 			$transaction->commit();
 			GetMessage(false,getcatalog('insertsuccess'));
 		}
@@ -217,27 +207,31 @@ class MenuaccessController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,'chooseone');
+			GetMessage(true,getcatalog('chooseone'));
 		}
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();
-		$this->dataprint['titleid'] = GetCatalog('menuaccessid');
+		$this->dataprint['menuname'] = GetSearchText(array('GET'),'menuname');
+		$this->dataprint['description'] = GetSearchText(array('GET'),'description');
+		$this->dataprint['menuurl'] = GetSearchText(array('GET'),'menuurl');
+		$this->dataprint['menuicon'] = GetSearchText(array('GET'),'menuicon');
+		$this->dataprint['parentname'] = GetSearchText(array('GET'),'parentname');
+		$this->dataprint['modulename'] = GetSearchText(array('GET'),'modulename');
+		$id = GetSearchText(array('GET'),'id');
+		if ($id != '%%') {
+			$this->dataprint['id'] = $id;
+		} else {
+			$this->dataprint['id'] = GetSearchText(array('GET'),'menuaccessid');
+		}
+		$this->dataprint['titleid'] = GetCatalog('id');
 		$this->dataprint['titlemenuname'] = GetCatalog('menuname');
 		$this->dataprint['titledescription'] = GetCatalog('description');
-		$this->dataprint['titlemenuurl'] = GetCatalog('menuurl');
 		$this->dataprint['titlemenuicon'] = GetCatalog('menuicon');
+		$this->dataprint['titlemenuurl'] = GetCatalog('menuurl');
 		$this->dataprint['titleparentname'] = GetCatalog('parentname');
 		$this->dataprint['titlemodulename'] = GetCatalog('modulename');
 		$this->dataprint['titlesortorder'] = GetCatalog('sortorder');
-		$this->dataprint['url'] = Yii::app()->params['baseUrl'];
-    $this->dataprint['id'] = GetSearchText(array('GET'),'id');
-    $this->dataprint['menuname'] = GetSearchText(array('GET'),'menuname');
-    $this->dataprint['description'] = GetSearchText(array('GET'),'description');
-    $this->dataprint['menuurl'] = GetSearchText(array('GET'),'menuurl');
-    $this->dataprint['menuicon'] = GetSearchText(array('GET'),'menuicon');
-    $this->dataprint['parentname'] = GetSearchText(array('GET'),'parentname');
-    $this->dataprint['modulename'] = GetSearchText(array('GET'),'modulename');
-    $this->dataprint['sortorder'] = GetSearchText(array('GET'),'sortorder');
+		$this->dataprint['titlerecordstatus'] = GetCatalog('recordstatus');
   }
 }

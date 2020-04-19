@@ -106,6 +106,22 @@
 				return row.uom3code;
 		}},
 		{
+			field:'qty4',
+			title:'".getCatalog('qty4') ."',
+			width:'80px',
+			sortable: true,
+			formatter: function(value,row,index){
+				return formatnumber('',value);
+		}},
+		{
+			field:'uom4code',
+			title:'".getCatalog('uom4code') ."',
+			width:'80px',
+			sortable: true,
+			formatter: function(value,row,index){
+				return row.uom4code;
+		}},
+		{
 			field:'qtyinprogress',
 			title:'".getCatalog('qtyinprogress') ."',
 			editor:'numberbox',
@@ -146,6 +162,10 @@
 			'subs'=>"
 				{field:'referenceno',title:'".getCatalog('referenceno') ."',width:'150px'},
 				{field:'transdate',title:'".getCatalog('transdate') ."',width:'100px'},
+				{field:'averageprice',title:'".getCatalog('averageprice') ."',
+					formatter: function(value,row,index){
+						return formatnumber('',value);
+					},width:'130px'},
 				{field:'qty',title:'".getCatalog('qty') ."',
 					formatter: function(value,row,index){
 						return formatnumber('',value);
@@ -161,6 +181,11 @@
 						return formatnumber('',value);
 					},width:'100px'},
 				{field:'uom3code',title:'".getCatalog('uom3code') ."',width:'80px'},
+				{field:'qty4',title:'".getCatalog('qty4') ."',
+					formatter: function(value,row,index){
+						return formatnumber('',value);
+					},width:'100px'},
+				{field:'uom4code',title:'".getCatalog('uom4code') ."',width:'80px'},
 			",
 		),
 	),	

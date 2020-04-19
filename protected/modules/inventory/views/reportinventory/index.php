@@ -8,8 +8,18 @@
 			<tr>
 				<td>".getCatalog('reporttype')."</td>
 				<td><select class='easyui-combobox' id='reportinventory-list' name='reportinventory-list' data-options='required:true' style='width:350px;'>
+					<option value='1'>Rincian Histori Barang</option>
+					<option value='2'>Rekap Histori Barang</option>
 					<option value='3'>Kartu Stok Barang</option>
-					<option value='5'>Rekap Stok Barang</option>
+					<option value='4'>Rekap Stok Barang</option>
+					<option value='5'>Rincian Surat Jalan Per Dokumen</option>
+					<option value='6'>Daftar Surat Jalan</option>
+					<option value='7'>Rincian Transfer Gudang Keluar Per Dokumen</option>
+					<option value='8'>Rincian Transfer Gudang Masuk Per Dokumen</option>
+					<option value='9'>Daftar Surat Penyerahan Hasil Jadi</option>
+					<option value='10'>Daftar Surat Penyerahan Bahan Baku</option>
+					<option value='14'>Rincian LPB Per Dokumen</option>
+					<option value='15'>Daftar Laporan Penerimaan Barang</option>
 					<option value='40'>Rekonsiliasi FPP, PO, dan LPB</option>
 					<option value='27'>Rekap LPB Per Dokumen Belum Status Max</option>
 					<option value='28'>Rekap Retur Beli Per Dokumen Belum Status Max</option>
@@ -150,7 +160,7 @@
 			<tr>
 				<td>".getCatalog('product')."</td>
 				<td><select class='easyui-combogrid' id='reportinventory-productid' name='reportinventory-productid' style='width:350px' data-options=\"
-						panelWidth: '600px',
+						panelWidth: '630px',
 						idField: 'productname',
 						textField: 'productname',
 						mode:'remote',
@@ -161,6 +171,7 @@
 						},
 						columns: [[
 							{field:'productid',title:'".getCatalog('productid') ."',width:'80px'},
+							{field:'productcode',title:'".getCatalog('productcode') ."',width:'150px'},
 							{field:'productname',title:'".getCatalog('productname') ."',width:'400px'},
 						]],
 						fitColumns: true

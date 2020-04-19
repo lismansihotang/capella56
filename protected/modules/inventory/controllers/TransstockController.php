@@ -42,7 +42,7 @@ class TransstockController extends Controller {
     Yii::app()->end();
   }
   public function search() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $transstockid 		= GetSearchText(array('POST','Q'),'transstockid','','int');
     $plantid 		= GetSearchText(array('POST','GET'),'plantid','','int');
     $slocfromid 		= GetSearchText(array('POST','GET'),'slocfromid','','int');
@@ -358,7 +358,7 @@ class TransstockController extends Controller {
     return CJSON::encode($result);
 	}
   public function actionSearchdetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     $id = 0;
     if (isset($_POST['id'])) {
       $id = $_POST['id'];
@@ -385,6 +385,7 @@ class TransstockController extends Controller {
 					->leftjoin('storagebin d', 'd.storagebinid = t.storagebintoid')
 					->leftjoin('mesin e', 'e.mesinid = t.mesinid')
 					->leftjoin('materialtype f', 'f.materialtypeid = a.materialtypeid')
+					->leftjoin('formrequestraw g', 'g.formrequestrawid = t.formrequestrawid')
 					->where('t.transstockid = :transstockid',
 					array(
 				':transstockid' => $id
@@ -396,6 +397,7 @@ class TransstockController extends Controller {
 						(select b.uomcode from unitofmeasure b where b.unitofmeasureid = t.uom3id) as uom3code,
 						GetStdQty2(a.productid) as stdqty2,
 						GetStdQty3(a.productid) as stdqty3,
+						g.qty - g.tsqty as qtyreq,
 						GetStockBin(a.productid,t.uomid,m.slocfromid,t.storagebinfromid) as qtystock')
 					->from('transstockdet t')
 					->leftjoin('transstock m', 'm.transstockid = t.transstockid')
@@ -404,6 +406,7 @@ class TransstockController extends Controller {
 					->leftjoin('storagebin d', 'd.storagebinid = t.storagebintoid')
 					->leftjoin('mesin e', 'e.mesinid = t.mesinid')
 					->leftjoin('materialtype f', 'f.materialtypeid = a.materialtypeid')
+					->leftjoin('formrequestraw g', 'g.formrequestrawid = t.formrequestrawid')
 					->where('t.transstockid = :transstockid', array(
 		':transstockid' => $id
 		))->offset($offset)->limit($rows)->order($sort . ' ' . $order)->queryAll();
@@ -423,6 +426,7 @@ class TransstockController extends Controller {
         'qty' => Yii::app()->format->formatNumber($data['qty']),
 				'qty2' => Yii::app()->format->formatNumber($data['qty2']),
 				'qty3' => Yii::app()->format->formatNumber($data['qty3']),
+				'qtyreq' => Yii::app()->format->formatNumber($data['qtyreq']),
 				'stdqty2' => Yii::app()->format->formatNumber($data['stdqty2']),
 				'stdqty3' => Yii::app()->format->formatNumber($data['stdqty3']),
 				'qtystock' => Yii::app()->format->formatNumber($data['qtystock']),
@@ -483,7 +487,7 @@ class TransstockController extends Controller {
 		}
   }
   public function actionSavedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (!Yii::app()->request->isPostRequest)
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     $connection  = Yii::app()->db;
@@ -523,7 +527,7 @@ class TransstockController extends Controller {
 		}
   }
   public function actionPurge() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
       $id          = $_POST['id'];
       $connection  = Yii::app()->db;
@@ -548,7 +552,7 @@ class TransstockController extends Controller {
     }
   }
   public function actionPurgedetail() {
-    header("Content-Type: application/json");
+    header('Content-Type: application/json');
     if (isset($_POST['id'])) {
 			$id          = $_POST['id'];
 			$connection  = Yii::app()->db;
@@ -745,7 +749,6 @@ class TransstockController extends Controller {
           $row1['uomcode'],
           $row1['uom2code'],
           $row1['uom3code'],
-          $row1['uom4code'],
           $row1['storagebinfrom'],
           $row1['storagebinto'],
           $row1['lotno']
@@ -818,6 +821,7 @@ class TransstockController extends Controller {
 			inner join unitofmeasure h on h.unitofmeasureid = f.uomid
 			left join unitofmeasure i on i.unitofmeasureid = f.uom2id
 			left join unitofmeasure j on j.unitofmeasureid = f.uom3id
+			left join unitofmeasure k on k.unitofmeasureid = f.uom4id
 			left join mesin l on l.mesinid = f.mesinid 
 		";
 		$sql .= " where coalesce(a.transstockid,'') like '".$transstockid."' 

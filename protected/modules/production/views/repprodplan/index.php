@@ -45,7 +45,18 @@
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
-				return value;
+				if (row.recordstatus >= 4) {
+					if (row.qtyres > 0) {
+						return '<div style=\"background-color:yellow;color:black;\">'+value+'</div>';
+					} else
+					if (row.qtyres == 0) {
+						return '<div style=\"background-color:red;color:white;\">'+value+'</div>';
+					} else {
+						return value;
+					}
+				} else {
+					return value;
+				}
 		}},
 		{
 			field:'soheaderid',
@@ -81,12 +92,18 @@
 		}},",
 		'downloadbuttons'=>"
 		<a href='javascript:void(0)' title='".getCatalog('pdfoperator')."' class='easyui-linkbutton' iconCls='icon-pdf' plain='true' onclick='pdfoperator()'></a>
+		<a href='javascript:void(0)' title='".getCatalog('pdfpakai')."' class='easyui-linkbutton' iconCls='icon-pdf' plain='true' onclick='pdfpakai()'></a>
 	",
 		'addonscripts'=>"
 		function pdfoperator() {
 			var rows = $('#dg-repprodplan').edatagrid('getSelected');
 			var array = 'id='+rows.productplanid;
 			window.open('".Yii::app()->createUrl('production/productplan/pdfoperator')."?'+array);
+		};
+		function pdfpakai() {
+			var rows = $('#dg-repprodplan').edatagrid('getSelected');
+			var array = 'id='+rows.productplanid;
+			window.open('".Yii::app()->createUrl('production/productplan/pdfpakai')."?'+array);
 		};
 		",
 	'searchfield'=> array ('productplanid','plantcode','productplanno','productplandate','sono','customer','sloccode','productname','description','recordstatus'),
