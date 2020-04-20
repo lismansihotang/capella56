@@ -33,10 +33,10 @@ return array(
       'caseSensitive'=>false,  
 		),
 		'db'=>array(
-			'connectionString' => 'mysql:port=5000;dbname=capellafive;host=mifsaka.com',
+			'connectionString' => 'mysql:port=5000;dbname=capellafive;host=',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'cr4nkc4s3',
+			'password' => '',
 			'charset' => 'utf8',
 			'initSQLs'=>array('set names utf8'),
       'schemaCachingDuration' => 3600,
