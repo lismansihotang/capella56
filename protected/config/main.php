@@ -80,7 +80,7 @@ return array(
 		'datetimetodb'=>'Y-m-d H:i:s',
 		'title'=>'Capella ERP Indonesia',
 		'baseUrl'=>'https://localhost/capellafive/',
-		'baseUrlReport'=>'http://mifsaka.com:8080/jasperserver/rest_v2/reports/reports/capellafive',
+		'baseUrlReport'=>'http:/localhost:8080/jasperserver/rest_v2/reports/reports/capellafive',
 		'ReportServerUser'=>'jasperadmin',
 		'ReportServerPass'=>'jasperadmin',
     'ReportTimeout'=>5,
