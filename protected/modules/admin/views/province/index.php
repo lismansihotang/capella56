@@ -50,7 +50,7 @@
 		{
 			field:'provincecode',
 			title:localStorage.getItem('catalogprovincecode'),
-			editor:{type:'numberbox',options:{precision:0,required:true,}},
+			editor:{type:'textbox',options:{precision:0,required:true,}},
 			sortable: true,	
 			width:'100px',			
 			formatter: function(value,row,index){
@@ -60,7 +60,7 @@
 		{
 			field:'provincename',
 			title:localStorage.getItem('catalogprovincename'),
-			editor:'text',
+			editor: {type:'textbox',options:{required:true}},
 			width:'200px',
 			sortable: true,
 			formatter: function(value,row,index){

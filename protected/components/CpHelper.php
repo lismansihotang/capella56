@@ -115,7 +115,7 @@ function GetItems() {
       'parentid' => $result['menuaccessid']
     );
   }
-  return $items;
+  return CJSON::encode($items);
 }
 function getSubMenu($menuname) {
 	$dependency = new CDbCacheDependency("SELECT max(b.updatedate) 
@@ -142,7 +142,7 @@ function getSubMenu($menuname) {
 			'parentid' => $result['menuaccessid']
 		);
 	}
-	return $items;
+	return CJSON::encode($items);
 }
 function eja($number) {
   $number       = strtr($number,array(','=>''));
@@ -692,4 +692,270 @@ function GetAllCatalog() {
 	$comm = Yii::app()->db->createCommand($sql);
 	$comm->bindvalue(':user',Yii::app()->user->id,PDO::PARAM_STR);
 	return $comm->queryAll();
+}
+function GetAllStatus() {
+	$sql = 'SELECT b.wfname,a.wfstat,backcolor,fontcolor
+	FROM wfstatus a
+	JOIN workflow b ON b.workflowid = a.workflowid';
+	$comm = Yii::app()->db->createCommand($sql)->queryAll();
+	return $comm;
+}
+function GetData($data){
+	header('Content-Type: application/json');
+	$result = array();
+	$row = array();
+	$viewfield = '';
+	foreach ($data['viewfield'] as $key => $value) {
+		if (!is_array($value)) {
+			if ($viewfield == '') {
+				$viewfield .= $key;
+			} else {
+				$viewfield .= ','.$key;
+			}
+		} else {
+			if (array_key_exists('sourcefield',$value)) {
+				$sourcefield = $data['searchfield'][$key]['sourcefield'].' as '.$key;
+			} else {
+				$sourcefield = $key;
+			}
+			if (array_key_exists('from',$value)) {
+				$from = $data['viewfield'][$key]['from'];
+			} else {
+				$from = 't';
+			}
+			if ($from != 'other') {
+				if ($viewfield == '') {
+					$viewfield .= $from.'.'.$sourcefield;
+				} else {
+					$viewfield .= ','.$from.'.'.$sourcefield;
+				}
+			} else {
+				$viewfield .= ','.$data['viewfield'][$key]['source'].' as '.$key;
+			}
+		}
+	}; 
+
+	if ($data['paging'] == true) {
+		$page = GetSearchText(array('POST'),'page',1,'int');
+		$rows = GetSearchText(array('POST'),'rows',10,'int');
+		$offset = ($page-1) * $rows;
+	}
+	$sort = GetSearchText(array($data['sort']['datatype']),'sort',$data['sort']['default'],'int');
+	$order = GetSearchText(array($data['order']['datatype']),'sort',$data['order']['default'],'int');
+
+	$selectcount = 'select count(1) as total';
+	$select = 'select '. $viewfield;
+	$from = ' from '.$data['from'];
+	$where = '';
+	if (is_array($data['searchfield'])) {
+		foreach ($data['searchfield'] as $key => $value) {
+			if (array_key_exists('from',$data['searchfield'][$key])) {
+				$alias = $data['searchfield'][$key]['from'];
+				if ($alias == 'other') {
+					$alias = 't';
+				}
+			} else {
+				$alias = 't';
+			}
+			if (array_key_exists('operatortype',$data['searchfield'][$key])) {
+				$operatortype = $data['searchfield'][$key]['operatortype'];
+			} else {
+				$operatortype = 'and';
+			}
+			if (array_key_exists('datatype',$data['searchfield'][$key])) {
+				$datatype = $data['searchfield'][$key]['datatype'];
+			} else {
+				$datatype = 'POST';
+			}
+			if (array_key_exists('sourcefield',$data['searchfield'][$key])) {
+				$sourcefield = $data['searchfield'][$key]['sourcefield'];
+			} else {
+				$sourcefield = $key;
+			}
+			if (array_key_exists('source',$data['searchfield'][$key])) {
+				$source = $data['searchfield'][$key]['source'];
+			} else {
+				$source = '';
+			}
+			if (array_key_exists('strict',$data['searchfield'][$key])) {
+				$action = $data['searchfield'][$key]['strict'];
+			} else {
+				$action = 'like';
+			}
+			if ($action == 'like') {
+				$value = GetSearchText(array($datatype),$key);
+			} else {
+				$value = GetSearchText(array($datatype),$key,'0','int');
+			}
+			if ($where == '') {
+				$where .= " where (coalesce(".$alias.'.'.$sourcefield.",'') ".$action." '".$value."') ";
+			} else {
+				if ($source == '') {
+					$where .= $operatortype." (coalesce(".$alias.'.'.$sourcefield.",'') ".$action." '".$value."') ";
+				} else {
+					if ($value != '%%') {
+					$where .= str_replace('P{'.$key.'}',"'".$value."'",$source);
+					}
+				}
+			}
+		}; 
+	} else {
+		$where .= $data['searchfield'];
+	}
+	$where .= $data['addonsearch'];
+	$sql = $selectcount . ' '. $from . ' '. $where;
+	$cmd = Yii::app()->db->createCommand($sql)->queryScalar();
+	$result['total'] = $cmd;
+	if ($data['paging'] == true) {
+		$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order . ' limit ' . $offset . ',' . $rows; 
+	} else {
+		$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order;
+	}
+	//print_r($sql);
+	$cmd = Yii::app()->db->createCommand($sql)->queryAll();
+	foreach($cmd as $datax) {	
+		$fields = array();
+		foreach ($data['viewfield'] as $key => $value) {
+			if ($value == 'number') {
+				$fields = array_merge($fields,array($key=>Yii::app()->format->formatnumber($datax[$key])));
+			} else {
+				$fields = array_merge($fields,array($key=>$datax[$key]));
+			}
+		}
+		$row[] = $fields;
+	}
+
+	$result=array_merge($result,array('rows'=>$row));
+	return CJSON::encode($result);
+}
+
+function ModifyData($connection,$data){
+	$id =  $data['arraydata']['vid']; 
+	$columns = '';
+	foreach($data['arraydata'] as $key=>$value) {
+		if ($key != 'vid') {
+			if ($columns == '') {
+				$columns = 	':'.$key;
+			} else {
+				$columns .= ',:'.$key;
+			}
+		}
+	}
+	if ($data['spinsert'] == $data['spupdate']) {
+		$sql = 'call '. $data['spupdate']. ' (:vid,'.$columns.',:vdatauser)';
+		$command=$connection->createCommand($sql);
+		$command->bindvalue(':vid',$data['arraydata']['vid'],PDO::PARAM_STR);
+	} else {
+		if ($id == '') {
+			$sql = 'call '. $data['spinsert']. ' (' .$columns. ',:vdatauser)'; 
+			$command=$connection->createCommand($sql);
+		}
+		else {
+			$sql = 'call '. $data['spupdate']. ' (:vid,'.$columns.',:vdatauser)';
+			$command=$connection->createCommand($sql);
+			$command->bindvalue(':vid',$data['arraydata']['vid'],PDO::PARAM_STR);
+		}
+	}
+
+	$columns = '';
+	foreach($data['arraydata'] as $key=>$value) {
+		if ($key != 'vid') {
+			if ($columns == '') {
+				$command->bindvalue(':'.$key,$value,PDO::PARAM_STR);
+			} else {
+				$command->bindvalue(':'.$key,$value,PDO::PARAM_STR);
+			}
+		}
+	}
+	$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
+	$command->execute();
+}
+
+function UploadData($menuname,$data){
+	$target_file = dirname('__FILES__').'/uploads/' . basename($_FILES["file-".$menuname]["name"]);
+	if (move_uploaded_file($_FILES["file-".$menuname]["tmp_name"], $target_file)) {
+		$objReader = PHPExcel_IOFactory::createReader('Excel2007');
+		$objPHPExcel = $objReader->load($target_file);
+		$objWorksheet = $objPHPExcel->getActiveSheet();
+		$highestRow = $objWorksheet->getHighestRow(); 
+		$highestColumn = $objWorksheet->getHighestColumn();
+		$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
+		$connection=Yii::app()->db;
+		$transaction=$connection->beginTransaction();
+		try {
+			for ($row = 2; $row <= $highestRow; ++$row) {
+				foreach($data['arraydata'] as $key=>$value) {
+					if (!is_array($value)) {
+						$data['arraydata'][$key] = $objWorksheet->getCellByColumnAndRow($value, $row)->getValue();
+					} else {
+						$pkname = $objWorksheet->getCellByColumnAndRow($data['arraydata'][$key]['column'], $row)->getValue();
+						$pkid = Yii::app()->db->createCommand($data['arraydata'][$key]['source']."'".$pkname."'")->queryScalar();
+						$data['arraydata'][$key] = $pkid;
+					}
+				}
+
+				ModifyData($connection,$data);
+			}
+			$transaction->commit();
+			GetMessage(false,'insertsuccess');
+		}
+		catch (CDbException $e) {
+			$transaction->rollBack();
+			GetMessage(true,implode(" ",$e->errorInfo));
+		}
+	}
+}
+
+function SaveData($data) {
+	$connection=Yii::app()->db;
+	$transaction=$connection->beginTransaction();
+	try {
+		ModifyData($connection,$data);
+		$transaction->commit();
+		GetMessage(false,'insertsuccess');
+	}
+	catch (CDbException $e) {
+		$transaction->rollBack();
+		GetMessage(true,implode(" ",$e->errorInfo));
+	}
+}
+
+function ExecData($data) {
+	if (isset($_POST['id'])) {
+		$id=$_POST['id'];
+		$connection=Yii::app()->db;
+		$transaction=$connection->beginTransaction();
+		try {
+			$sql = 'call '.$data['spname'].' (:vid,:vdatauser)';
+			$command=$connection->createCommand($sql);
+			$command->bindvalue(':vid',$id,PDO::PARAM_STR);
+			$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
+			$command->execute();
+			$transaction->commit();
+			GetMessage(false,'insertsuccess');
+		}
+		catch (CDbException $e) {
+			$transaction->rollBack();
+			GetMessage(true,implode($e->errorInfo));
+		}
+	}
+	else {
+		GetMessage(true,'chooseone');
+	}
+}
+
+function RandomID() {
+	return rand(-1, -1000000000);
+}
+
+function GetRandomHeader($data) {
+	$id = RandomID();
+	$sql = "select ifnull(count(1),0) from ".$data['table']." where ".$data['key']." = ".$id;
+	$count = Yii::app()->db->createCommand($sql)->queryScalar();
+	if ($count > 0) {
+		$id = GetRandomHeader($data);
+	}
+	echo CJSON::encode(array(
+		$data['key'] => $id
+	));
 }

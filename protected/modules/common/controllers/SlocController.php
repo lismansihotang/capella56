@@ -539,7 +539,7 @@ class SlocController extends Controller {
 					$this->ModifyData($connection,array($id,$plantid,$sloccode,$description,$recordstatus));
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -561,7 +561,7 @@ class SlocController extends Controller {
 				$_POST['isbj'],
 				$_POST['recordstatus']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -581,7 +581,7 @@ class SlocController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -589,7 +589,7 @@ class SlocController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,getcatalog('chooseone'));
+			GetMessage(true,'chooseone');
 		}
 	}
 	protected function actionDataPrint() {

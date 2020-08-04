@@ -1,155 +1,136 @@
 <?php
 class ProvinceController extends Controller {
 	public $menuname = 'province';
+	private $sort = [
+		'datatype' => 'POST',
+		'default' => 'provinceid'
+	];
+	private $order = [
+		'default' => 'desc'
+	];
+	private $viewfield = [
+		'provinceid' => 'text',
+		'countryid' => [
+			'type' => 'text',
+			'from' => 'p'
+		],
+		'countryname' => [
+			'type' => 'text',
+			'from' => 'p'
+		],
+		'provincecode' => 'text',
+		'provincename' => 'text',
+		'recordstatus' => [
+			'type' => 'text',
+			'from' => 't'
+		]
+	];
 	public function actionIndex() {
 		parent::actionIndex();
+		if(isset($_GET['combo']))
+			echo $this->searchcombo();
+		else
 		if(isset($_GET['grid']))
 			echo $this->search();
 		else
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header('Content-Type: application/json');
-		$provinceid = GetSearchText(array('POST','Q'),'provinceid');
-		$countrycode = GetSearchText(array('POST','Q'),'countrycode');
-		$countryname = GetSearchText(array('POST','Q'),'countryname');
-		$provincecode = GetSearchText(array('POST','Q'),'provincecode');
-		$provincename = GetSearchText(array('POST','Q'),'provincename');
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','provinceid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$selectcount = ' select count(1) as total ';
-		$select = ' select t.provinceid,t.provincecode,t.provincename,t.countryid,p.countrycode,p.countryname,t.recordstatus ';
-		$from = ' from province t 
-			left join country p on p.countryid = t.countryid';
-		$where = ' where ';
-		if (!isset($_GET['combo'])) {
-			$where .= " (provinceid like '".$provinceid."') 
-			and (provincecode like '".$provincecode."') 
-			and (provincename like '".$provincename."') 
-			and (p.countryname like '".$countryname."')
-			and (p.countrycode like '".$countrycode."') ";
-		} else {
-			$where .= " ((provinceid like '".$provinceid."') 
-			or (provincecode like '".$provincecode."') 
-			or (provincename like '".$provincename."') 
-			or (p.countryname like '".$countryname."')
-			or (p.countrycode like '".$countrycode."')) 
-			and t.recordstatus = 1 ";
-		}
-		$sql = $selectcount . $from . $where;
-		$cmd = Yii::app()->db->createCommand($sql)->queryScalar();
-		$result['total'] = $cmd;
-		if (!isset($_GET['combo'])) {
-			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order . ' limit ' . $offset . ',' . $rows;
-		} else {
-			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order;
-		}
-		$cmd = Yii::app()->db->createCommand($sql)->queryAll();
-		foreach($cmd as $data) {	
-			$row[] = array(
-			'provinceid'=>$data['provinceid'],
-			'countryid'=>$data['countryid'],
-			'countryname'=>$data['countryname'],
-			'provincecode'=>$data['provincecode'],
-			'provincename'=>$data['provincename'],
-			'recordstatus'=>$data['recordstatus'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => 'province t 
+				left join country p on p.countryid = t.countryid ',
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => true,
+			'searchfield' => [
+				'provinceid' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and' 
+				],
+				'countrycode' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'countryname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'provincecode' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'provincename' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+			]
+		]);
 	}
-	private function ModifyData($connection,$arraydata) {
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql = 'call Insertprovince(:vcountryid,:vprovincecode,:vprovincename,:vrecordstatus,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else {
-			$sql = 'call Updateprovince(:vid,:vcountryid,:vprovincecode,:vprovincename,:vrecordstatus,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-			$this->DeleteLock($this->menuname, $arraydata[0]);
-		}
-		$command->bindvalue(':vcountryid',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vprovincecode',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vprovincename',$arraydata[3],PDO::PARAM_STR);
-		$command->bindvalue(':vrecordstatus',$arraydata[4],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();
+	public function searchcombo() {
+		return GetData([
+			'from' => 'province t 
+				left join country p on p.countryid = t.countryid ',
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => false,
+			'searchfield' => [
+				'countrycode' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'countryname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+				'provincecode' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+				'provincename' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+			]
+		]);
 	}
 	public function actionUpload() {
 		parent::actionUpload();
-		$target_file = dirname('__FILES__').'/uploads/' . basename($_FILES["file-province"]["name"]);
-		if (move_uploaded_file($_FILES["file-province"]["tmp_name"], $target_file)) {
-			$objReader = PHPExcel_IOFactory::createReader('Excel2007');
-			$objPHPExcel = $objReader->load($target_file);
-			$objWorksheet = $objPHPExcel->getActiveSheet();
-			$highestRow = $objWorksheet->getHighestRow(); 
-			$highestColumn = $objWorksheet->getHighestColumn();
-			$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				for ($row = 2; $row <= $highestRow; ++$row) {
-					$id = $objWorksheet->getCellByColumnAndRow(0, $row)->getValue();
-					$countrycode = $objWorksheet->getCellByColumnAndRow(1, $row)->getValue();
-					$countryid = Yii::app()->db->createCommand("select countryid from country where countrycode = '".$countrycode."'")->queryScalar();
-					$provincecode = $objWorksheet->getCellByColumnAndRow(2, $row)->getValue();
-					$provincename = $objWorksheet->getCellByColumnAndRow(3, $row)->getValue();
-					$recordstatus = $objWorksheet->getCellByColumnAndRow(4, $row)->getValue();
-					$this->ModifyData($connection,array($id,$countryid,$provincecode,$provincename,$recordstatus));
-				}
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}	
-    }
+		UploadData($this->menuname,[
+			'spinsert' => 'InsertProvince',
+			'spupdate' => 'UpdateProvince',
+			'arraydata' => [
+				'vid'=>0,
+				'countryid'=>[
+					'column' => 1,
+					'source' => 'select countryid from country where countrycode = '
+				],
+				'provincecode'=>2,
+				'provincename'=>3,
+				'recordstatus'=>4
+			]
+		]);
 	}
 	public function actionSave() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyData($connection,array((isset($_POST['provinceid'])?$_POST['provinceid']:''),$_POST['countryid'],$_POST['provincecode'],$_POST['provincename'],$_POST['recordstatus']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}	
+		SaveData([
+			'spinsert' => 'InsertProvince',
+			'spupdate' => 'UpdateProvince',
+			'arraydata' => [
+				'vid'=>(isset($_POST['provinceid'])?$_POST['provinceid']:''),
+				'countryid'=>$_POST['countryid'],
+				'provincecode'=>$_POST['provincecode'],
+				'provincename'=>$_POST['provincename'],
+				'recordstatus'=>$_POST['recordstatus']
+			]
+		]);
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgeprovince(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}	
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgeprovince',			
+		]);
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();

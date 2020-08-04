@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'requestedbyid',
-			title:'".getCatalog('requestedbyid')."', 
+			title: localStorage.getItem('catalogrequestedbyid'), 
 			sortable:'true',
 			width:'50px',
 			formatter: function(value,row,index){
@@ -21,7 +21,7 @@
 		},
 		{
 			field:'requestedbycode',
-			title:'".getCatalog('requestedbycode')."', 
+			title: localStorage.getItem('catalogrequestedbycode'), 
 			editor:{
 				type: 'textbox',
 				options:{
@@ -36,7 +36,7 @@
 		},
 		{
 			field:'description',
-			title:'".getCatalog('description')."', 
+			title: localStorage.getItem('catalogdescription'), 
 			editor:{
 				type: 'textbox',
 				options:{
@@ -51,7 +51,7 @@
 		},
 		{
 			field:'recordstatus',
-			title:'".getCatalog('recordstatus')."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

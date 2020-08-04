@@ -101,7 +101,7 @@ class SalesareaController extends Controller {
 					$this->ModifyData($connection,array($id,$areaname,$recordstatus));
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -116,7 +116,7 @@ class SalesareaController extends Controller {
 		try {		
 			$this->ModifyData($connection,array((isset($_POST['salesareaid'])?$_POST['salesareaid']:''),$_POST['areaname'],$_POST['recordstatus']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -136,7 +136,7 @@ class SalesareaController extends Controller {
 					$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 					$command->execute();
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -144,7 +144,7 @@ class SalesareaController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,getcatalog('chooseone'));
+			GetMessage(true,'chooseone');
 		}
 	}
 	protected function actionDataPrint() {

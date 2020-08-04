@@ -21,7 +21,7 @@
 		{
 			field:'themename',
 			title:localStorage.getItem('catalogthemename'),
-			editor:'text',
+			editor:{type:'textbox',options:{required:true}},
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -30,7 +30,7 @@
 		{
 			field:'description',
 			title:localStorage.getItem('catalogdescription'),
-			editor:'text',
+			editor:{type:'textbox',options:{required:true}},
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -39,7 +39,7 @@
 		{
 			field:'themeprev',
 			title:localStorage.getItem('catalogthemeprev'),
-			editor:'text',
+			editor:{type:'textbox',options:{}},
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){

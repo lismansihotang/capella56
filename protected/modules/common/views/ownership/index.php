@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'ownershipid',
-			title:'".getCatalog('ownershipid')."', 
+			title: localStorage.getItem('catalogownershipid'), 
 			sortable:'true',
 			width:'50px',
 			formatter: function(value,row,index){
@@ -21,7 +21,7 @@
 		},
 		{
 			field:'ownershipname',
-			title:'".getCatalog('ownershipname')."', 
+			title: localStorage.getItem('catalogownershipname'), 
 			editor:'text',
 			width:'150px',
 			sortable:'true',
@@ -30,7 +30,7 @@
 			}
 		},
 		{
-			field:'recordstatus',title:'".getCatalog('recordstatus')."',
+			field:'recordstatus',title: localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

@@ -1,7 +1,7 @@
 <?php
 class SiteController extends Controller {
   public function actionIndex() {
-    if (Yii::app()->user->name !== 'Guest') {
+    if (Yii::app()->user->name != 'Guest') {
       $this->layout = '//layouts/columnadmin';
       Yii::app()->theme = Yii::app()->user->themename;
       $this->render('index');
@@ -62,7 +62,7 @@ class SiteController extends Controller {
   }
   public function actionLogin() {
     $this->layout = '//layouts/columngeneral';
-		$model        = new LoginForm;
+    $model        = new LoginForm;
     if (isset($_POST['ajax']) && $_POST['ajax'] === 'login-form') {
       echo CActiveForm::validate($model);
       Yii::app()->end();
@@ -70,7 +70,7 @@ class SiteController extends Controller {
     if (isset($_POST['LoginForm'])) {
       $model->attributes = $_POST['LoginForm'];
       if ($model->validate() && $model->login()) {
-        $this->redirect(Yii::app()->user->returnUrl);
+        $this->actionIndex();
       }
     }
     $this->render('login', array(

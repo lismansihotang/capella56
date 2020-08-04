@@ -104,7 +104,7 @@ class PricecategoryController extends Controller {
 					$this->ModifyData($connection,array($id,$categoryname,$recordstatus));
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -119,7 +119,7 @@ class PricecategoryController extends Controller {
 		try {
 			$this->ModifyData($connection,array((isset($_POST['pricecategoryid'])?$_POST['pricecategoryid']:''),$_POST['categoryname'],$_POST['recordstatus']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -139,7 +139,7 @@ class PricecategoryController extends Controller {
 					$command->bindvalue(':vcreatedby',Yii::app()->user->name,PDO::PARAM_STR);
 					$command->execute();
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -147,7 +147,7 @@ class PricecategoryController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,getcatalog('chooseone'));
+			GetMessage(true,'chooseone');
 		}
 	}
 	protected function actionDataPrint() {

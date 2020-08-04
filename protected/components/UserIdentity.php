@@ -12,7 +12,6 @@ class UserIdentity extends CUserIdentity {
 		$user				 = $command->queryScalar();
 		if ($user > 0) {
 			$this->errorCode = self::ERROR_NONE;
-			$dependency   = new CDbCacheDependency("select max(updatedate) from useraccess a where username = '" . $this->username . "'");
 			$sql = "select a.useraccessid, a.username, a.realname, a.password, a.email, a.phoneno, a.languageid, a.themeid, b.languagename, 
 				c.themename, a.isonline, a.authkey, a.wallpaper
 				from useraccess a 
@@ -37,20 +36,18 @@ class UserIdentity extends CUserIdentity {
 			Yii::app()->user->wallpaper = $user['wallpaper'];
 			Yii::app()->user->basecurrencyid = GetParamValue('basecurrencyid');
 			Yii::app()->user->basecurrencyname = GetParamValue('basecurrencyname');
-			$dependency   = new CDbCacheDependency("select max(updatedate) from useraccess a where username = '" . Yii::app()->user->id . "'");
     	$sql = "SELECT c.menuvalueid
 				FROM useraccess a 
 				JOIN usergroup b ON b.useraccessid = a.useraccessid 
 				JOIN groupmenuauth c ON c.groupaccessid = b.groupaccessid 
 				WHERE c.menuauthid = 16 AND a.username = '".$this->username."' LIMIT 1";
-			Yii::app()->user->defaultplant = Yii::app()->db->cache(1000,$dependency)->createCommand($sql)->queryScalar();
-			$dependency   = new CDbCacheDependency("select max(updatedate) from useraccess a where username = '" . Yii::app()->user->id . "'");
+			Yii::app()->user->defaultplant = Yii::app()->db->createCommand($sql)->queryScalar();
 			$sql = "SELECT c.menuvalueid
 				FROM useraccess a 
 				JOIN usergroup b ON b.useraccessid = a.useraccessid 
 				JOIN groupmenuauth c ON c.groupaccessid = b.groupaccessid 
 				WHERE c.menuauthid = 1 AND a.username = '".$this->username."' LIMIT 1";
-			Yii::app()->user->defaultsloc = Yii::app()->db->cache(1000,$dependency)->createCommand($sql)->queryScalar();
+			Yii::app()->user->defaultsloc = Yii::app()->db->createCommand($sql)->queryScalar();
 		} else {
 			$this->errorCode = self::ERROR_USER_PASSWORD_INVALID;
 		}

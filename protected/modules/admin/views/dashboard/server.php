@@ -2,9 +2,9 @@
 setInterval(GetDataServer,500000);
 $(document).ready(function() {
   GetDataServer();
-});
-async function GetDataServer() {
-  const result = await jQuery.ajax({'url':'<?php echo Yii::app()->params['SysInfoServer']?>',
+}); 
+function GetDataServer() {
+  const result = jQuery.ajax({'url':'<?php echo Yii::app()->params['SysInfoServer']?>',
 		'type':'post','dataType':'json',
 		'success':function(data)
 		{

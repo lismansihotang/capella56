@@ -193,7 +193,7 @@ class StoragebinController extends Controller {
 					$this->ModifyData($connection,array($id,$description,$ismultiproduct,$slocid,$qtymax,$recordstatus));
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -210,7 +210,7 @@ class StoragebinController extends Controller {
 				$_POST['description'], $_POST['ismultiproduct'],$_POST['slocid'],$_POST['qtymax'],
 				$_POST['recordstatus']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -232,7 +232,7 @@ class StoragebinController extends Controller {
 					$command->execute();
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -240,7 +240,7 @@ class StoragebinController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,getcatalog('chooseone'));
+			GetMessage(true,'chooseone');
 		}
 	}
 	public function actionDownPDF() {

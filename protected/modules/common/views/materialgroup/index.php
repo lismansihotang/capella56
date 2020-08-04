@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'materialgroupid',
-			title:'". GetCatalog('materialgroupid') ."',
+			title: localStorage.getItem('catalogmaterialgroupid'),
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -20,7 +20,7 @@
 		}},
 		{
 			field:'materialgroupcode',
-			title:'". GetCatalog('materialgroupcode') ."',
+			title: localStorage.getItem('catalogmaterialgroupcode'),
 			width:'150px',
 			editor:{
 				type: 'validatebox',
@@ -34,7 +34,7 @@
 		}},
 		{
 			field:'description',
-			title:'". GetCatalog('description') ."',
+			title: localStorage.getItem('catalogdescription'),
 			width:'350px',
 			editor:{
 				type: 'validatebox',
@@ -48,7 +48,7 @@
 		}},
 		{
 			field:'parentmatgroupid',
-			title:'". GetCatalog('parentmatgroup') ."',
+			title: localStorage.getItem('catalogparentmatgroup'),
 			width:'400px',
 			editor:{
 				type:'combogrid',
@@ -60,11 +60,11 @@
 					textField:'description',
 					url:'". $this->createUrl('materialgroup/index',array('grid'=>true,'combo'=>true)) ."',
 					fitColumns:true,
-					loadMsg: '". GetCatalog('pleasewait')."',
+					loadMsg:  localStorage.getItem('catalogpleasewait'),
 					columns:[[
-						{field:'materialgroupid',title:'". GetCatalog('materialgroupid')."',width:'50px'},
-						{field:'materialgroupcode',title:'". GetCatalog('materialgroupcode')."',width:'150px'},
-						{field:'description',title:'". GetCatalog('description')."',width:'250px'},
+						{field:'materialgroupid',title: localStorage.getItem('catalogmaterialgroupid'),width:'50px'},
+						{field:'materialgroupcode',title: localStorage.getItem('catalogmaterialgroupcode'),width:'150px'},
+						{field:'description',title: localStorage.getItem('catalogdescription'),width:'250px'},
 					]]
 				}	
 			},
@@ -74,7 +74,7 @@
 		}},
 		{
 			field:'isfg',
-			title:'". GetCatalog('isfg') ."',
+			title: localStorage.getItem('catalogisfg'),
 			width:'50px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
@@ -88,7 +88,7 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			width:'50px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

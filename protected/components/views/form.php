@@ -1,7 +1,7 @@
 <script src="<?php echo Yii::app()->request->baseUrl;?>/js/easyui/plugins/datagrid-detailview.min.js"></script>
 <?php if (Yii::app()->user->id !== '') { ?>
 <?php if ($this->formtype == 'master') { ?>
-<table id="dg-<?php echo $this->menuname?>" style="width:100%;height:auto"></table>
+<table id="dg-<?php echo $this->menuname?>" style="width:100%;height100%"></table>
 <div id="tb-<?php echo $this->menuname?>">
 	<?php if ($this->iswrite == 1) { ?>
 		<?php if (CheckAccess($this->menuname, 'iswrite') == 1) {?>
@@ -87,7 +87,7 @@
 	</table>
 </div>
 <?php if ($this->ispurge == 1) { ?>
-<div id="historydlg-<?php echo $this->menuname?>" class="easyui-dialog" title='<?php echo getcatalog('history')?>' data-options="" closed="true" style="width:800px;height:400px;padding:10px">
+<div id="historydlg-<?php echo $this->menuname?>" class="easyui-dialog" title='' data-options="" closed="true" style="width:800px;height:400px;padding:10px">
 	<table id="historydg-<?php echo $this->menuname?>" style="width:100%;height:100%">
 	<thead>
 		<tr>
@@ -110,48 +110,47 @@
 <?php }?>
 <script type="text/javascript">
 $(document).ready(function(){
-	$('#add-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogadd"));
-	$('#copy-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogcopy"));
-	$('#save-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogsave"));
-	$('#cancel-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogcancel"));
-	$('#approve-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogapprove"));
-	$('#reject-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogreject"));
-	$('#pdf-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogdownpdf"));
-	$('#xls-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogdownxls"));
-	$('#doc-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogdowndoc"));
-	$('#submit-<?php echo $this->menuname?>').prop('value',localStorage.getItem("cataloguploaddata"));
-	$('#search-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogsearch"));
-	$('#history-<?php echo $this->menuname?>').prop('title',localStorage.getItem("cataloghistory"));
-	$('#purge-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogpurge"));
-	$('#historydlg-<?php echo $this->menuname?>').prop('title',localStorage.getItem("cataloghistory"));
-	<?php foreach ($this->searchfield as $field) {?>
-		var parent=document.getElementById('textsearch-<?php echo $this->menuname.$field?>');
-		parent.innerHTML = localStorage.getItem("catalog<?php echo $field?>");
+	$('#add-<?php echo $this->menuname?>').prop('title',getlocalmsg("add"));
+	$('#copy-<?php echo $this->menuname?>').prop('title',getlocalmsg("copy"));
+	$('#save-<?php echo $this->menuname?>').prop('title',getlocalmsg("save"));
+	$('#cancel-<?php echo $this->menuname?>').prop('title',getlocalmsg("cancel"));
+	$('#approve-<?php echo $this->menuname?>').prop('title',getlocalmsg("approve"));
+	$('#reject-<?php echo $this->menuname?>').prop('title',getlocalmsg("reject"));
+	$('#pdf-<?php echo $this->menuname?>').prop('title',getlocalmsg("downpdf"));
+	$('#xls-<?php echo $this->menuname?>').prop('title',getlocalmsg("downxls"));
+	$('#doc-<?php echo $this->menuname?>').prop('title',getlocalmsg("downdoc"));
+	$('#submit-<?php echo $this->menuname?>').prop('value',getlocalmsg("uploaddata"));
+	$('#search-<?php echo $this->menuname?>').prop('title',getlocalmsg("search"));
+	$('#history-<?php echo $this->menuname?>').prop('title',getlocalmsg("history"));
+	$('#purge-<?php echo $this->menuname?>').prop('title',getlocalmsg("purge"));
+	$('#historydlg-<?php echo $this->menuname?>').prop('title',getlocalmsg("history"));
+	<?php foreach ($this->searchfield as $field) {?>		var parent=document.getElementById('textsearch-<?php echo $this->menuname.$field?>');
+		parent.innerHTML = getlocalmsg("<?php echo $field?>");
 	<?php }?>
 	parent=document.getElementById('historytranslogid-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("catalogtranslogid");
+	parent.innerHTML = getlocalmsg("translogid");
 	parent=document.getElementById('historyusername-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("catalogusername");
+	parent.innerHTML = getlocalmsg("username");
 	parent=document.getElementById('historycreateddate-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("catalogcreateddate");
+	parent.innerHTML = getlocalmsg("createddate");
 	parent=document.getElementById('historyuseraction-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("cataloguseraction");
+	parent.innerHTML = getlocalmsg("useraction");
 	parent=document.getElementById('historynewdata-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("catalognewdata");
+	parent.innerHTML = getlocalmsg("newdata");
 	parent=document.getElementById('historyolddata-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("catalogolddata");
+	parent.innerHTML = getlocalmsg("olddata");
 	parent=document.getElementById('historymenuname-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("catalogmenuname");
+	parent.innerHTML = getlocalmsg("menuname");
 	parent=document.getElementById('historytableid-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("catalogtableid");
+	parent.innerHTML = getlocalmsg("tableid");
 	parent=document.getElementById('historyippublic-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("catalogippublic");
+	parent.innerHTML = getlocalmsg("ippublic");
 	parent=document.getElementById('historyiplocal-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("catalogiplocal");
+	parent.innerHTML = getlocalmsg("iplocal");
 	parent=document.getElementById('historylat-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("cataloglat");
+	parent.innerHTML = getlocalmsg("lat");
 	parent=document.getElementById('historylng-<?php echo $this->menuname?>');
-	parent.innerHTML = localStorage.getItem("cataloglng");
+	parent.innerHTML = getlocalmsg("lng");
 });
 <?php echo $searchscript;?>
 function copyRow<?php echo $this->menuname?>(){
@@ -184,11 +183,15 @@ $('#dg-<?php echo $this->menuname?>').edatagrid({
 		<?php $i=0;if ($this->columndetails != null) { foreach ($this->columndetails as $detail) { ?>
 		var ddv<?php echo $detail['id']?> = $(this).datagrid('getRowDetail',index).find('table.ddv-<?php echo $this->menuname?>-<?php echo $detail['id']?>');
 		ddv<?php echo $detail['id']?>.datagrid({
-			url:'<?php echo $detail['urlsub'] ?>?id='+row.<?php echo $this->idfield?>,
+			method:'POST',
+			url:'<?php echo $detail['urlsub'] ?>',
+			queryParams: {
+				id: row.<?php echo $this->idfield?>
+			},
 			fitColumns:true,
 			singleSelect:true,
 			rownumbers:true,
-			loadMsg:'<?php echo GetCatalog('pleasewait') ?>',
+			loadMsg:getlocalmsg("pleasewait'),
 			height:'auto',
 			showFooter:true,
 			pagination:true, pagePosition:'top',
@@ -216,11 +219,11 @@ $('#dg-<?php echo $this->menuname?>').edatagrid({
 	<?php if (CheckAccess($this->menuname, 'ispurge') == 1) {?>
 	destroyUrl: '<?php echo $this->destroyurl?>',
 	<?php }?>
-	<?php if (CheckAccess($this->menuname, 'iswrite') == 1) {?>
 	onSuccess: function(index,row){
-		show('Pesan',row.msg,row.isError);
+		show('Pesan',getlocalmsg(row.msg),row.isError);
 		$('#dg-<?php echo $this->menuname?>').edatagrid('reload');
 	},
+	<?php if (CheckAccess($this->menuname, 'iswrite') == 1) {?>
 	onBeginEdit: function(index,row){
 		var editors = $(this).datagrid('getEditors', index);
 		$.each(editors, function(i, ed){
@@ -238,10 +241,10 @@ $('#dg-<?php echo $this->menuname?>').edatagrid({
 		row.clientlat = $('#clientlat').val();
 		row.clientlng = $('#clientlng').val();
 	},
-	onError: function(index,row){
-		show('Pesan',row.msg,row.isError);
-	},
 	<?php }?>
+	onError: function(index,row){
+		show('Pesan',getlocalmsg(row.msg),row.isError);
+	},
 	idField: '<?php echo $this->idfield?>',
 	<?php if ($this->iswrite == 1) { ?>
 	editing: <?php echo (CheckAccess($this->menuname, 'iswrite') == 1 ? 'true' : 'false') ?>,
@@ -293,7 +296,7 @@ $("#form-<?php echo $this->menuname?>").submit(function(e) {
 		},
 		success: function (data,status,xhr) {
 			if (data.msg != undefined) {
-				show('Pesan',data.msg,row.isError);
+				show('Pesan',getlocalmsg(data.msg),data.isError);
 			} else {
 				show('Pesan',data,"0");
 			}
@@ -306,7 +309,7 @@ $("#form-<?php echo $this->menuname?>").submit(function(e) {
 });
 <?php if ($this->iswrite == 1) { ?>
 function add<?php echo $this->menuname?>() {
-	$('#dg-<?php echo $this->menuname?>').edatagrid('addRow');
+	$('#dg-<?php echo $this->menuname?>').edatagrid('addRow',0);
 }
 function save<?php echo $this->menuname?>() {
 	openloader();
@@ -338,7 +341,7 @@ function approve<?php echo $this->menuname?>() {
             show('Pesan','An Error Occured: '+xhr.status+ ' ' +xhr.responseText,'1');
           },
           'success':function(data) {
-            show('Pesan',data.msg,data.isError);
+            show('Pesan',getlocalmsg(data.msg),data.isError);
             $('#dg-<?php echo $this->menuname?>').edatagrid('reload');				
           } ,
           'cache':false});
@@ -366,7 +369,7 @@ function cancel<?php echo $this->menuname?>() {
 			show('Pesan','An Error Occured: '+xhr.status+ ' ' +xhr.responseText,'1');
 		},
 		'success':function(data) {
-			show('Pesan',data.msg,data.isError);
+			show('Pesan',getlocalmsg(data.msg),data.isError);
 			$('#dg-<?php echo $this->menuname?>').edatagrid('reload');				
 		} ,
 		'cache':false});
@@ -435,7 +438,7 @@ function downdoc<?php echo $this->menuname?>() {
 </script>
 <?php } else ?>
 <?php if ($this->formtype == 'masterdetail') { ?>
-<table id="dg-<?php echo $this->menuname?>"  style="width:100%;height:auto"></table>
+<table id="dg-<?php echo $this->menuname?>"  style="width:100%;height:100%"></table>
 <div id="tb-<?php echo $this->menuname?>">
 	<?php if ($this->iswrite == 1) { ?>
 		<?php if (CheckAccess($this->menuname, 'iswrite') == 1) {  ?>
@@ -571,7 +574,7 @@ function downdoc<?php echo $this->menuname?>() {
 				<table class="easyui-edatagrid mytable" id="dg-<?php echo $this->menuname?>-<?php echo $detail['id']?>" style="width:auto;height:95%"></table>			
 				<div id="tb-<?php echo $this->menuname?>-<?php echo $detail['id']?>">
 				<?php $a = (isset($detail['isnew'])?$detail['isnew']:1); if ($a == 1) { ?>
-					<a id="adddetail-<?php echo $this->menuname?>-<?php echo $detail['id']?>" href="#" title='' class="adddetail easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#dg-<?php echo $this->menuname?>-<?php echo $detail['id']?>').edatagrid('addRow')"></a>
+					<a id="adddetail-<?php echo $this->menuname?>-<?php echo $detail['id']?>" href="#" title='' class="adddetail easyui-linkbutton" iconCls="icon-add" plain="true" onclick="javascript:$('#dg-<?php echo $this->menuname?>-<?php echo $detail['id']?>').edatagrid('addRow',0)"></a>
 				<?php }?>
 				<?php $a = (isset($detail['iswrite'])?$detail['iswrite']:1); if ($a == 1) { ?>
 					<a id="savedetail-<?php echo $this->menuname?>-<?php echo $detail['id']?>" href="#" title='' class="savedetail easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="javascript:$('#dg-<?php echo $this->menuname?>-<?php echo $detail['id']?>').edatagrid('saveRow')"></a>
@@ -627,18 +630,18 @@ function downdoc<?php echo $this->menuname?>() {
 	<table id="historydg-<?php echo $this->menuname?>" style="width:100%;height:100%">
 	<thead>
 		<tr>
-			<th data-options="field:'translogid',width:80"><?php echo getCatalog('translogid')?></th>
-			<th data-options="field:'username',width:100"><?php echo getCatalog('username')?></th>
-			<th data-options="field:'createddate'"><?php echo getCatalog('createddate')?></th>
-			<th data-options="field:'useraction'"><?php echo getCatalog('useraction')?></th>
-			<th data-options="field:'newdata'"><?php echo getCatalog('newdata')?></th>
-			<th data-options="field:'olddata'"><?php echo getCatalog('olddata')?></th>
-			<th data-options="field:'menuname'"><?php echo getCatalog('menuname')?></th>
-			<th data-options="field:'tableid'"><?php echo getCatalog('tableid')?></th>
-			<th data-options="field:'ippublic'"><?php echo getCatalog('ippublic')?></th>
-			<th data-options="field:'iplocal'"><?php echo getCatalog('iplocal')?></th>
-			<th data-options="field:'lat'"><?php echo getCatalog('lat')?></th>
-			<th data-options="field:'lng'"><?php echo getCatalog('lng')?></th>
+      <th id='historytranslogid-<?php echo $this->menuname?>' data-options="field:'translogid',width:80"></th>
+			<th id='historyusername-<?php echo $this->menuname?>' data-options="field:'username',width:100"></th>
+			<th id='historycreateddate-<?php echo $this->menuname?>' data-options="field:'createddate'"></th>
+			<th id='historyuseraction-<?php echo $this->menuname?>' data-options="field:'useraction'"></th>
+			<th id='historynewdata-<?php echo $this->menuname?>' data-options="field:'newdata'"></th>
+			<th id='historyolddata-<?php echo $this->menuname?>' data-options="field:'olddata'"></th>
+			<th id='historymenuname-<?php echo $this->menuname?>' data-options="field:'menuname'"></th>
+			<th id='historytableid-<?php echo $this->menuname?>' data-options="field:'tableid'"></th>
+			<th id='historyippublic-<?php echo $this->menuname?>' data-options="field:'ippublic'"></th>
+			<th id='historyiplocal-<?php echo $this->menuname?>' data-options="field:'iplocal'"></th>
+			<th id='historylat-<?php echo $this->menuname?>' data-options="field:'lat'"></th>
+			<th id='historylng-<?php echo $this->menuname?>' data-options="field:'lng'"></th>
 		</tr>
 	</thead>
 	</table>
@@ -646,30 +649,54 @@ function downdoc<?php echo $this->menuname?>() {
 <?php }?>
 <script type="text/javascript">
 $(document).ready(function(){
-	$('#add-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogadd"));
-	$('#adddetail-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogadd"));
-	$('#edit-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogedit"));
-	$('#copy-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogcopy"));
-	$('#copydetail-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogcopy"));
-	$('#save-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogsave"));
-	$('#savedetail-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogsave"));
-	$('#cancel-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogcancel"));
-	$('#canceldetail-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogcancel"));
-	$('#approve-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogapprove"));
-	$('#reject-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogreject"));
-	$('#pdf-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogdownpdf"));
-	$('#xls-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogdownxls"));
-	$('#doc-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogdowndoc"));
-	$('#submit-<?php echo $this->menuname?>').prop('value',localStorage.getItem("cataloguploaddata"));
-	$('#search-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogsearch"));
-	$('#history-<?php echo $this->menuname?>').prop('title',localStorage.getItem("cataloghistory"));
-	$('#purge-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogpurge"));
-	$('#purgedetail-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogpurge"));
-	$('#historydlg-<?php echo $this->menuname?>').prop('title',localStorage.getItem("cataloghistorydata"));
+	$('#add-<?php echo $this->menuname?>').prop('title',getlocalmsg("add"));
+	$('#adddetail-<?php echo $this->menuname?>').prop('title',getlocalmsg("add"));
+	$('#edit-<?php echo $this->menuname?>').prop('title',getlocalmsg("edit"));
+	$('#copy-<?php echo $this->menuname?>').prop('title',getlocalmsg("copy"));
+	$('#copydetail-<?php echo $this->menuname?>').prop('title',getlocalmsg("copy"));
+	$('#save-<?php echo $this->menuname?>').prop('title',getlocalmsg("save"));
+	$('#savedetail-<?php echo $this->menuname?>').prop('title',getlocalmsg("save"));
+	$('#cancel-<?php echo $this->menuname?>').prop('title',getlocalmsg("cancel"));
+	$('#canceldetail-<?php echo $this->menuname?>').prop('title',getlocalmsg("cancel"));
+	$('#approve-<?php echo $this->menuname?>').prop('title',getlocalmsg("approve"));
+	$('#reject-<?php echo $this->menuname?>').prop('title',getlocalmsg("reject"));
+	$('#pdf-<?php echo $this->menuname?>').prop('title',getlocalmsg("downpdf"));
+	$('#xls-<?php echo $this->menuname?>').prop('title',getlocalmsg("downxls"));
+	$('#doc-<?php echo $this->menuname?>').prop('title',getlocalmsg("downdoc"));
+	$('#submit-<?php echo $this->menuname?>').prop('value',getlocalmsg("uploaddata"));
+	$('#search-<?php echo $this->menuname?>').prop('title',getlocalmsg("search"));
+	$('#history-<?php echo $this->menuname?>').prop('title',getlocalmsg("history"));
+	$('#purge-<?php echo $this->menuname?>').prop('title',getlocalmsg("purge"));
+	$('#purgedetail-<?php echo $this->menuname?>').prop('title',getlocalmsg("purge"));
+	$('#historydlg-<?php echo $this->menuname?>').prop('title',getlocalmsg("historydata"));
 	<?php foreach ($this->searchfield as $field) {?>
 		var parent=document.getElementById('textsearch-<?php echo $this->menuname.$field?>');
-		parent.innerHTML = localStorage.getItem("catalog<?php echo $field?>");
-	<?php }?>
+		parent.innerHTML = getlocalmsg("<?php echo $field?>");
+  <?php }?>
+  parent=document.getElementById('historytranslogid-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("translogid");
+	parent=document.getElementById('historyusername-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("username");
+	parent=document.getElementById('historycreateddate-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("createddate");
+	parent=document.getElementById('historyuseraction-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("useraction");
+	parent=document.getElementById('historynewdata-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("newdata");
+	parent=document.getElementById('historyolddata-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("olddata");
+	parent=document.getElementById('historymenuname-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("menuname");
+	parent=document.getElementById('historytableid-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("tableid");
+	parent=document.getElementById('historyippublic-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("ippublic");
+	parent=document.getElementById('historyiplocal-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("iplocal");
+	parent=document.getElementById('historylat-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("lat");
+	parent=document.getElementById('historylng-<?php echo $this->menuname?>');
+	parent.innerHTML = getlocalmsg("lng");
 });
 <?php echo $searchscript;?>
 <?php if ($this->iswrite == 1) { echo $searchscriptdetail; }?>
@@ -684,7 +711,7 @@ $("#form-<?php echo $this->menuname?>").submit(function(e) {
 			show('Pesan','An Error Occured: '+xhr.status+ ' ' +xhr.responseText,'1');
 		},
 		success: function (data) {
-			show('Pesan',data.msg,data.isError);
+			show('Pesan',getlocalmsg(data.msg),data.isError);
 			$('#dg-<?php echo $this->menuname?>').edatagrid('reload');
 		},
 		cache: false,
@@ -718,11 +745,15 @@ $('#dg-<?php echo $this->menuname?>').edatagrid({
 		<?php $i=0;foreach ($this->columndetails as $detail) { ?>
 		var ddv<?php echo $detail['id']?> = $(this).datagrid('getRowDetail',index).find('table.ddv-<?php echo $this->menuname?>-<?php echo $detail['id']?>');
 		ddv<?php echo $detail['id']?>.datagrid({
-			url:'<?php echo $detail['urlsub'] ?>?id='+row.<?php echo $this->idfield?>,
+			method:'POST',
+			url:'<?php echo $detail['urlsub'] ?>',
+			queryParams: {
+				id: row.<?php echo $this->idfield?>
+			},
 			fitColumns:true,
 			singleSelect:true,
 			rownumbers:true,
-			loadMsg:'<?php echo GetCatalog('pleasewait') ?>',
+			loadMsg:getlocalmsg('pleasewait'),
 			height:'auto',
 			showFooter:true,
 			pagination:true, pagePosition:'top',
@@ -743,7 +774,9 @@ $('#dg-<?php echo $this->menuname?>').edatagrid({
 		$('#dg-<?php echo $this->menuname?>').datagrid('fixDetailRowHeight',index);
 	},
 	url: '<?php echo $this->url?>',
+	<?php if (CheckAccess($this->menuname, 'iswrite') == 1) {  ?>
 	destroyUrl: '<?php echo $this->destroyurl?>',
+<?php }?>
 	idField: '<?php echo $this->idfield;?>',
 	<?php if ($this->rowstyler != '') {?>
 	rowStyler: function(index,row) {
@@ -816,7 +849,7 @@ function edit<?php echo $this->menuname?>($i) {
 		$('#<?php echo $this->menuname?>-<?php echo $this->idfield?>').val(row.<?php echo $this->idfield?>);
 		<?php if ($this->ispost == 1) { ?>
 		if (docstatus == docmax) {
-			show('Pesan','<?php echo GetCatalog('docreachmaxstatus')?>','1');
+			show('Pesan',getlocalmsg('docreachmaxstatus'),'1');
 		} else {
 			closeloader();
 			$('#dlg-<?php echo $this->menuname?>').dialog('open').window('window').css('zIndex',9991);
@@ -842,7 +875,7 @@ function edit<?php echo $this->menuname?>($i) {
 		<?php }?>
 	} else {
 		closeloader();			
-		show('Pesan','<?php echo getcatalog('chooseone')?>','1');
+		show('Pesan',getlocalmsg('chooseone'),'1');
 	}
 };
 function submitform<?php echo $this->menuname?>(){
@@ -851,6 +884,7 @@ function submitform<?php echo $this->menuname?>(){
 	<?php }?>
 	$('#ff-<?php echo $this->menuname?>-modif').form('submit',{
 		url:'<?php echo $this->saveurl ?>',
+		iframe: false,
 		onSubmit:function(param){
 			param.clientippublic = $('#clientippublic').val();
 			param.clientiplocal = $('#clientiplocal').val();
@@ -861,9 +895,9 @@ function submitform<?php echo $this->menuname?>(){
 		success:function(data){
 			var datax = eval('(' + data + ')');  // change the JSON string to javascript object
 			if (datax.isError == 1){
-				show('Pesan',datax.msg,datax.isError);
+				show('Pesan',getlocalmsg(datax.msg),datax.isError);
 			} else {
-				show('Pesan',datax.msg,datax.isError);
+				show('Pesan',getlocalmsg(datax.msg),datax.isError);
         $('#dg-<?php echo $this->menuname?>').datagrid('reload');
         $('#dlg-<?php echo $this->menuname?>').dialog('close');
 			}
@@ -970,7 +1004,7 @@ function approve<?php echo $this->menuname?>() {
 	<?php }?>
 	if (row) {
 		if (docstatus == docmax) {
-			show('Pesan','<?php echo GetCatalog('docreachmaxstatus')?>','1');
+			show('Pesan',getlocalmsg('docreachmaxstatus'),'1');
 		} else {
 		jQuery.ajax({'url':'<?php echo $this->approveurl ?>',
 			'data':{'id':row.<?php echo $this->idfield?>,
@@ -983,13 +1017,13 @@ function approve<?php echo $this->menuname?>() {
 			show('Pesan','An Error Occured: '+xhr.status+ ' ' +xhr.responseText,'1');
 		},
 			'success':function(data) {
-				show('Pesan',data.msg,data.isError);
+				show('Pesan',getlocalmsg(data.msg),data.isError);
 				$('#dg-<?php echo $this->menuname?>').edatagrid('reload');				
 			} ,
 			'cache':false});
 		}
 	} else {
-		show('Pesan','<?php echo getcatalog('chooseone')?>','1');
+		show('Pesan',getlocalmsg('chooseone'),'1');
 	}
   }
   },
@@ -1009,9 +1043,6 @@ function cancel<?php echo $this->menuname?>() {
 	var docstatus = row.recordstatus;
 	<?php }?>
 	if (row) {
-		/*if (docstatus == docmax) {
-			show('Pesan','<?php echo GetCatalog('docreachmaxstatus')?>');
-		} else {*/
 		jQuery.ajax({'url':'<?php echo $this->rejecturl ?>',
 			'data':{'id':row.<?php echo $this->idfield?>,
 				'clientippublic' : $('#clientippublic').val(),
@@ -1023,13 +1054,12 @@ function cancel<?php echo $this->menuname?>() {
 				show('Pesan','An Error Occured: '+xhr.status+ ' ' +xhr.responseText,'1');
 			},
 			'success':function(data) {
-				show('Pesan',data.msg,data.isError);
+				show('Pesan',getlocalmsg(data.msg),data.isError);
 				$('#dg-<?php echo $this->menuname?>').edatagrid('reload');				
 			} ,
 			'cache':false});
-		//}
 	} else {
-		show('Pesan','<?php echo getcatalog('chooseone')?>','1');
+		show('Pesan',getlocalmsg('chooseone'),'1');
   }
 }
   }
@@ -1071,7 +1101,7 @@ function purge<?php echo $this->menuname?>() {
             show('Pesan','An Error Occured: '+xhr.status+ ' ' +xhr.responseText,'1');
           },
           'success':function(data) {
-            show('Pesan',data.msg,data.isError);
+            show('Pesan',getlocalmsg(data.msg),data.isError);
             $('#dg-<?php echo $this->menuname?>').edatagrid('reload');				
           } ,
           'cache':false});
@@ -1135,7 +1165,7 @@ $('#dg-<?php echo $this->menuname?>-<?php echo $detail['id']?>').edatagrid({
 		//show('Pesan',row.msg);
 	},
 	onError: function(index,row){
-		show('Pesan',row.msg,row.isError);
+		show('Pesan',getlocalmsg(row.msg),row.isError);
 	},
 	onBeginEdit:function(index,row) {
 		var dg = $(this);
@@ -1170,12 +1200,6 @@ $('#dg-<?php echo $this->menuname?>-<?php echo $detail['id']?>').edatagrid({
 		row.clientlng = $('#clientlng').val();
 		<?php if (isset($detail['onbeforesave'])) { ?>
 			<?php echo $detail['onbeforesave']; 
-		}?>
-	},
-	onDestroy: function(index,row) {
-		$('#dg-<?php echo $this->menuname?>-<?php echo $detail['id']?>').edatagrid('reload');
-		<?php if (isset($detail['ondestroy'])) {
-			echo $detail['ondestroy'];
 		}?>
 	},
 	<?php if (isset($detail['onselect'])) { ?>
@@ -1248,7 +1272,7 @@ function downdoc<?php echo $this->menuname?>() {
 </script>
 <?php }?>
 <?php } else if ($this->formtype == 'list') { ?>
-<table id="dg-<?php echo $this->menuname?>"  style="width:100%;height:auto"></table>
+<table id="dg-<?php echo $this->menuname?>"  style="width:100%;height:100%"></table>
 <div id="tb-<?php echo $this->menuname?>">
 	<?php if ($this->isdownload == 1) { ?>
 		<?php if (CheckAccess($this->menuname, $this->isdownload) == 1) {  ?>
@@ -1322,13 +1346,13 @@ function downdoc<?php echo $this->menuname?>() {
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
-	$('#pdf-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogdownpdf"));
-	$('#xls-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogdownxls"));
-	$('#doc-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogdowndoc"));
-	$('#search-<?php echo $this->menuname?>').prop('title',localStorage.getItem("catalogsearch"));
+	$('#pdf-<?php echo $this->menuname?>').prop('title',getlocalmsg("downpdf"));
+	$('#xls-<?php echo $this->menuname?>').prop('title',getlocalmsg("downxls"));
+	$('#doc-<?php echo $this->menuname?>').prop('title',getlocalmsg("downdoc"));
+	$('#search-<?php echo $this->menuname?>').prop('title',getlocalmsg("search"));
 	<?php if (is_array($this->searchfield)) { foreach ($this->searchfield as $field) {?>
 		var parent=document.getElementById('textsearch-<?php echo $this->menuname.$field?>');
-		parent.innerHTML = localStorage.getItem("catalog<?php echo $field?>");
+		parent.innerHTML = getlocalmsg("<?php echo $field?>");
 	<?php }}?>
 });
 <?php echo $searchscript;?>
@@ -1358,11 +1382,15 @@ $('#dg-<?php echo $this->menuname?>').edatagrid({
 		<?php $i=0;if (is_array($this->columndetails)) { foreach ($this->columndetails as $detail) { ?>
 		var ddv<?php echo $detail['id']?> = $(this).datagrid('getRowDetail',index).find('table.ddv-<?php echo $this->menuname?>-<?php echo $detail['id']?>');
 		ddv<?php echo $detail['id']?>.datagrid({
-			url:'<?php echo $detail['urlsub'] ?>?id='+row.<?php echo $this->idfield?>,
+			method:'POST',
+			url:'<?php echo $detail['urlsub'] ?>',
+			queryParams: {
+				id: row.<?php echo $this->idfield?>
+			},
 			fitColumns:true,
 			singleSelect:true,
 			rownumbers:true,
-			loadMsg:'<?php echo GetCatalog('pleasewait') ?>',
+			loadMsg:getlocalmsg('pleasewait'),
 			height:'auto',
 			showFooter:true,
 			pagination:true, pagePosition:'top',

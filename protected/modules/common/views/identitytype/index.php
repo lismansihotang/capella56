@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'identitytypeid',
-			title:'".getCatalog('identitytypeid')."', 
+			title: localStorage.getItem('catalogidentitytypeid'), 
 			sortable:'true',
 			width:'50px',
 			formatter: function(value,row,index){
@@ -21,8 +21,10 @@
 		},
 		{
 			field:'identitytypename',
-			title:'".getCatalog('identitytypename')."', 
-			editor:'text',
+			title: localStorage.getItem('catalogidentitytypename'), 
+			editor: {
+        type: 'textbox',
+      },
 			width:'250px',
 			sortable:'true',
 			formatter: function(value,row,index){
@@ -30,7 +32,8 @@
 			}
 		},
 		{
-			field:'recordstatus',title:'".getCatalog('recordstatus')."',
+      field:'recordstatus',
+      title: localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

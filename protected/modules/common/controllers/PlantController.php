@@ -209,7 +209,7 @@ class PlantController extends Controller {
 					$this->ModifyData($connection,array($id,$languagename,$recordstatus));
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -226,7 +226,7 @@ class PlantController extends Controller {
 			$_POST['description'],$_POST['limitpo'],
 			$_POST['recordstatus']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -246,7 +246,7 @@ class PlantController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -254,7 +254,7 @@ class PlantController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true, getcatalog('chooseone'));
+			GetMessage(true, 'chooseone');
 		}
 	}
 	protected function actionDataPrint() {

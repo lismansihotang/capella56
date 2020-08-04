@@ -21,7 +21,7 @@
 	{
 		field:'modulename',
 		title:localStorage.getItem('catalogmodulename'),
-		editor:'text',
+		editor: {type: 'textbox', options: {required:true}},
 		width:'100px',
 		sortable: true,
 		formatter: function(value,row,index){
@@ -30,7 +30,7 @@
 	{
 		field:'moduledesc',
 		title:localStorage.getItem('catalogmoduledesc'),
-		editor:'text',
+		editor: {type: 'textbox', options: {required:true}},
 		width:'150px',
 		sortable: true,
 		formatter: function(value,row,index){
@@ -39,7 +39,7 @@
 	{
 		field:'moduleicon',
 		title:localStorage.getItem('catalogmoduleicon'),
-		editor:'text',
+		editor: {type: 'textbox', options: {required:true}},
 		width:'150px',
 		sortable: true,
 		formatter: function(value,row,index){

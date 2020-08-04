@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'slocid',
-			title:'". GetCatalog('slocid') ."',
+			title: localStorage.getItem('catalogslocid'),
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -20,7 +20,7 @@
 		}},
 		{
 			field:'plantid',
-			title:'". GetCatalog('plant') ."',
+			title: localStorage.getItem('catalogplant'),
 			width:'150px',
 			sortable: true,
 			editor:{
@@ -34,11 +34,11 @@
 					url:'". $this->createUrl('plant/index',array('grid'=>true,'combo'=>true)) ."',
 					fitColumns:true,
 					required:true,
-					loadMsg: '". GetCatalog('pleasewait')."',
+					loadMsg:  localStorage.getItem('catalogpleasewait'),
 					columns:[[
-						{field:'plantid',title:'". GetCatalog('plantid')."',width:'50px'},
-						{field:'plantcode',title:'". GetCatalog('plantcode')."',width:'80px'},
-						{field:'description',title:'". GetCatalog('description')."',width:'200px'},
+						{field:'plantid',title: localStorage.getItem('catalogplantid'),width:'50px'},
+						{field:'plantcode',title: localStorage.getItem('catalogplantcode'),width:'80px'},
+						{field:'description',title: localStorage.getItem('catalogdescription'),width:'200px'},
 					]]
 				}	
 			},
@@ -47,7 +47,7 @@
 		}},
 		{
 			field:'sloccode',
-			title:'". GetCatalog('sloccode') ."',
+			title: localStorage.getItem('catalogsloccode'),
 			width:'150px',
 			editor:{
 				type: 'validatebox', 
@@ -61,7 +61,7 @@
 		}},
 		{
 			field:'description',
-			title:'". GetCatalog('description') ."',
+			title: localStorage.getItem('catalogdescription'),
 			width:'250px',
 			editor:{
 				type: 'validatebox',
@@ -75,7 +75,7 @@
 		}},
 		{
 			field:'isprd',
-			title:'". GetCatalog('isprd') ."',
+			title: localStorage.getItem('catalogisprd'),
 			width:'80px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
@@ -89,7 +89,7 @@
 			}},
 			{
 			field:'isbb',
-			title:'". GetCatalog('isbb') ."',
+			title: localStorage.getItem('catalogisbb'),
 			width:'80px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
@@ -103,7 +103,7 @@
 			}},
 			{
 			field:'isbj',
-			title:'". GetCatalog('isbj') ."',
+			title: localStorage.getItem('catalogisbj'),
 			width:'80px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
@@ -117,7 +117,7 @@
 			}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			width:'50px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

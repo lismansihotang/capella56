@@ -20,7 +20,12 @@
 		{
 			field:'companyname',
 			title:localStorage.getItem('catalogcompanyname'),
-			editor:'text',
+			editor: { 
+        type: 'textbox',
+        options: {
+          required: true
+        }
+      },
 			sortable: true,
 			width:'200px',
 			formatter: function(value,row,index){
@@ -29,7 +34,12 @@
 		{
 			field:'companycode',
 			title:localStorage.getItem('catalogcompanycode'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+          required: true
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -38,7 +48,12 @@
 		{
 			field:'address',
 			title:localStorage.getItem('catalogaddress'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+          required: true
+        }
+      },
 			sortable: true,
 			width:'350px',
 			formatter: function(value,row,index){
@@ -73,7 +88,12 @@
 		{
 			field:'zipcode',
 			title:localStorage.getItem('catalogzipcode'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+          required: true
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -82,7 +102,11 @@
 		{
 			field:'taxno',
 			title:localStorage.getItem('catalogtaxno'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -117,7 +141,11 @@
 		{
 			field:'faxno',
 			title:localStorage.getItem('catalogfaxno'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -126,7 +154,11 @@
 		{
 			field:'phoneno',
 			title:localStorage.getItem('catalogphoneno'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -135,7 +167,11 @@
 		{
 			field:'webaddress',
 			title:localStorage.getItem('catalogwebaddress'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -144,7 +180,11 @@
 		{
 			field:'email',
 			title:localStorage.getItem('catalogemail'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -153,7 +193,11 @@
 		{
 			field:'leftlogofile',
 			title:localStorage.getItem('catalogleftlogofile'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -162,7 +206,11 @@
 		{
 			field:'rightlogofile',
 			title:localStorage.getItem('catalogrightlogofile'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -183,7 +231,13 @@
 		{
 			field:'billto',
 			title:localStorage.getItem('catalogbillto'),
-			editor:'textarea',
+			editor:{ 
+        type: 'textbox',
+        options: {
+          required: true,
+          multiline: true
+        }
+      },
 			sortable: true,
 			width:'350px',
 			formatter: function(value,row,index){
@@ -192,7 +246,11 @@
 		{
 			field:'bankacc1',
 			title:localStorage.getItem('catalogbankacc1'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -201,7 +259,11 @@
 		{
 			field:'bankacc2',
 			title:localStorage.getItem('catalogbankacc2'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -210,7 +272,11 @@
 		{
 			field:'bankacc3',
 			title:localStorage.getItem('catalogbankacc3'),
-			editor:'text',
+			editor:{ 
+        type: 'textbox',
+        options: {
+        }
+      },
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){

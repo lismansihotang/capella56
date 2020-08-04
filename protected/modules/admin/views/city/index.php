@@ -47,7 +47,9 @@
 		{
 			field:'citycode',
 			title:localStorage.getItem('catalogcitycode'),
-			editor:'numberbox',
+			editor: {
+        type: 'textbox'
+      },
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -56,7 +58,12 @@
 		{
 			field:'cityname',
 			title:localStorage.getItem('catalogcityname'),
-			editor:'text',
+			editor: { 
+        type:'textbox',
+        options: {
+          required:true
+        } 
+      },
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){

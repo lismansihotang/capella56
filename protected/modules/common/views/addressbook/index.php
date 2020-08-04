@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'addressbookid',
-			title:'". GetCatalog('addressbookid') ."',
+			title: localStorage.getItem('catalogaddressbookid'),
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -20,16 +20,18 @@
 		}},
 		{
 			field:'fullname',
-			title:'". GetCatalog('fullname') ."',
+			title: localStorage.getItem('catalogfullname'),
 			width:'350px',
-			editor:'text',
+			editor: {
+        type: 'textbox',
+      },
 			sortable: true,
 			formatter: function(value,row,index){
 				return value;
 		}},
 		{
 			field:'iscustomer',
-			title:'". GetCatalog('iscustomer') ."',
+			title: localStorage.getItem('catalogiscustomer'),
 			width:'80px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
@@ -42,7 +44,7 @@
 		}},
 		{
 			field:'isemployee',
-			title:'". GetCatalog('isemployee') ."',
+			title: localStorage.getItem('catalogisemployee'),
 			width:'80px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
@@ -55,7 +57,7 @@
 		}},
 		{
 			field:'isvendor',
-			title:'". GetCatalog('isvendor') ."',
+			title: localStorage.getItem('catalogisvendor'),
 			width:'80px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
@@ -68,7 +70,7 @@
 		}},
 		{
 			field:'ishospital',
-			title:'". GetCatalog('ishospital') ."',
+			title: localStorage.getItem('catalogishospital'),
 			width:'80px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
@@ -81,7 +83,7 @@
 		}},
 		{
 			field:'isexpedisi',
-			title:'". GetCatalog('isexpedisi') ."',
+			title: localStorage.getItem('catalogisexpedisi'),
 			width:'80px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,
@@ -94,7 +96,7 @@
 		}},
 		{
 			field:'taxno',
-			title:'". GetCatalog('taxno') ."',
+			title: localStorage.getItem('catalogtaxno'),
 			width:'100px',
 			editor:{
 				type:'textbox',
@@ -105,7 +107,7 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable: true,

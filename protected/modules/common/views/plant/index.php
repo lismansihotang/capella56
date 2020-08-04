@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'plantid',
-			title:'". GetCatalog('plantid') ."',
+			title: localStorage.getItem('catalogplantid'),
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -20,7 +20,7 @@
 		}},
 		{
 			field:'companyid',
-			title:'". GetCatalog('company') ."',
+			title: localStorage.getItem('catalogcompany'),
 			width:'250px',
 			sortable: true,
 			editor:{
@@ -34,10 +34,10 @@
 					url:'". Yii::app()->createUrl('admin/company/index',array('grid'=>true)) ."',
 					fitColumns:true,
 					required:true,
-					loadMsg: '". GetCatalog('pleasewait')."',
+					loadMsg:  localStorage.getItem('catalogpleasewait'),
 					columns:[[
-						{field:'companyid',title:'". GetCatalog('companyid')."',width:'50px'},
-						{field:'companyname',title:'". GetCatalog('companyname')."',width:'200px'},
+						{field:'companyid',title: localStorage.getItem('catalogcompanyid'),width:'50px'},
+						{field:'companyname',title: localStorage.getItem('catalogcompanyname'),width:'200px'},
 					]]
 				}	
 			},
@@ -46,7 +46,7 @@
 		}},
 		{
 			field:'plantcode',
-			title:'". GetCatalog('plantcode') ."',
+			title: localStorage.getItem('catalogplantcode'),
 			width:'150px',
 			editor:{
 				type: 'textbox',
@@ -60,7 +60,7 @@
 		}},
 		{
 			field:'addresstoname',
-			title:'". GetCatalog('addressto') ."',
+			title: localStorage.getItem('catalogaddressto'),
 			width:'250px',
 			editor:{
 				type: 'textbox',
@@ -74,7 +74,7 @@
 		}},
 		{
 			field:'limitpo',
-			title:'". GetCatalog('limitpo') ."',
+			title: localStorage.getItem('cataloglimitpo'),
 			editor:{
 				type:'numberbox',
 				options:{
@@ -92,7 +92,7 @@
 	
 		{
 			field:'description',
-			title:'". GetCatalog('description') ."',
+			title: localStorage.getItem('catalogdescription'),
 			width:'250px',
 			editor:{
 				type: 'textbox',
@@ -106,7 +106,7 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			width:'50px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

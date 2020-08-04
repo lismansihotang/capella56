@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'unitofmeasureid',
-			title:'". GetCatalog('unitofmeasureid') ."',
+			title: localStorage.getItem('catalogunitofmeasureid'),
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -20,7 +20,7 @@
 		}},
 		{
 			field:'uomcode',
-			title:'". GetCatalog('uomcode') ."',
+			title: localStorage.getItem('cataloguomcode'),
 			width:'150px',
 			editor:{
 				type: 'validatebox',
@@ -34,7 +34,7 @@
 		}},
 		{
 			field:'description',
-			title:'". GetCatalog('description') ."',
+			title: localStorage.getItem('catalogdescription'),
 			width:'250px',
 			editor:{
 				type: 'validatebox',
@@ -48,7 +48,7 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			width:'50px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

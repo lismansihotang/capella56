@@ -16,19 +16,40 @@
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl;?>/js/fullcalendar/fullcalendar.min.css"/>	
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl;?>/js/clippy/clippy.css" media="all">    
     <link rel="preconnect" href="https://api.ipify.org">
-    <script src="<?php echo Yii::app()->request->baseUrl;?>/js/jquery.min.js"></script>
-    <script src="<?php echo Yii::app()->request->baseUrl;?>/js/easyui/jquery.easyui.min.all.js"></script>
+    <script src="<?php echo Yii::app()->request->baseUrl;?>/js/jquery-3.5.1.min.js"></script>
+    <script src="<?php echo Yii::app()->request->baseUrl;?>/js/easyui/jquery.easyui.min.js"></script>
+    <script src="<?php echo Yii::app()->request->baseUrl;?>/js/easyui/plugins/jquery.edatagrid.js"></script>
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
   </head>
   <body onload="startup();">
     <script>
       var minwindow = [];
       var openedapp = [];
+      localStorage('mainmenu',JSON.stringify(<?php echo getItems();?>));
+      var allapps = [];
+      var activewindow = '';
     </script>
-    <div class="loadingScreen">
-      <video autoplay loop muted playsinline>
-        <source src="<?php echo Yii::app()->request->baseUrl;?>/images/wallpaper/startup.mp4" type="video/mp4">
-      </video>
+    <div id="aboutwindow" class="easyui-window" title="About Window" data-options="iconCls:'icon-save',minimizable:false,modal:true,closed:true" style="width:1000px;height:500px;padding:10px;">
+      <h1 style="color: black">Capella ERP Indonesia</h1>
+      <h2>Owner : Prisma Data Abadi</h2>
+      <h3>Powered By Capella ERP Indonesia</h3>
+      <div id="p" class="easyui-panel" title="Implementor (Trainer, Configurator)" style="width:100%;height:220px;padding:10px;">
+      Project Manager : Romy Andre
+      <br>Accounting Management: Djuana Nurmayanti 
+      <br>Material Master : Audi Sulistya
+      <br>PPIC : Adhidarmarius Sutandi
+      <br>Purchasing : Audi Sulistya, Widiastuti
+      <br>Production : Romy Andre
+      <br>Order : Joko Setyawan
+      <br>Warehouse : Audi Sulistya 
+      <br>Senior Dev : Kusnaedi Modiho, Andi Setyawan, Gilang, Nicky Irawan, Manasye B P
+      <br/>
+      </div>
+      <div id="p" class="easyui-panel" title="Petunjuk" style="width:100%;height:100px;padding:10px;">
+        Esc: Tutup Dialog, F1: About, F2: New, F3: Edit (Chrome), F5: Page Refresh, F6: Save, F7: Cancel, F8: Purge, F9: Approve, F10: Reject, F11: PDF (Chrome), F12: XLS, Tab : Next Focus, Shift + Tab : Previous Focus
+        <br>Alt  + ... ==>  W: Close Window, F1: Upload a File, F2: New Detail, F3: Edit Detail, F6: Save Detail, F7: Cancel Detail, F8: Purge Detail, F9: Copy Detail, F11 : PDF (Opera)
+        <br>Ctrl + ... ==> F1: Choose File Upload, F3: Edit (Opera), F5: Tab Refresh
+      </div>
     </div>
     <input type="hidden" id='clientippublic' value=''>
     <input type="hidden" id='clientiplocal' value=''>
@@ -40,6 +61,19 @@
       <div class="startButton">
         <img alt="Start" draggable="false" src="<?php echo Yii::app()->request->baseUrl;?>/images/icons/windows.png">
       </div>
+      <select class="easyui-combobox" name="ccode" id="ccode" PlaceHolder="Search Apps" labelPosition="top" style="width:300px;">
+      <?php	$menus = getItems();
+        foreach($menus AS $menu) {?>
+        <?php
+            $submenus = getSubmenu($menu['parentid']);
+            foreach ($submenus as $submenu) {?>
+      <option value="<?php echo $submenu['name']?>"><?php echo $submenu['label']?></option>
+                <?php }?>
+        <?php }?>
+      </select>
+      <a href="#" onclick="openshortcut()">
+        <img src="<?php echo Yii::app()->request->baseUrl."/images/icons/search.png"?>" style="height:30px;width:30px">
+      </a>
       <div class="taskbaricon" id="taskbaricon">
       </div>
       <!--Clock and Date-->
@@ -98,7 +132,7 @@
             <p>Logout</p>
           </div>
         </div>
-      </div>          
+      </div>       
       <div class="appview">
         <?php	$menus = getItems();
         foreach($menus AS $menu) {?>
@@ -108,7 +142,8 @@
             <?php
             $submenus = getSubmenu($menu['parentid']);
             foreach ($submenus as $submenu) {?>
-            <a id="link<?php echo $submenu['name']?>" href="#" onclick="openapp('<?php echo $submenu['name']?>','<?php echo $submenu['url']?>',
+            <a class="easyui-draggable linkdrag" data-options="revert:true,cursor:'pointer',
+                proxy:'clone'", id="link<?php echo $submenu['name']?>" href="#" onclick="openapp('<?php echo $submenu['name']?>','<?php echo $submenu['url']?>',
             '<?php echo $submenu['label']?>','icon-<?php echo $submenu['name']?>')"><li class="app"><img alt="<?php echo $submenu['label']?>" src="<?php echo Yii::app()->request->baseUrl.'/images/icons/'.$submenu['icon']?>"><br><br><span class="labelmenu"><?php echo $submenu['label'] ?></span></li></a>
             <?php }?>
           </div>
@@ -121,37 +156,44 @@
 
     <!-- Shortcut Menu -->
     <div class="desktop" id="desktop">
-      <div class="shortcutShell">
-      <?php
-      $menus = getUserFavs();
-      foreach($menus AS $menu) {  ?>
-        <div class="shortcut" id="<?php echo $menu['name'] ?>shortcut">
-          <a href="#" onclick="openapp('<?php echo $menu['name']?>','<?php echo $menu['url']?>',
-            '<?php echo $menu['label']?>','icon-<?php echo $menu['name']?>')">
-            <img alt="<?php echo $menu['label']?>" src="<?php echo Yii::app()->request->baseUrl."/images/icons/".$menu['icon'];?>">
-            <p><?php echo $menu['label']?></p>
+      <div class="shortcutShell" id="shortcutShell">
+        <div class="shortcut" id="recyclebin">
+          <a href="#">
+            <img alt="Recycle Bin" src="<?php echo Yii::app()->request->baseUrl."/images/icons/recyclebin.png"?>">
+            <p>Recycle Bin</p>
           </a>
         </div>
-      <?php }?>
+        <?php
+        $menus = getUserFavs();
+        foreach($menus AS $menu) {  ?>
+ <div class="shortcut" id="<?php echo $menu['name'] ?>shortcut">
+            <a href="#" ondblclick="openapp('<?php echo $menu['name']?>','<?php echo $menu['url']?>',
+              '<?php echo $menu['label']?>','icon-<?php echo $menu['name']?>')">
+              <img alt="<?php echo $menu['label']?>" src="<?php echo Yii::app()->request->baseUrl."/images/icons/".$menu['icon'];?>">
+              <p><?php echo $menu['label']?></p>
+            </a>
+          </div>
+        <?php }?>
       </div>
     </div>
     <!-- End of Shortcut Menu -->
-    
+
+    <!--
     <div class="widgets">
-      <?php  $widgets = getDashboard();
-      foreach($widgets AS $widget) { ?>
+      <?php  //$widgets = getDashboard();
+      //foreach($widgets AS $widget) { ?>
         <div class="widget">
-          <div id="<?php echo $widget['widgetname']?>" style="padding:5px;" title="<?php echo $widget['widgettitle']?>" class="easyui-panel"
+          <div id="<?php //echo $widget['widgetname']?>" style="padding:5px;" title="<?php //echo $widget['widgettitle']?>" class="easyui-panel"
             data-options="
               border: false,
               noheader:false,
-              width: '<?php echo $widget['width'] ?>',    
-              href: '<?php echo Yii::app()->createUrl('admin/dashboard/'.$widget['widgetname'])?>'
+              width: '<?php //echo $widget['width'] ?>',    
+              href: '<?php //echo Yii::app()->createUrl('admin/dashboard/'.$widget['widgetname'])?>'
             ">
           </div>
         </div>
-      <?php  }?>
-    </div>
+      <?php  //}?>
+    </div>-->
 
     <script>
       function getCatalog() {
@@ -177,6 +219,9 @@
       function getBackground(){
         $("body").css("background-image", "url(<?php echo Yii::app()->request->baseUrl;?>/images/wallpaper/<?php echo Yii::app()->user->getWallpaper()?>)"); 
       }
+      function openshortcut(){
+        alert($('#ccode').combobox('getValue'));
+      }
       function openapp(appname,urlapp,labelapp,iconapp) {
         $(".startMenu, .cortanaMenu").hide();
         openedapp.push(appname);
@@ -186,7 +231,7 @@
         desktop.appendChild(newapp);
         $("#"+appname+"app").window({
           width:'600px',
-          height:'auto',
+          height:'500px',
           inline:true,
           iconCls:iconapp,
           collapsible:false,
@@ -196,13 +241,27 @@
           inline:true,
           openAnimation:'fade',
           closeAnimation:'fade',
+          id:appname,
           href:urlapp,
           //constrain:true,
           title: labelapp,
           onOpen: function(){
+            activewindow = appname;
           },
           onMinimize: function() {
             minwindow.push(appname);
+          },
+          onResize: function(width,height) {
+            activewindow = appname;
+          },
+          onMove: function(width, height) {
+            activewindow = appname;
+          },
+          onMaximize: function() {
+            activewindow = appname;
+          },
+          onRestore: function() {
+            activewindow = appname;
           },
           onClose:function() {
             try {
@@ -222,10 +281,6 @@
           },
         });          
         var ww = $('#'+appname+"app");
-        ww.window('resize',{
-          width: '50%',
-          height: '400px',
-        });   
         ww.window('center');
         var icon = document.getElementById("taskbaricon");
         var newnode = document.createElement("div");
@@ -234,8 +289,9 @@
         newnode.setAttribute("onclick", "bringtofrontapp('"+appname+"')");
         icon.appendChild(newnode);	
       }
-      async function bringtofrontapp(appname) {
+      function bringtofrontapp(appname) {
         var bols = false;
+        activewindow = appname;
         for( var i = 0; i < minwindow.length; i++){ 
           if ( minwindow[i] === appname) {
             bols = true;
@@ -263,9 +319,9 @@
       $(".desktop").click(function(){
         $(".startMenu, .cortanaMenu").fadeOut();
       });
-      $(".widgets").click(function(){
+      /*$(".widgets").click(function(){
         $(".startMenu, .cortanaMenu").fadeOut();
-      });
+      });*/
       $(".taskbaricon").click(function(){
         $(".startMenu, .cortanaMenu").fadeOut();
       });
@@ -308,8 +364,50 @@
         var t = setTimeout(starttime, 500);
       }
       $(document).ready(function(){
-        $(".loadingScreen").fadeOut();
-        $(".startMenu, .cortanaMenu").fadeOut();
+        $('.shortcut').draggable({
+          revert:true,
+          proxy:'clone',
+          cursor:'pointer'
+        });
+        $('#recyclebin').droppable({
+          accept:'.shortcut',
+          onDrop:function(e,source){
+            jQuery.ajax({'url':'<?php echo Yii::app()->createUrl('admin/useraccess/removeshortcut')?>',
+            'type':'post','dataType':'json',
+            'data':{
+              'name':$(source).attr('id').replace('shortcut','')
+            },
+            'success':function(data)
+            {
+              if (data.msg == 'insertsuccess') {
+                location.reload();
+              } else {
+                alert(data.msg);
+              }
+            } ,
+            'cache':false});
+          }
+        });
+        $('#desktop').droppable({
+          accept:'.linkdrag',
+          onDrop:function(e,source){
+            jQuery.ajax({'url':'<?php echo Yii::app()->createUrl('admin/useraccess/saveshortcut')?>',
+            'type':'post','dataType':'json',
+            'data':{
+              'name':$(source).attr('id').replace('link','')
+            },
+            'success':function(data)
+            {
+              if (data.msg == 'insertsuccess') {
+                location.reload();
+              } else {
+                alert(data.msg);
+              }
+            } ,
+            'cache':false});
+          }
+        });
+        //$(".startMenu, .cortanaMenu").fadeOut();
         jQuery.ajax({'url':'https://api.ipify.org?format=jsonp&callback=?',
           'type':'post','dataType':'json',
           'success':function(data)
@@ -318,6 +416,195 @@
           } ,
           'cache':false});
         getLocation();
+        $(document).keydown(function (e) {
+          if (e.ctrlKey) {
+            switch(e.which) {
+            case 112: //Ctrl+F1 - Choose File Upload
+              e.preventDefault();
+              var elem = document.getElementById("file-"+activewindow);
+              if (elem != null) {
+                elem.click();
+              } 
+              break;
+            case 113: //Ctrl+F2
+              e.preventDefault();
+              break	;
+            case 114: //Ctrl+F3 - Edit (opera)
+              if (isOpera == true) {
+                e.preventDefault();
+                var elem = document.getElementById("edit-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                } else {
+                  var selectedrow = $("#dg-"+activewindow).datagrid("getSelected");
+                  var rowIndex = $("#dg-"+activewindow).datagrid("getRowIndex", selectedrow);
+                  if (rowIndex > -1) {
+                    $('#dg-'+activewindow).edatagrid('editRow',rowIndex);
+                  } else {
+                    show('Pesan',localStorage.getItem('chooseone'));
+                  }
+                }
+              }
+              break;
+            case 116: //Ctrl+F5 - Tab Refresh
+              e.preventDefault();
+              minirefresh();
+              break;
+            case 120: //Ctrl+F9 - Copy Row
+              e.preventDefault();
+              var elem = document.getElementById("copy-"+activewindow);
+              if (elem != null) {
+                elem.click();
+              } else {
+                  var selectedrow = $("#dg-"+id).datagrid("getSelected");
+                  var rowIndex = $("#dg-"+id).datagrid("getRowIndex", selectedrow);
+                  if (rowIndex > -1) {
+                    $('#dg-'+activewindow).edatagrid('editRow',rowIndex);
+                  } else {
+                    show('Pesan',localStorage.getItem('chooseone'));
+                  }
+                }
+              break;
+            }
+          } else 
+          if (e.altKey) {
+			      switch(e.which) {
+              case 87: //Alt+W - Tab Close
+              e.preventDefault();
+              removePanel();
+              break;
+            case 112: //Alt+F1 - File Upload
+              e.preventDefault();
+              var elem = document.getElementById("submit-"+activewindow);
+              if (elem != null) {
+                elem.click();
+              } 				
+              break;
+            case 113: //Alt+F2 - New Detail
+              e.preventDefault();
+              $('#tabdetails-'+activewindow).tabs('getSelected').find('a.adddetail').click();
+              break;
+            case 114: //Alt+F3 - Edit 
+              e.preventDefault();
+              var datagrid = $('#tabdetails-'+activewindow).tabs('getSelected').find('table.mytable');
+              var selectedrow = $("#dg-"+activewindow).datagrid("getSelected");
+              var rowIndex = $("#dg-"+activewindow).datagrid("getRowIndex", selectedrow);
+              if (rowIndex > -1) {
+                datagrid.edatagrid('editRow',rowIndex);
+              } else {
+                show('Pesan',localStorage.getItem('chooseone'));
+              }
+              break;
+            case 117: //Alt+F6 - Save Detail
+              e.preventDefault();
+              $('#tabdetails-'+activewindow).tabs('getSelected').find('a.savedetail').click();
+              break;
+            case 118: //Alt+F7 - Cancel Detail
+              e.preventDefault();
+              $('#tabdetails-'+activewindow).tabs('getSelected').find('a.canceldetail').click();
+              break;
+            case 119: //Alt+F8 - Purge Detail
+              e.preventDefault();
+              $('#tabdetails-'+activewindow).tabs('getSelected').find('a.purgedetail').click();
+              break;
+            case 120: //Alt+F9 - Copy Detail
+              e.preventDefault();
+              $('#tabdetails-'+activewindow).tabs('getSelected').find('a.copydetail').click();
+              break;
+            case 122: //Alt+F11 - PDF (opera)
+              if (isOpera == true) {
+                e.preventDefault();
+                var elem = document.getElementById("pdf-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                }
+              }
+              break;
+            }
+          } else {
+            switch(e.which) {
+              case 112: //F1 - About
+                e.preventDefault();
+                $('#aboutwindow').window('open');
+                break;
+              case 113: //F2 - New
+                e.preventDefault();
+                var elem = document.getElementById("add-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                }
+                break;
+              case 114: //F3 - Edit (chrome)
+                e.preventDefault();
+                var elem = document.getElementById("edit-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                } else {
+                  var selectedrow = $("#dg-"+activewindow).datagrid("getSelected");
+                  var rowIndex = $("#dg-"+activewindow).datagrid("getRowIndex", selectedrow);
+                  if (rowIndex > -1) {
+                    $('#dg-'+activewindow).edatagrid('editRow',rowIndex);
+                  } else {
+                    show('Pesan',localStorage.getItems('chooseone'));
+                  }
+                }
+                break;
+              case 116://F5: Refresh Page
+                break;
+              case 117: //F6 - Save
+                e.preventDefault();
+                var elem = document.getElementById("save-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                }
+                break;
+              case 118: //F7 - Cancel
+                e.preventDefault();
+                var elem = document.getElementById("cancel-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                }
+                break;
+              case 119: //F8 - Purge
+                e.preventDefault();
+                var elem = document.getElementById("purge-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                }
+                break;
+              case 120: //F9 - Approve
+                e.preventDefault();
+                var elem = document.getElementById("approve-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                }
+                break;
+              case 121: //F10 - Reject
+                e.preventDefault();
+                var elem = document.getElementById("reject-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                }
+                break;
+              case 122: //F11 - PDF (chrome)
+                if (isChrome == true) {
+                  e.preventDefault();
+                  var elem = document.getElementById("pdf-"+activewindow);
+                  if (elem != null) {
+                    elem.click();
+                  }
+                }
+                break;
+              case 123: //F12 - XLS 
+                e.preventDefault();
+                var elem = document.getElementById("xls-"+activewindow);
+                if (elem != null) {
+                  elem.click();
+                }
+                break;
+              }
+            }
+          });
         document.getElementById('logout').addEventListener('click', function() {
           window.location.href = '<?php echo Yii::app()->createurl("site/logout")?>';
         });
@@ -353,6 +640,13 @@
       }
       function closeloader() {
         $('#loaderwindow').window('close');
+      }
+      function getlocalmsg($msg) {
+        $pesan = localStorage.getItem('catalog'+$msg);
+        if ($pesan === null) {
+          $pesan = $msg;
+        }
+        return $pesan;
       }
       function show($title,$msg,$isError="0") {
         var $type = "info";

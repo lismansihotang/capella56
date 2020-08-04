@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'salesareaid',
-			title:'".getCatalog('salesareaid')."', 
+			title: localStorage.getItem('catalogsalesareaid'), 
 			sortable:'true',
 			width:'50px',
 			formatter: function(value,row,index){
@@ -21,8 +21,10 @@
 		},
 		{
 			field:'areaname',
-			title:'".getCatalog('areaname')."', 
-			editor:'text',
+			title: localStorage.getItem('catalogareaname'), 
+			editor: {
+        type: 'textbox',
+      },
 			width:'150px',
 			sortable:'true',
 			formatter: function(value,row,index){
@@ -30,7 +32,7 @@
 			}
 		},
 		{
-			field:'recordstatus',title:'".getCatalog('recordstatus')."',
+			field:'recordstatus',title: localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

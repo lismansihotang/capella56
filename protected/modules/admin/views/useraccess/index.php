@@ -298,7 +298,7 @@
 								textField:'menuname',
 								pagination:true,
 								required:true,
-								url:'".$this->createUrl('menuaccess/index',array('grid'=>true))."',
+								url:'".$this->createUrl('menuaccess/index',array('grid'=>true,'combo'=>true))."',
 								fitColumns:true,
 								loadMsg: localStorage.getItem('catalogpleasewait'),
 								columns:[[

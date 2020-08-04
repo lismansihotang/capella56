@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'addresstypeid',
-			title:'". GetCatalog('addresstypeid') ."',
+			title: localStorage.getItem('catalogaddresstypeid'),
 			width:'80px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -20,7 +20,7 @@
 		}},
 		{
 			field:'addresstypename',
-			title:'". GetCatalog('addresstypename') ."',
+			title: localStorage.getItem('catalogaddresstypename'),
 			width:'200px',
 			editor: {
 				type: 'textbox',
@@ -34,7 +34,7 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			width:'80px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

@@ -75,26 +75,40 @@
 	'headerform'=>"
 		<table cellpadding='5'>
 			<tr>
-				<td>".GetCatalog('wfname')."</td>
+				<td id='workflowtext-wfname'></td>
 				<td><input class='easyui-textbox' id='workflow-wfname' name='workflow-wfname' data-options=\"required:true,width:'200px'\"></input></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('wfdesc')."</td>
+				<td id='workflowtext-wfdesc'></td>
 				<td><input class='easyui-textbox' id='workflow-wfdesc' name='workflow-wfdesc' data-options=\"required:true,width:'200px'\"></input></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('wfminstat')."</td>
+				<td id='workflowtext-wfminstat'></td>
 				<td><input class='easyui-numberbox' id='workflow-wfminstat' name='workflow-wfminstat' data-options=\"required:true,width:'200px'\"></input></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('wfmaxstat')."</td>
+				<td id='workflowtext-wfmaxstat'></td>
 				<td><input class='easyui-numberbox' id='workflow-wfmaxstat' name='workflow-wfmaxstat' data-options=\"required:true,width:'200px'\"></input></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('recordstatus')."</td>
+				<td id='workflowtext-recordstatus'></td>
 				<td><input id='workflow-recordstatus' name='workflow-recordstatus' type='checkbox'></input></td>
 			</tr>
 		</table>
+  ",
+  'addonscripts'=> "
+	$(document).ready(function(){
+		var parel = document.getElementById('workflowtext-wfname');
+		parel.innerHTML = localStorage.getItem('catalogwfname');
+		parel = document.getElementById('workflowtext-wfdesc');
+		parel.innerHTML = localStorage.getItem('catalogwfdesc');
+		parel = document.getElementById('workflowtext-wfminstat');
+		parel.innerHTML = localStorage.getItem('catalogwfminstat');
+		parel = document.getElementById('workflowtext-wfmaxstat');
+		parel.innerHTML = localStorage.getItem('catalogwfmaxstat');
+		parel = document.getElementById('workflowtext-recordstatus');
+		parel.innerHTML = localStorage.getItem('catalogrecordstatus');
+	});
 	",
 	'rowstyler'=>"
 		if (row.jumlah == 0) {

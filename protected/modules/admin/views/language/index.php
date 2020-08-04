@@ -33,7 +33,7 @@
 			field:'recordstatus',
 			title:localStorage.getItem('catalogrecordstatus'),
 			align:'center',
-			width:'50px',
+			width:'80px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			sortable:'true',
 			formatter: function(value,row,index){

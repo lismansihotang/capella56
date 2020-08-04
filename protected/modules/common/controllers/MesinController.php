@@ -264,7 +264,7 @@ class MesinController extends Controller {
 						$shiftperhari,$speedpermin,$speedperjam,$rpm,$lebarbahan,$rpm2,$description));
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -282,7 +282,7 @@ class MesinController extends Controller {
 				$_POST['shiftperhari'],$_POST['speedpermin'],$_POST['speedperjam'],$_POST['rpm'],$_POST['lebarbahan'],
 				$_POST['rpm2'],$_POST['description']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -302,7 +302,7 @@ class MesinController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -310,7 +310,7 @@ class MesinController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,getcatalog('chooseone'));
+			GetMessage(true,'chooseone');
 		}
 	}
 	protected function actionDataPrint() {

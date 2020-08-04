@@ -21,7 +21,7 @@
 		{
 			field: 'widgetname',
 			title: localStorage.getItem('catalogwidgetname'),
-			editor: 'text',
+			editor: {type: 'textbox', options:{required:true}},
 			width: '150px',
 			sortable: true,
 			formatter: function (value, row, index) {
@@ -30,7 +30,7 @@
 		{
 			field: 'widgettitle',
 			title: localStorage.getItem('catalogwidgettitle'),
-			editor: 'text',
+			editor: {type: 'textbox', options:{required:true}},
 			width: '150px',
 			sortable: true,
 			formatter: function (value, row, index) {
@@ -39,7 +39,7 @@
 		{
 			field: 'widgetversion',
 			title: localStorage.getItem('catalogwidgetversion'),
-			editor: 'text',
+			editor: {type: 'textbox', options:{required:true}},
 			width: '100px',
 			sortable: true,
 			formatter: function (value, row, index) {
@@ -48,7 +48,7 @@
 		{
 			field: 'widgetby',
 			title: localStorage.getItem('catalogwidgetby'),
-			editor: 'text',
+			editor: {type: 'textbox', options:{required:true}},
 			width: '150px',
 			sortable: true,
 			formatter: function (value, row, index) {
@@ -57,7 +57,7 @@
 		{
 			field: 'description',
 			title: localStorage.getItem('catalogdescription'),
-			editor: 'text',
+			editor: {type: 'textbox', options:{required:true}},
 			width: '250px',
 			sortable: true,
 			formatter: function (value, row, index) {
@@ -66,7 +66,7 @@
 		{
 			field: 'widgeturl',
 			title: localStorage.getItem('catalogwidgeturl'),
-			editor: 'text',
+			editor: {type: 'textbox', options:{required:true}},
 			width: '250px',
 			sortable: true,
 			formatter: function (value, row, index) {

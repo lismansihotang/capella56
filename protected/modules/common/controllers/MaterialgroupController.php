@@ -289,7 +289,7 @@ class MaterialgroupController extends Controller {
 					$this->ModifyData($connection,array($id,$materialgroupcode,$description,$parentid,$isfg,$recordstatus));
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -304,7 +304,7 @@ class MaterialgroupController extends Controller {
 		try {
 			$this->ModifyData($connection,array((isset($_POST['materialgroupid'])?$_POST['materialgroupid']:''),$_POST['materialgroupcode'],$_POST['description'],$_POST['parentmatgroupid'],$_POST['isfg'],$_POST['recordstatus']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -324,7 +324,7 @@ class MaterialgroupController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();				
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -332,7 +332,7 @@ class MaterialgroupController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,getcatalog('chooseone'));
+			GetMessage(true,'chooseone');
 		}
 	}
 	protected function actionDataPrint() {

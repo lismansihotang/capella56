@@ -84,7 +84,7 @@ class RequestedbyController extends Controller {
       $command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
       $command->execute();
       $transaction->commit();
-      GetMessage(false,getcatalog('insertsuccess'));
+      GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -104,7 +104,7 @@ class RequestedbyController extends Controller {
         $command->bindvalue(':vcreatedby', Yii::app()->user->name, PDO::PARAM_STR);
         $command->execute();
         $transaction->commit();
-        GetMessage(false,getcatalog('insertsuccess'));
+        GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();

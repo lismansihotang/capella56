@@ -1,214 +1,220 @@
 <?php
 class MenuaccessController extends Controller {
 	public $menuname = 'menuaccess';
+	private $sort = [
+		'datatype' => 'POST',
+		'default' => 't.menuaccessid'
+	];
+	private $order = [
+		'default' => 'desc'
+	];
+	private $viewfield = [
+		'menuaccessid' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'menuname' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'description' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'menuurl' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'menuicon' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'parentid' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'parentname' => [
+			'type' => 'text',
+			'from' => 'p',
+			'sourcefield' => 'menuname'
+		],
+		'moduleid' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'modulename' => [
+			'type' => 'text',
+			'from' => 'q'
+		],
+		'viewcode' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'controllercode' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'menudep' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'sortorder' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'recordstatus' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+	];
 	public function actionIndex() {
+		if(isset($_GET['combo']))
+			echo $this->searchcombo();
+		else
 		if(isset($_GET['grid']))
 			echo $this->search();
 		else
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header('Content-Type: application/json');
-		$menuaccessid = GetSearchText(array('POST','Q'),'menuaccessid');
-		$menuname = GetSearchText(array('POST','Q'),'menuname');
-		$description = GetSearchText(array('POST','Q'),'description');
-		$menuurl = GetSearchText(array('POST','Q'),'menuurl');
-		$menuicon = GetSearchText(array('POST','Q'),'menuicon');
-		$parentname = GetSearchText(array('POST','Q'),'parentname');
-		$modulename = GetSearchText(array('POST','Q'),'modulename');
-		$sortorder = GetSearchText(array('POST','Q'),'sortorder');
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','menuaccessid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->selectdistinct('count(1) as total')	
-				->from('menuaccess t')
-				->leftjoin('menuaccess p', 't.parentid=p.menuaccessid')
-				->join('modules m', 'm.moduleid=t.moduleid')
-				->where("(coalesce(t.menuname,'') like :menuname) 
-					and (coalesce(t.menuaccessid,'') like :menuaccessid) 
-					and (coalesce(t.description,'') like :description) 
-					and (coalesce(t.menuurl,'') like :menuurl) 
-					and (coalesce(t.menuicon,'') like :menuicon) 
-					and (coalesce(p.menuname,'') like :parentname) 
-					and (coalesce(m.modulename,'') like :modulename)",
-						array(':menuaccessid'=>$menuaccessid,':menuname'=>$menuname,':description'=>$description,':menuurl'=>$menuurl,':menuicon'=>$menuicon,':parentname'=>$parentname,':modulename'=>$modulename))
-				->queryScalar();
-		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->selectdistinct('count(1) as total')	
-				->from('menuaccess t')
-				->leftjoin('menuaccess p', 't.parentid=p.menuaccessid')
-				->join('modules m', 'm.moduleid=t.moduleid')
-				->where("((coalesce(t.menuname,'') like :menuname) 
-					or (coalesce(t.menuaccessid,'') like :menuaccessid) 
-					or (coalesce(t.description,'') like :description) 
-					or (coalesce(t.menuurl,'') like :menuurl) 
-					or (coalesce(t.menuicon,'') like :menuicon) 
-					or (coalesce(p.menuname,'') like :parentname) 
-					or (coalesce(m.modulename,'') like :modulename)) and t.recordstatus = 1",
-						array(':menuaccessid'=>$menuaccessid,':menuname'=>$menuname,':description'=>$description,':menuurl'=>$menuurl,':menuicon'=>$menuicon,':parentname'=>$parentname,':modulename'=>$modulename))
-				->queryScalar();
-		}
-		$result['total'] = $cmd;
-		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->selectdistinct('t.*,p.description as parentdesc,m.modulename')						
-				->from('menuaccess t')
-				->leftjoin('menuaccess p', 't.parentid=p.menuaccessid')
-				->join('modules m', 'm.moduleid=t.moduleid')
-				->where("(coalesce(t.menuname,'') like :menuname) 
-					and (coalesce(t.menuaccessid,'') like :menuaccessid) 
-					and (coalesce(t.description,'') like :description) 
-					and (coalesce(t.menuurl,'') like :menuurl) 
-					and (coalesce(t.menuicon,'') like :menuicon) 
-					and (coalesce(p.menuname,'') like :parentname) 
-					and (coalesce(m.modulename,'') like :modulename)",
-						array(':menuaccessid'=>$menuaccessid,':menuname'=>$menuname,':description'=>$description,':menuurl'=>$menuurl,':menuicon'=>$menuicon,':parentname'=>$parentname,':modulename'=>$modulename))
-				->offset($offset)
-				->limit($rows)
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->selectdistinct('t.*,p.description as parentdesc,m.modulename')			
-				->from('menuaccess t')
-				->leftjoin('menuaccess p', 't.parentid=p.menuaccessid')
-				->join('modules m', 'm.moduleid=t.moduleid')
-				->where("((coalesce(t.menuname,'') like :menuname) 
-					or (coalesce(t.menuaccessid,'') like :menuaccessid) 
-					or (coalesce(t.description,'') like :description) 
-					or (coalesce(t.menuurl,'') like :menuurl) 
-					or (coalesce(t.menuicon,'') like :menuicon) 
-					or (coalesce(p.menuname,'') like :parentname) 
-					or (coalesce(m.modulename,'') like :modulename)) 
-					and t.recordstatus = 1",
-						array(':menuaccessid'=>$menuaccessid,':menuname'=>$menuname,':description'=>$description,':menuurl'=>$menuurl,':menuicon'=>$menuicon,':parentname'=>$parentname,':modulename'=>$modulename))
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		foreach($cmd as $data) {	
-			$row[] = array(
-				'menuaccessid'=>$data['menuaccessid'],
-				'menuname'=>$data['menuname'],
-				'description'=>$data['description'],
-				'menuurl'=>$data['menuurl'],
-				'menuicon'=>$data['menuicon'],
-				'parentid'=>$data['parentid'],
-				'parentdesc'=>$data['parentdesc'], 
-				'moduleid'=>$data['moduleid'],
-				'modulename'=>$data['modulename'],
-				'sortorder'=>$data['sortorder'],
-				'recordstatus'=>$data['recordstatus'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => 'menuaccess t 
+				left join menuaccess p on t.parentid = p.menuaccessid 
+				left join modules q on t.moduleid = q.moduleid ',
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => true,
+			'searchfield' => [
+				'menuaccessid' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from'=>'t' 
+				],
+				'menuname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from'=>'t' 
+				],
+				'description' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from'=>'t' 
+				],
+				'menuurl' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from'=>'t' 
+				],
+				'menuicon' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from'=>'t' 
+				],
+				'parentname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from'=>'p',
+					'sourcefield'=>'menuname' 
+				],
+				'modulename' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from'=>'q' 
+				],
+			]
+		]);
 	}
-	private function ModifyData($connection,$arraydata) {
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql = 'call Insertmenuaccess(:vmenuname,:vdescription,:vmenuurl,:vmenuicon,:vparentid,:vmoduleid,:vsortorder,:vrecordstatus,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else {
-			$sql = 'call Updatemenuaccess(:vid,:vmenuname,:vdescription,:vmenuurl,:vmenuicon,:vparentid,:vmoduleid,:vsortorder,:vrecordstatus,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-			$this->DeleteLock($this->menuname, $arraydata[0]);
-		}
-		$command->bindvalue(':vmenuname',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vdescription',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vmenuurl',$arraydata[3],PDO::PARAM_STR);
-		$command->bindvalue(':vmenuicon',$arraydata[4],PDO::PARAM_STR);
-		$command->bindvalue(':vparentid',$arraydata[5],PDO::PARAM_STR);
-		$command->bindvalue(':vmoduleid',$arraydata[6],PDO::PARAM_STR);
-		$command->bindvalue(':vsortorder',$arraydata[7],PDO::PARAM_STR);
-		$command->bindvalue(':vrecordstatus',$arraydata[8],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();			
+	public function searchcombo() {
+		return GetData([
+			'from' => 'menuaccess t 
+				left join menuaccess p on t.parentid = p.menuaccessid 
+				left join modules q on t.moduleid = q.moduleid ',
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => false,
+			'searchfield' => [
+				'menuname' => [
+					'datatype' => 'Q',
+					'operatortype' => 'or'
+				],
+				'description' => [
+					'datatype' => 'Q',
+					'operatortype' => 'or'
+				],
+				'menuurl' => [
+					'datatype' => 'Q',
+					'operatortype' => 'or'
+				],
+				'menuicon' => [
+					'datatype' => 'Q',
+					'operatortype' => 'or'
+				],
+				'parentname' => [
+					'datatype' => 'Q',
+					'operatortype' => 'and',
+					'from'=>'p',
+					'sourcefield'=>'menuname' 
+				],
+				'modulename' => [
+					'datatype' => 'Q',
+					'operatortype' => 'and',
+					'from'=>'q' 
+				],
+			]
+		]);
 	}
 	public function actionUpload() {
 		parent::actionUpload();
-		$target_file = dirname('__FILES__').'/uploads/' . basename($_FILES["file-menuaccess"]["name"]);
-		if (move_uploaded_file($_FILES["file-menuaccess"]["tmp_name"], $target_file)) {
-			$objReader = PHPExcel_IOFactory::createReader('Excel2007');
-			$objPHPExcel = $objReader->load($target_file);
-			$objWorksheet = $objPHPExcel->getActiveSheet();
-			$highestRow = $objWorksheet->getHighestRow(); 
-			$highestColumn = $objWorksheet->getHighestColumn();
-			$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				for ($row = 2; $row <= $highestRow; ++$row) {
-					$id = $objWorksheet->getCellByColumnAndRow(0, $row)->getValue();
-					$menuname = $objWorksheet->getCellByColumnAndRow(1, $row)->getValue();
-					$description = $objWorksheet->getCellByColumnAndRow(2, $row)->getValue();
-					$menuurl = $objWorksheet->getCellByColumnAndRow(3, $row)->getValue();
-					$menuicon = $objWorksheet->getCellByColumnAndRow(4, $row)->getValue();
-					$parentname = $objWorksheet->getCellByColumnAndRow(5, $row)->getValue();
-					$parentid = Yii::app()->db->createCommand("select menuaccessid from menuaccess where menuname = '".$parentname."'")->queryScalar();
-					$modulename = $objWorksheet->getCellByColumnAndRow(6, $row)->getValue();
-					$moduleid = Yii::app()->db->createCommand("select moduleid from modules where modulename = '".$modulename."'")->queryScalar();
-					$sortorder = $objWorksheet->getCellByColumnAndRow(7, $row)->getValue();
-					$recordstatus = $objWorksheet->getCellByColumnAndRow(8, $row)->getValue();
-					$this->ModifyData($connection,array($id,$menuname,$description,$menuurl,$menuicon,$parentid,$moduleid,$sortorder,$recordstatus));
-				}
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-    }
+		UploadData($this->menuname,[
+			'spinsert' => 'Insertmenuaccess',
+			'spupdate' => 'Updatemenuaccess',
+			'arraydata' => [
+				'vid'=>0,
+				'menuname'=>1,
+				'description'=>2,
+				'menuurl'=>3,
+				'menuicon'=>4,
+				'parentid'=>[
+					'column' => 5,
+					'source' => 'select menuaccessid from menuaccess where menuname = '
+				],
+				'moduleid'=>[
+					'column' => 6,
+					'source' => 'select moduleid from modules where modulename = '
+				],
+				'sortorder'=>8,
+				'recordstatus'=>9
+			]
+		]);
 	}
 	public function actionSave() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyData($connection,array((isset($_POST['menuaccessid'])?$_POST['menuaccessid']:''),$_POST['menuname'],$_POST['description'],$_POST['menuurl'],
-				$_POST['menuicon'],$_POST['parentid'],$_POST['moduleid'],$_POST['sortorder'],$_POST['recordstatus']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
+		SaveData([
+			'spinsert' => 'Insertmenuaccess',
+			'spupdate' => 'Updatemenuaccess',
+			'arraydata' => [
+				'vid'=>(isset($_POST['menuaccessid'])?$_POST['menuaccessid']:''),
+				'menuname'=>$_POST['menuname'],
+				'description'=>$_POST['description'],
+				'menuurl'=>$_POST['menuurl'],
+				'menuicon'=>$_POST['menuicon'],
+				'parentid'=>$_POST['parentid'],
+				'moduleid'=>$_POST['moduleid'],
+				'sortorder'=>$_POST['sortorder'],
+				'viewcode'=>$_POST['viewcode'],
+				'controllercode'=>$_POST['controllercode'],
+				'menudep'=>$_POST['menudep'],
+				'recordstatus'=>$_POST['recordstatus']
+			]
+		]);
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgemenuaccess(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgemenuaccess',			
+		]);
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();

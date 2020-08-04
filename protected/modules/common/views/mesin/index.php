@@ -11,7 +11,7 @@
 	'columns'=>"
 		{
 			field:'mesinid',
-			title:'".getCatalog('mesinid')."', 
+			title: localStorage.getItem('catalogmesinid'), 
 			sortable:'true',
 			width:'50px',
 			formatter: function(value,row,index){
@@ -20,7 +20,7 @@
 		},
 		{
 			field:'plantid',
-			title:'". GetCatalog('plant') ."',
+			title: localStorage.getItem('catalogplant'),
 			editor:{
 				type:'combogrid',
 				options:{
@@ -32,7 +32,7 @@
 						url:'". Yii::app()->createUrl('common/plant/index',array('grid'=>true,'auth'=>true)) ."',
 						fitColumns:true,
 						required:true,
-						loadMsg: '". GetCatalog('pleasewait')."',
+						loadMsg:  localStorage.getItem('catalogpleasewait'),
 						onChange: function(newValue, oldValue){
 							if ((newValue !== oldValue) && (newValue !== ''))
 							{
@@ -56,9 +56,9 @@
 							}
 						},
 						columns:[[
-							{field:'plantid',title:'". GetCatalog('plantid')."',width:'80px'},
-							{field:'plantcode',title:'". GetCatalog('plantcode')."',width:'100px'},
-							{field:'description',title:'". GetCatalog('description')."',width:'300px'},
+							{field:'plantid',title: localStorage.getItem('catalogplantid'),width:'80px'},
+							{field:'plantcode',title: localStorage.getItem('catalogplantcode'),width:'100px'},
+							{field:'description',title: localStorage.getItem('catalogdescription'),width:'300px'},
 						]]
 				}	
 			},
@@ -69,7 +69,7 @@
 		}},
 		{
 			field:'slocid',
-			title:'". GetCatalog('sloc') ."',
+			title: localStorage.getItem('catalogsloc'),
 			editor:{
 				type:'combogrid',
 				options:{
@@ -81,11 +81,11 @@
 						url:'". Yii::app()->createUrl('common/sloc/indextrxplant',array('grid'=>true)) ."',
 						fitColumns:true,
 						required:true,
-						loadMsg: '". GetCatalog('pleasewait')."',
+						loadMsg:  localStorage.getItem('catalogpleasewait'),
 						columns:[[
-							{field:'slocid',title:'". GetCatalog('slocid')."',width:'80px'},
-							{field:'sloccode',title:'". GetCatalog('sloccode')."',width:'100px'},
-							{field:'description',title:'". GetCatalog('description')."',width:'300px'},
+							{field:'slocid',title: localStorage.getItem('catalogslocid'),width:'80px'},
+							{field:'sloccode',title: localStorage.getItem('catalogsloccode'),width:'100px'},
+							{field:'description',title: localStorage.getItem('catalogdescription'),width:'300px'},
 						]]
 				}	
 			},
@@ -96,7 +96,7 @@
 		}},
 		{
 			field:'kodemesin',
-			title:'".getCatalog('kodemesin')."', 
+			title: localStorage.getItem('catalogkodemesin'), 
 			editor:{
 				type:'validatebox',
 				options:{
@@ -111,7 +111,7 @@
 		},
 		{
 			field:'namamesin',
-			title:'".getCatalog('namamesin')."', 
+			title: localStorage.getItem('catalognamamesin'), 
 			editor:{
 				type:'validatebox',
 				options:{
@@ -126,7 +126,7 @@
 		},
 		{
 			field:'tahunoperasional',
-			title:'".getCatalog('tahunoperasional')."', 
+			title: localStorage.getItem('catalogtahunoperasional'), 
 			editor:{
 				type:'numberbox',
 				options:{
@@ -141,7 +141,7 @@
 		},
 		{
 			field:'buatan',
-			title:'".getCatalog('buatan')."', 
+			title: localStorage.getItem('catalogbuatan'), 
 			editor:{
 				type:'validatebox',
 				options:{
@@ -156,7 +156,7 @@
 		},
 		{
 			field:'kwh',
-			title:'".getCatalog('kwh')."', 
+			title: localStorage.getItem('catalogkwh'), 
 			editor:{
 				type:'numberbox',
 				options:{
@@ -174,7 +174,7 @@
 		},
 		{
 			field:'orgpershift',
-			title:'".getCatalog('orgpershift')."', 
+			title: localStorage.getItem('catalogorgpershift'), 
 			editor:{
 				type:'numberbox',
 				options:{
@@ -189,7 +189,7 @@
 		},
 		{
 			field:'shiftperhari',
-			title:'".getCatalog('shiftperhari')."', 
+			title: localStorage.getItem('catalogshiftperhari'), 
 			editor:{
 				type:'numberbox',
 				options:{
@@ -204,7 +204,7 @@
 		},
 		{
 			field:'speedpermin',
-			title:'".getCatalog('speedpermin')."', 
+			title: localStorage.getItem('catalogspeedpermin'), 
 			editor:{
 				type:'numberbox',
 				options:{
@@ -219,7 +219,7 @@
 		},
 		{
 			field:'speedperjam',
-			title:'".getCatalog('speedperjam')."', 
+			title: localStorage.getItem('catalogspeedperjam'), 
 			editor:{
 				type:'numberbox',
 				options:{
@@ -234,7 +234,7 @@
 		},
 		{
 			field:'rpm',
-			title:'".getCatalog('rpm')."', 
+			title: localStorage.getItem('catalogrpm'), 
 			editor:{
 				type:'numberbox',
 				options:{
@@ -252,7 +252,7 @@
 		},
 		{
 			field:'lebarbahan',
-			title:'".getCatalog('lebarbahan')."', 
+			title: localStorage.getItem('cataloglebarbahan'), 
 			editor:{
 				type:'numberbox',
 				options:{
@@ -270,7 +270,7 @@
 		},
 		{
 			field:'rpm2',
-			title:'".getCatalog('rpm2')."', 
+			title: localStorage.getItem('catalogrpm2'), 
 			editor:{
 				type:'numberbox',
 				options:{
@@ -288,7 +288,7 @@
 		},
 		{
 			field:'description',
-			title:'".getCatalog('description')."', 
+			title: localStorage.getItem('catalogdescription'), 
 			editor:{
 				type:'text',
 				options:{

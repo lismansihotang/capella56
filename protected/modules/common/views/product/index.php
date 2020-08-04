@@ -13,7 +13,7 @@
 	'columns'=>"
 		{
 			field:'productid',
-			title:'". GetCatalog('productid') ."',
+			title: localStorage.getItem('catalogproductid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -21,7 +21,7 @@
 		}},
 		{
 			field:'materialtypeid',
-			title:'". GetCatalog('materialtype') ."',
+			title: localStorage.getItem('catalogmaterialtype'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -29,7 +29,7 @@
 		}},		
 		{
 			field:'materialgroupid',
-			title:'". GetCatalog('materialgroup') ."',
+			title: localStorage.getItem('catalogmaterialgroup'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -37,7 +37,7 @@
 		}},
 		{
 			field:'productcode',
-			title:'". GetCatalog('productcode') ."',
+			title: localStorage.getItem('catalogproductcode'),
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -45,7 +45,7 @@
 		}},
 		{
 			field:'productname',
-			title:'". GetCatalog('productname') ."',
+			title: localStorage.getItem('catalogproductname'),
 			width:'500px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -53,7 +53,7 @@
 		}},
 		{
 			field:'productpic',
-			title:'". GetCatalog('productpic') ."',
+			title: localStorage.getItem('catalogproductpic'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -61,7 +61,7 @@
 		}},
 		{
 			field:'thickness',
-			title:'". GetCatalog('thickness') ."',
+			title: localStorage.getItem('catalogthickness'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -69,7 +69,7 @@
 		}},
 		{
 			field:'width',
-			title:'". GetCatalog('width') ."',
+			title: localStorage.getItem('catalogwidth'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -77,7 +77,7 @@
 		}},
 		{
 			field:'length',
-			title:'". GetCatalog('length') ."',
+			title: localStorage.getItem('cataloglength'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -85,7 +85,7 @@
 		}},
 		{
 			field:'qty1',
-			title:'". GetCatalog('qty1') ."',
+			title: localStorage.getItem('catalogqty1'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -93,7 +93,7 @@
 		}},
 		{
 			field:'uom1',
-			title:'". GetCatalog('uom1') ."',
+			title: localStorage.getItem('cataloguom1'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -101,7 +101,7 @@
 		}},
 		{
 			field:'qty2',
-			title:'". GetCatalog('qty2') ."',
+			title: localStorage.getItem('catalogqty2'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -109,7 +109,7 @@
 		}},
 		{
 			field:'uom2',
-			title:'". GetCatalog('uom2') ."',
+			title: localStorage.getItem('cataloguom2'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -117,7 +117,7 @@
 		}},
 		{
 			field:'qty3',
-			title:'". GetCatalog('qty3') ."',
+			title: localStorage.getItem('catalogqty3'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -125,7 +125,7 @@
 		}},
 		{
 			field:'uom3',
-			title:'". GetCatalog('uom3') ."',
+			title: localStorage.getItem('cataloguom3'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -133,7 +133,7 @@
 		}},
 		{
 			field:'sled',
-			title:'". GetCatalog('sled') ."',
+			title: localStorage.getItem('catalogsled'),
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -141,7 +141,7 @@
 		}},
 		{
 			field:'isautolot',
-			title:'". GetCatalog('isautolot') ."',
+			title: localStorage.getItem('catalogisautolot'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
@@ -155,7 +155,7 @@
 		}},
 		{
 			field:'isstock',
-			title:'". GetCatalog('isstock') ."',
+			title: localStorage.getItem('catalogisstock'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
@@ -169,7 +169,7 @@
 		}},
 		{
 			field:'isasset',
-			title:'". GetCatalog('isasset') ."',
+			title: localStorage.getItem('catalogisasset'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
@@ -183,7 +183,7 @@
 		}},
 		{
 			field:'barcode',
-			title:'". GetCatalog('barcode') ."',
+			title: localStorage.getItem('catalogbarcode'),
 			editor:'text',
 			width:'120px',
 			sortable: true,
@@ -192,7 +192,7 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
@@ -208,7 +208,7 @@
 	'headerform'=> "
 		<table cellpadding='5'>
 			<tr>
-				<td>".GetCatalog('materialtype')."</td>
+				<td id='producttext-materialtype'></td>
 				<td><select class='easyui-combogrid' id='product-materialtypeid' name='product-materialtypeid' style='width:300px' data-options=\"
 						panelWidth:'500px',
 						mode : 'remote',
@@ -218,16 +218,16 @@
 						url:'". Yii::app()->createUrl('common/materialtype/index',array('grid'=>true,'combo'=>true)) ."',
 						fitColumns:true,
 						required:true,
-						loadMsg: '". GetCatalog('pleasewait')."',
+						loadMsg:  localStorage.getItem('catalogpleasewait'),
 						columns:[[
-							{field:'materialtypeid',title:'". GetCatalog('materialtypeid')."',width:'50px'},
-							{field:'description',title:'". GetCatalog('description')."',width:'200px'},
+							{field:'materialtypeid',title: localStorage.getItem('catalogmaterialtypeid'),width:'50px'},
+							{field:'description',title: localStorage.getItem('catalogdescription'),width:'200px'},
 						]]
 					\">
 			</select></td>
       </tr>
       <tr>
-				<td>".GetCatalog('materialgroup')."</td>
+				<td id='producttext-materialgroup'></td>
 				<td><select class='easyui-combogrid' id='product-materialgroupid' name='product-materialgroupid' style='width:300px' data-options=\"
 						panelWidth:'500px',
 						mode : 'remote',
@@ -237,65 +237,65 @@
 						url:'". Yii::app()->createUrl('common/materialgroup/index',array('grid'=>true,'combo'=>true)) ."',
 						fitColumns:true,
 						required:true,
-						loadMsg: '". GetCatalog('pleasewait')."',
+						loadMsg:  localStorage.getItem('catalogpleasewait'),
 						columns:[[
-							{field:'materialgroupid',title:'". GetCatalog('materialgroupid')."',width:'50px'},
-							{field:'materialgroupcode',title:'". GetCatalog('materialgroupcode')."',width:'200px'},
-							{field:'description',title:'". GetCatalog('description')."',width:'200px'},
+							{field:'materialgroupid',title: localStorage.getItem('catalogmaterialgroupid'),width:'50px'},
+							{field:'materialgroupcode',title: localStorage.getItem('catalogmaterialgroupcode'),width:'200px'},
+							{field:'description',title: localStorage.getItem('catalogdescription'),width:'200px'},
 						]]
 					\">
 			</select></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('productcode')."</td>
+				<td id='producttext-productcode'></td>
 				<td><input class='easyui-textbox' id='product-productcode' name='product-productcode' data-options=\"width:'300px'\"></input></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('productname')."</td>
+				<td id='producttext-productname'></td>
 				<td><input class='easyui-textbox' id='product-productname' name='product-productname' data-options=\"required:true,width:'300px'\"></input></td>
 			</tr>
 			<tr>
-				<td>".GetCatalog('thickness')."</td>
+				<td id='producttext-thickness'></td>
 				<td><input class='easyui-numberbox' id='product-thickness' name='product-thickness' data-options=\"required:true,width:'300px',precision:4,
 				decimalSeparator:',',
 				groupSeparator:'.'\"></input></td>
 			</tr>			
 			<tr>
-				<td>".GetCatalog('width')."</td>
+				<td id='producttext-width'></td>
 				<td><input class='easyui-numberbox' id='product-width' name='product-width' data-options=\"required:true,width:'300px',precision:4,
 				decimalSeparator:',',
 				groupSeparator:'.'\"></input></td>
 			</tr>			
 			<tr>
-				<td>".GetCatalog('length')."</td>
+				<td id='producttext-length'></td>
 				<td><input class='easyui-numberbox' id='product-length' name='product-length' data-options=\"required:true,width:'300px',precision:4,
 				decimalSeparator:',',
 				groupSeparator:'.'\"></input></td>
 			</tr>			
 			<tr>
-				<td>".GetCatalog('productpic')."</td>
+				<td id='producttext-productpic'></td>
 				<td><input class='easyui-textbox' id='product-productpic' name='product-productpic' data-options=\"required:true,width:'300px'\"></input></td>
 			</tr>			
 			<tr>
-				<td>".GetCatalog('barcode')."</td>
+				<td id='producttext-barcode'></td>
 				<td><input class='easyui-textbox' id='product-barcode' name='product-barcode' data-options=\"width:'300px'\"></input></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('isstock')."</td>
+				<td id='producttext-isstock'></td>
 				<td><input id='product-isstock' name='product-isstock' type='checkbox'></input></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('isasset')."</td>
+				<td id='producttext-isasset'></td>
 				<td><input id='product-isasset' name='product-isasset' type='checkbox'></input></td>
       </tr>
       <tr>
-        <td>".GetCatalog('qty1')."</td>
+        <td id='producttext-qty1'></td>
         <td><input class='easyui-numberbox' id='product-qty1' name='product-qty1' data-options=\"required:true,width:'300px',precision:4,
 				decimalSeparator:',',
 				groupSeparator:'.'\"></input></td>
       </tr>			
       <tr>
-				<td>".GetCatalog('uom1')."</td>
+				<td id='producttext-uom1'></td>
 				<td><select class='easyui-combogrid' id='product-uom1' name='product-uom1' style='width:300px' data-options=\"
 						panelWidth:'500px',
 						mode : 'remote',
@@ -305,20 +305,20 @@
 						url:'". Yii::app()->createUrl('common/unitofmeasure/index',array('grid'=>true,'combo'=>true)) ."',
 						fitColumns:true,
 						required:true,
-						loadMsg: '". GetCatalog('pleasewait')."',
+						loadMsg:  localStorage.getItem('catalogpleasewait'),
 						columns:[[
-							{field:'unitofmeasureid',title:'". GetCatalog('unitofmeasureid')."',width:'50px'},
-							{field:'uomcode',title:'". GetCatalog('uomcode')."',width:'200px'},
+							{field:'unitofmeasureid',title: localStorage.getItem('catalogunitofmeasureid'),width:'50px'},
+							{field:'uomcode',title: localStorage.getItem('cataloguomcode'),width:'200px'},
 						]]
 					\">
 			</select></td>
 			</tr>
       <tr>
-        <td>".GetCatalog('qty2')."</td>
+        <td id='producttext-qty2'></td>
         <td><input class='easyui-numberbox' id='product-qty2' name='product-qty2' data-options=\"required:true,width:'300px'\"></input></td>
       </tr>			
       <tr>
-				<td>".GetCatalog('uom2')."</td>
+				<td id='producttext-uom2'></td>
 				<td><select class='easyui-combogrid' id='product-uom2' name='product-uom2' style='width:300px' data-options=\"
 						panelWidth:'500px',
 						mode : 'remote',
@@ -327,20 +327,20 @@
 						textField:'uomcode',
 						url:'". Yii::app()->createUrl('common/unitofmeasure/index',array('grid'=>true,'combo'=>true)) ."',
 						fitColumns:true,
-						loadMsg: '". GetCatalog('pleasewait')."',
+						loadMsg:  localStorage.getItem('catalogpleasewait'),
 						columns:[[
-							{field:'unitofmeasureid',title:'". GetCatalog('unitofmeasureid')."',width:'50px'},
-							{field:'uomcode',title:'". GetCatalog('uomcode')."',width:'200px'},
+							{field:'unitofmeasureid',title: localStorage.getItem('catalogunitofmeasureid'),width:'50px'},
+							{field:'uomcode',title: localStorage.getItem('cataloguomcode'),width:'200px'},
 						]]
 					\">
 			</select></td>
       </tr>
       <tr>
-        <td>".GetCatalog('qty3')."</td>
+        <td id='producttext-qty3'></td>
         <td><input class='easyui-numberbox' id='product-qty3' name='product-qty3' data-options=\"required:true,width:'300px'\"></input></td>
       </tr>			
       <tr>
-        <td>".GetCatalog('uom3')."</td>
+        <td id='producttext-uom3'></td>
         <td><select class='easyui-combogrid' id='product-uom3' name='product-uom3' style='width:300px' data-options=\"
             panelWidth:'500px',
             mode : 'remote',
@@ -349,27 +349,71 @@
             textField:'uomcode',
             url:'". Yii::app()->createUrl('common/unitofmeasure/index',array('grid'=>true,'combo'=>true)) ."',
             fitColumns:true,
-            loadMsg: '". GetCatalog('pleasewait')."',
+            loadMsg:  localStorage.getItem('catalogpleasewait'),
             columns:[[
-              {field:'unitofmeasureid',title:'". GetCatalog('unitofmeasureid')."',width:'50px'},
-              {field:'uomcode',title:'". GetCatalog('uomcode')."',width:'200px'},
+              {field:'unitofmeasureid',title: localStorage.getItem('catalogunitofmeasureid'),width:'50px'},
+              {field:'uomcode',title: localStorage.getItem('cataloguomcode'),width:'200px'},
             ]]
           \">
       </select></td>
       </tr>
       <tr>
-        <td>".GetCatalog('sled')."</td>
+        <td id='producttext-sled'></td>
         <td><input class='easyui-numberbox' id='product-sled' name='product-sled' data-options=\"required:true,width:'300px'\"></input></td>
       </tr>			
 			<tr>
-				<td>". GetCatalog('isautolot')."</td>
+				<td id='producttext-isautolot'></td>
 				<td><input id='product-isautolot' name='product-isautolot' type='checkbox'></input></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('recordstatus')."</td>
+				<td id='producttext-recordstatus'></td>
 				<td><input id='product-recordstatus' name='product-recordstatus' type='checkbox'></input></td>
 			</tr>
 		</table>
+  ",
+  'addonscripts'=>"
+    $(document).ready(function(){
+      var parel = document.getElementById('producttext-materialtype');
+      parel.innerHTML = localStorage.getItem('catalogmaterialtype');
+      parel = document.getElementById('producttext-materialgroup');
+      parel.innerHTML = localStorage.getItem('catalogmaterialgroup');
+      parel = document.getElementById('producttext-productcode');
+      parel.innerHTML = localStorage.getItem('catalogproductcode');
+      parel = document.getElementById('producttext-productname');
+      parel.innerHTML = localStorage.getItem('catalogproductname');
+      parel = document.getElementById('producttext-thickness');
+      parel.innerHTML = localStorage.getItem('catalogthickness');
+      parel = document.getElementById('producttext-width');
+      parel.innerHTML = localStorage.getItem('catalogwidth');
+      parel = document.getElementById('producttext-length');
+      parel.innerHTML = localStorage.getItem('cataloglength');
+      parel = document.getElementById('producttext-productpic');
+      parel.innerHTML = localStorage.getItem('catalogproductpic');
+      parel = document.getElementById('producttext-barcode');
+      parel.innerHTML = localStorage.getItem('catalogbarcode');
+      parel = document.getElementById('producttext-isstock');
+      parel.innerHTML = localStorage.getItem('catalogisstock');
+      parel = document.getElementById('producttext-isasset');
+      parel.innerHTML = localStorage.getItem('catalogisasset');
+      parel = document.getElementById('producttext-qty1');
+      parel.innerHTML = localStorage.getItem('catalogqty1');
+      parel = document.getElementById('producttext-uom1');
+      parel.innerHTML = localStorage.getItem('cataloguom1');
+      parel = document.getElementById('producttext-qty2');
+      parel.innerHTML = localStorage.getItem('catalogqty2');
+      parel = document.getElementById('producttext-uom2');
+      parel.innerHTML = localStorage.getItem('cataloguom2');
+      parel = document.getElementById('producttext-qty3');
+      parel.innerHTML = localStorage.getItem('catalogqty3');
+      parel = document.getElementById('producttext-uom3');
+      parel.innerHTML = localStorage.getItem('cataloguom3');
+      parel = document.getElementById('producttext-sled');
+      parel.innerHTML = localStorage.getItem('catalogsled');
+      parel = document.getElementById('producttext-isautolot');
+      parel.innerHTML = localStorage.getItem('catalogisautolot');
+      parel = document.getElementById('producttext-recordstatus');
+      parel.innerHTML = localStorage.getItem('catalogrecordstatus');
+    });
   ",
   'addload' => "
     $('#product-productpic').textbox('setValue','default.jpg');
@@ -417,8 +461,8 @@
 			'updateurl'=>Yii::app()->createUrl('common/product/saveproductplant'),
 			'destroyurl'=>Yii::app()->createUrl('common/product/purgeproductplant'),
 			'subs'=>"
-				{field:'sloccode',title:'".GetCatalog('sloc')."',width:'200px'},
-				{field:'issource',title:'".GetCatalog('issource')."',width:'200px',formatter: function(value,row,index){
+				{field:'sloccode',title: localStorage.getItem('catalogsloc'),width:'200px'},
+				{field:'issource',title: localStorage.getItem('catalogissource'),width:'200px',formatter: function(value,row,index){
 					if (value == 1){
 						return '<img src=\"". Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
 					} else {
@@ -429,7 +473,7 @@
 			'columns'=>"
 				{
 					field:'productplantid',
-					title:'". GetCatalog('productplantid') ."',
+					title: localStorage.getItem('catalogproductplantid'),
 					sortable: true,
 					width:'80px',
 					formatter: function(value,row,index){
@@ -437,7 +481,7 @@
         }},
 				{
 					field:'productid',
-					title:'". GetCatalog('productid') ."',
+					title: localStorage.getItem('catalogproductid'),
 					sortable: true,
 					hidden: true,
 					width:'50px',
@@ -446,7 +490,7 @@
         }},
 				{
 					field:'productid',
-					title:'". GetCatalog('productname') ."',
+					title: localStorage.getItem('catalogproductname'),
 					width:'350px',
 					hidden: true,
 					sortable: true,
@@ -455,7 +499,7 @@
 				}},
 				{
 					field:'slocid',
-					title:'". GetCatalog('sloc') ."',
+					title: localStorage.getItem('catalogsloc'),
 					editor:{
 						type:'combogrid',
 						options:{
@@ -467,11 +511,11 @@
 								url:'". $this->createUrl('sloc/indexcombo',array('grid'=>true,'combo'=>true)) ."',
 								fitColumns:true,
 								required:true,
-								loadMsg: '". GetCatalog('pleasewait')."',
+								loadMsg:  localStorage.getItem('catalogpleasewait'),
 								columns:[[
-									{field:'slocid',title:'". GetCatalog('slocid')."',width:'80px'},
-									{field:'sloccode',title:'". GetCatalog('sloccode')."',width:'80px'},
-									{field:'description',title:'". GetCatalog('description')."',width:'200px'},
+									{field:'slocid',title: localStorage.getItem('catalogslocid'),width:'80px'},
+									{field:'sloccode',title: localStorage.getItem('catalogsloccode'),width:'80px'},
+									{field:'description',title: localStorage.getItem('catalogdescription'),width:'200px'},
 								]]
 						}	
 					},
@@ -482,7 +526,7 @@
 				}},
 				{
 					field:'issource',
-					title:'". GetCatalog('source') ."',
+					title: localStorage.getItem('catalogsource'),
 					align:'center',
 					width:'50px',
 					editor:{type:'checkbox',options:{on:'1',off:'0'}},
@@ -505,12 +549,12 @@
 			'updateurl'=>Yii::app()->createUrl('common/product/saveproductsales'),
 			'destroyurl'=>Yii::app()->createUrl('common/product/purgeproductsales'),
 			'subs'=>"
-				{field:'productsalesid',title:'".GetCatalog('productsalesid')."',width:'120px'},
-				{field:'currencyid',title:'".GetCatalog('currency')."',width:'120px'},
-				{field:'currencyvalue',title:'".GetCatalog('currencyvalue')."',width:'150px'},
-				{field:'pricecategoryid',title:'".GetCatalog('pricecategory')."',width:'200px'},
-				{field:'uomid',title:'".GetCatalog('uom')."',width:'200px'},
-				{field:'issource',title:'".GetCatalog('issource')."',width:'200px',formatter: function(value,row,index){
+				{field:'productsalesid',title: localStorage.getItem('catalogproductsalesid'),width:'120px'},
+				{field:'currencyid',title: localStorage.getItem('catalogcurrency'),width:'120px'},
+				{field:'currencyvalue',title: localStorage.getItem('catalogcurrencyvalue'),width:'150px'},
+				{field:'pricecategoryid',title: localStorage.getItem('catalogpricecategory'),width:'200px'},
+				{field:'uomid',title: localStorage.getItem('cataloguom'),width:'200px'},
+				{field:'issource',title: localStorage.getItem('catalogissource'),width:'200px',formatter: function(value,row,index){
 					if (value == 1){
 						return '<img src=\"". Yii::app()->request->baseUrl."/images/icons/ok.png"."\"></img>';
 					} else {
@@ -521,7 +565,7 @@
 			'columns'=>"
 			{
 				field:'productsalesid',
-				title:'". GetCatalog('productsalesid') ."',
+				title: localStorage.getItem('catalogproductsalesid'),
 				sortable: true,
 				width:'80px',
 				formatter: function(value,row,index){
@@ -529,7 +573,7 @@
 			}},
 			{
 				field:'productid',
-				title:'". GetCatalog('productname') ."',
+				title: localStorage.getItem('catalogproductname'),
 				width:'50px',
 				hidden:true,
 				sortable: true,
@@ -538,7 +582,7 @@
 			}},
 		{
 			field:'currencyid',
-			title:'". GetCatalog('currency') ."',
+			title: localStorage.getItem('catalogcurrency'),
 			width:'100px',
 			editor:{
 				type:'combogrid',
@@ -551,10 +595,10 @@
 					url:'". Yii::app()->createUrl('admin/currency/index',array('grid'=>true,'combo'=>true)) ."',
 					fitColumns:true,
 					required:true,
-					loadMsg: '". GetCatalog('pleasewait')."',
+					loadMsg:  localStorage.getItem('catalogpleasewait'),
 					columns:[[
-						{field:'currencyid',title:'". GetCatalog('currencyid')."',width:'50px'},
-						{field:'currencyname',title:'". GetCatalog('currencyname')."',width:'200px'},
+						{field:'currencyid',title: localStorage.getItem('catalogcurrencyid'),width:'50px'},
+						{field:'currencyname',title: localStorage.getItem('catalogcurrencyname'),width:'200px'},
 					]]
 				}	
 			},
@@ -564,7 +608,7 @@
 		}},
 		{
 			field:'currencyvalue',
-			title:'". GetCatalog('currencyvalue') ."',
+			title: localStorage.getItem('catalogcurrencyvalue'),
 			width:'150px',
 			editor:{
 				type:'numberbox',
@@ -582,7 +626,7 @@
 		}},
 		{
 			field:'pricecategoryid',
-			title:'". GetCatalog('pricecategory') ."',
+			title: localStorage.getItem('catalogpricecategory'),
 			pagination:true,
 			width:'150px',
 			editor:{
@@ -596,10 +640,10 @@
 					url:'". Yii::app()->createUrl('common/pricecategory/index',array('grid'=>true,'combo'=>true)) ."',
 					fitColumns:true,
 					required:true,
-					loadMsg: '". GetCatalog('pleasewait')."',
+					loadMsg:  localStorage.getItem('catalogpleasewait'),
 					columns:[[
-						{field:'pricecategoryid',title:'". GetCatalog('pricecategoryid')."',width:'50px'},
-						{field:'categoryname',title:'". GetCatalog('categoryname')."',width:'200px'},
+						{field:'pricecategoryid',title: localStorage.getItem('catalogpricecategoryid'),width:'50px'},
+						{field:'categoryname',title: localStorage.getItem('catalogcategoryname'),width:'200px'},
 					]]
 				}	
 			},
@@ -609,7 +653,7 @@
 		}},
 		{
 			field:'uomid',
-			title:'". GetCatalog('uom') ."',
+			title: localStorage.getItem('cataloguom'),
 			pagination:true,
 			width:'100px',
 			editor:{
@@ -623,10 +667,10 @@
 					url:'". Yii::app()->createUrl('common/unitofmeasure/index',array('grid'=>true,'combo'=>true)) ."',
 					fitColumns:true,
 					required:true,
-					loadMsg: '". GetCatalog('pleasewait')."',
+					loadMsg:  localStorage.getItem('catalogpleasewait'),
 					columns:[[
-						{field:'unitofmeasureid',title:'". GetCatalog('unitofmeasureid')."',width:'50px'},
-						{field:'uomcode',title:'". GetCatalog('uomcode')."',width:'200px'},
+						{field:'unitofmeasureid',title: localStorage.getItem('catalogunitofmeasureid'),width:'50px'},
+						{field:'uomcode',title: localStorage.getItem('cataloguomcode'),width:'200px'},
 					]]
 				}	
 			},

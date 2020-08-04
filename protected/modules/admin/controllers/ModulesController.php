@@ -1,6 +1,21 @@
 <?php
 class ModulesController extends Controller {
 	public $menuname = 'modules';
+	private $sort = [
+		'datatype' => 'POST',
+		'default' => 'moduleid'
+	];
+	private $order = [
+		'default' => 'desc'
+	];
+	private $viewfield = [
+		'moduleid' => 'text',
+		'modulename' => 'text',
+		'moduledesc' => 'text',
+		'moduleicon' => 'text',
+		'isinstall' => 'text',
+		'recordstatus' => 'text',
+	];
 	public function actionIndex() {
 		parent::actionIndex();
 		if(isset($_GET['grid']))
@@ -9,68 +24,31 @@ class ModulesController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header('Content-Type: application/json');
-		$moduleid = GetSearchText(array('POST','Q'),'moduleid');
-		$modulename = GetSearchText(array('POST','Q'),'modulename');
-		$moduledesc = GetSearchText(array('POST','Q'),'moduledesc');
-		$moduleicon = GetSearchText(array('POST','Q'),'moduleicon');
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','moduleid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')	
-				->from('modules t')
-				->where('(moduleid like :moduleid) and (modulename like :modulename) and (moduledesc like :moduledesc) and (moduleicon like :moduleicon)',
-					array(':moduleid'=>$moduleid,':modulename'=>$modulename,':moduledesc'=>$moduledesc,':moduleicon'=>$moduleicon))
-				->queryScalar();
-		}
-		else
-		{
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')	
-				->from('modules t')
-				->where('((moduleid like :moduleid) or (modulename like :modulename) or (moduledesc like :moduledesc) or (moduleicon like :moduleicon)) and t.recordstatus=1',
-					array(':moduleid'=>$moduleid,':modulename'=>$modulename,':moduledesc'=>$moduledesc,':moduleicon'=>$moduleicon))
-				->queryScalar();
-		}
-		$result['total'] = $cmd;
-		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select()			
-				->from('modules t')
-				->where('(moduleid like :moduleid) and (modulename like :modulename) and (moduledesc like :moduledesc) and (moduleicon like :moduleicon)',
-												array(':moduleid'=>$moduleid,':modulename'=>$modulename,':moduledesc'=>$moduledesc,':moduleicon'=>$moduleicon))
-				->offset($offset)
-				->limit($rows)
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->select()			
-				->from('modules t')
-				->where('((moduleid like :moduleid) or (modulename like :modulename) or (moduledesc like :moduledesc) or (moduleicon like :moduleicon)) and t.recordstatus=1',
-					array(':moduleid'=>$moduleid,':modulename'=>$modulename,':moduledesc'=>$moduledesc,':moduleicon'=>$moduleicon))
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		foreach($cmd as $data) {	
-			$row[] = array(
-				'moduleid'=>$data['moduleid'],
-				'modulename'=>$data['modulename'],
-				'moduledesc'=>$data['moduledesc'],
-				'moduleicon'=>$data['moduleicon'],
-				'isinstall'=>$data['isinstall'],
-				'recordstatus'=>$data['recordstatus'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => 'modules t',
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => true,
+			'searchfield' => [
+				'moduleid' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and' 
+				],
+				'modulename' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'moduledesc' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'moduleicon' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+			]
+		]);
 	}
 	private function ModifyData($connection,$arraydata) {
 		$id = (isset($arraydata[0])?$arraydata[0]:'');
@@ -94,76 +72,39 @@ class ModulesController extends Controller {
 	}
 	public function actionUpload() {
 		parent::actionUpload();
-		$target_file = dirname('__FILES__').'/uploads/' . basename($_FILES["file-modules"]["name"]);
-		if (move_uploaded_file($_FILES["file-modules"]["tmp_name"], $target_file)) {
-			$objReader = PHPExcel_IOFactory::createReader('Excel2007');
-			$objPHPExcel = $objReader->load($target_file);
-			$objWorksheet = $objPHPExcel->getActiveSheet();
-			$highestRow = $objWorksheet->getHighestRow(); 
-			$highestColumn = $objWorksheet->getHighestColumn();
-			$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				for ($row = 2; $row <= $highestRow; ++$row) {
-					$id = $objWorksheet->getCellByColumnAndRow(0, $row)->getValue();
-					$modulename = $objWorksheet->getCellByColumnAndRow(1, $row)->getValue();
-					$moduledesc = $objWorksheet->getCellByColumnAndRow(2, $row)->getValue();
-					$moduleicon = $objWorksheet->getCellByColumnAndRow(3, $row)->getValue();
-					$isinstall = $objWorksheet->getCellByColumnAndRow(4, $row)->getValue();
-					$recordstatus = $objWorksheet->getCellByColumnAndRow(5, $row)->getValue();
-					$this->ModifyData($connection,array($id,$modulename,$moduledesc,$moduleicon,$isinstall,$recordstatus));
-				}
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}	
-    }
+		UploadData($this->menuname,[
+			'spinsert' => 'insertmodules',
+			'spupdate' => 'updatemodules',
+			'arraydata' => [
+				'vid'=>0,
+				'modulename'=>1,
+				'moduledesc'=>2,
+				'moduleicon'=>3,
+				'isinstall'=>4,
+				'recordstatus'=>5
+			]
+		]);
 	}
 	public function actionSave() {
 		parent::actionWrite();
-		header('Content-Type: application/json');
-		if(!Yii::app()->request->isPostRequest)
-			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->Modifydata($connection,array((isset($_POST['moduleid'])?$_POST['moduleid']:''),$_POST['modulename'],$_POST['moduledesc'],$_POST['moduleicon'],$_POST['isinstall'],$_POST['recordstatus']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}	
+		SaveData([
+			'spinsert' => 'insertcountry',
+			'spupdate' => 'updatecountry',
+			'arraydata' => [
+				'vid'=>(isset($_POST['moduleid'])?$_POST['moduleid']:''),
+				'modulename'=>$_POST['modulename'],
+				'moduledesc'=>$_POST['moduledesc'],
+				'moduleicon'=>$_POST['moduleicon'],
+				'isinstall'=>$_POST['isinstall'],
+				'recordstatus'=>$_POST['recordstatus']
+			]
+		]);
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		header('Content-Type: application/json');
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgemodules(:vid,:vcreatedby)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vcreatedby',Yii::app()->user->name,PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}	
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgemodules',			
+		]);
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();

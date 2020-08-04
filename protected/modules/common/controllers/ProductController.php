@@ -1264,7 +1264,7 @@ class ProductController extends Controller {
 					$this->ModifyData($connection,array($id,$productcode,$productname,$productpic,$barcode,$isstock,$isasset,$materialtypeid,$recordstatus));
 				}
 				$transaction->commit();			
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -1299,7 +1299,7 @@ class ProductController extends Controller {
         isset($_POST['product-isautolot'])?1:0,
 				isset($_POST['product-recordstatus'])?1:0));
 			$transaction->commit();			
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -1331,7 +1331,7 @@ class ProductController extends Controller {
 			$this->ModifyDataproductplant($connection,array((isset($_POST['productplantid'])?$_POST['productplantid']:''),$_POST['productid'],$_POST['slocid'],
 				$_POST['issource']));
 			$transaction->commit();			
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -1365,7 +1365,7 @@ class ProductController extends Controller {
 			$this->ModifyDataProductSales($connection,array((isset($_POST['productsalesid'])?$_POST['productsalesid']:''),$_POST['productid'],$_POST['currencyid'],$_POST['currencyvalue'],
 				$_POST['pricecategoryid'],$_POST['uomid']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -1385,7 +1385,7 @@ class ProductController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();				
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -1393,7 +1393,7 @@ class ProductController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true, getcatalog('chooseone'));
+			GetMessage(true, 'chooseone');
 		}
 	}
 	public function actionPurgeproductplant() {
@@ -1409,7 +1409,7 @@ class ProductController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();				
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -1417,7 +1417,7 @@ class ProductController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true, getcatalog('chooseone'));
+			GetMessage(true, 'chooseone');
 		}
 	}
 	public function actionPurgeProductSales() {
@@ -1433,7 +1433,7 @@ class ProductController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -1441,7 +1441,7 @@ class ProductController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,getcatalog('chooseone'));
+			GetMessage(true,'chooseone');
 		}
 	}
 	protected function actionDataPrint() {

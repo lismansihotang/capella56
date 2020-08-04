@@ -11,7 +11,7 @@
 	'columns'=>"
 		{
 			field:'storagebinid',
-			title:'". GetCatalog('storagebinid') ."',
+			title: localStorage.getItem('catalogstoragebinid'),
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -19,7 +19,7 @@
 		}},
 		{
 			field:'slocid',
-			title:'". GetCatalog('sloc') ."',
+			title: localStorage.getItem('catalogsloc'),
 			width:'150px',
 			editor:{
 				type:'combogrid',
@@ -32,10 +32,10 @@
 					url:'". Yii::app()->createUrl('common/sloc/indexcombo',array('grid'=>true)) ."',
 					fitColumns:true,
 					required:true,
-					loadMsg: '". GetCatalog('pleasewait')."',
+					loadMsg:  localStorage.getItem('catalogpleasewait'),
 					columns:[[
-						{field:'slocid',title:'". GetCatalog('slocid')."',width:'50px'},
-						{field:'sloccode',title:'". GetCatalog('sloccode')."',width:'200px'},
+						{field:'slocid',title: localStorage.getItem('catalogslocid'),width:'50px'},
+						{field:'sloccode',title: localStorage.getItem('catalogsloccode'),width:'200px'},
 					]]
 				}	
 			},
@@ -45,7 +45,7 @@
 		}},
 		{
 			field:'description',
-			title:'". GetCatalog('description') ."',
+			title: localStorage.getItem('catalogdescription'),
 			editor:{
 				type: 'validatebox',
 				options:{
@@ -59,7 +59,7 @@
 		}},
 		{
 			field:'ismultiproduct',
-			title:'". GetCatalog('ismultiproduct') ."',
+			title: localStorage.getItem('catalogismultiproduct'),
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},
 			width:'150px',
 			sortable: true,
@@ -72,7 +72,7 @@
 		}},
 		{
 			field:'qtymax',
-			title:'". GetCatalog('qtymax') ."',
+			title: localStorage.getItem('catalogqtymax'),
 			editor:{
 				type:'numberbox',
 				options:{
@@ -89,7 +89,7 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'80px',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

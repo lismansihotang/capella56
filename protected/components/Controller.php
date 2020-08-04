@@ -11,8 +11,6 @@ class Controller extends CController {
   protected $isdownload = 'isdownload';
   protected $ispurge = 'ispurge';
   protected $txt = '_help';
-  protected $lockedby = "";
-  protected $lockeddate = "";
   protected $messages = '';
   protected $connection;
   protected $pdf;
@@ -25,16 +23,8 @@ class Controller extends CController {
 	protected $sql = '';
   protected $menuconfig = '';
   protected $dataprint;
-  protected function CheckDataLock($menuname, $idvalue) {
-  }
-  protected function InsertLock($menuname, $idvalue) {
-  }
-  protected function DeleteLock($menuname, $idvalue) {
-  }
-  protected function DeleteLockCloseForm($menuname, $postvalue, $idvalue) {
-  }
   public function actionIndex() {
-		if ((Yii::app()->user->id == '') || (Yii::app()->user->id == null)) {
+		if (Yii::app()->user->name == 'Guest') {
 			$this->redirect(Yii::app()->createUrl('site/login'));
 		} else {
 			$this->connection = Yii::app()->db;

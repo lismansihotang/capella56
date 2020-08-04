@@ -22,7 +22,9 @@
 		{
 			field:'countrycode',
 			title:localStorage.getItem('catalogcountrycode'),
-			editor:'text',
+			editor: {
+        type: 'textbox',
+      },
 			width:'80px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -32,7 +34,12 @@
 		{
 			field:'countryname',
 			title:localStorage.getItem('catalogcountryname'),
-			editor:'text',
+      editor: {
+        type: 'textbox',
+        options: {
+          required: true
+        }
+      },
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){

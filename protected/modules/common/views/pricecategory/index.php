@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'pricecategoryid',
-			title:'". GetCatalog('pricecategoryid') ."',
+			title: localStorage.getItem('catalogpricecategoryid'),
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -20,16 +20,18 @@
 		}},
 		{
 			field:'categoryname',
-			title:'". GetCatalog('categoryname') ."',
+			title: localStorage.getItem('catalogcategoryname'),
 			width:'300px',
-			editor:'text',
+			editor: {
+        type: 'textbox',
+      },
 			sortable: true,
 			formatter: function(value,row,index){
 				return value;
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			width:'50px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

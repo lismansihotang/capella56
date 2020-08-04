@@ -10,6 +10,11 @@
 	'downpdf'=>Yii::app()->createUrl('admin/groupaccess/downpdf'),
 	'downxls'=>Yii::app()->createUrl('admin/groupaccess/downxls'),
 	'downdoc'=>Yii::app()->createUrl('admin/groupaccess/downdoc'),
+	'rowstyler'=>"
+		if (row.jumlah == 0) {
+			return 'background-color:red;color:#fff;';
+		}  
+	",
 	'columns'=>"
 		{
 			field:'groupaccessid',
@@ -22,7 +27,7 @@
 		{
 			field:'groupname',
 			title:localStorage.getItem('cataloggroupname'),
-			editor:'text',
+			editor:{type:'textbox',options:{required:true}},
 			width:'600px',
 			sortable: true,
 			formatter: function(value,row,index){

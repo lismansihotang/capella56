@@ -1,8 +1,51 @@
 <?php
 class UseraccessController extends Controller {
 	public $menuname = 'useraccess';
+	private $sort = [
+		'datatype' => 'POST',
+		'default' => 'useraccessid'
+	];
+	private $order = [
+		'default' => 'desc'
+	];
+	private $viewfield = [
+		'useraccessid' => 'text',
+		'username' => 'text',
+		'realname' => 'text',
+		'password' => 'text',
+		'email' => 'text',
+		'phoneno' => 'text',
+		'languageid' => [
+			'type' => 'text',
+			'from' => 'l'
+		],
+		'languagename' => [
+			'type' => 'text',
+			'from' => 'l'
+		],
+		'themeid' => [
+			'type' => 'text',
+			'from' => 'h'
+		],
+		'themename' => [
+			'type' => 'text',
+			'from' => 'h'
+		],
+		'isonline' => 'text',
+		'jumlah' => [
+			'from'=>'other',
+			'source'=> "(select ifnull(count(1),0) from usergroup a where a.useraccessid = t.useraccessid)"
+		],
+		'recordstatus' => [
+			'type' => 'text',
+			'from' => 't'
+		]
+	];
 	public function actionIndex() {
 		parent::actionIndex();
+		if(isset($_GET['combo']))
+			echo $this->searchcombo();
+		else
 		if(isset($_GET['grid']))
 			echo $this->search();
 		else
@@ -23,400 +66,241 @@ class UseraccessController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header('Content-Type: application/json');
-		$useraccessid	= GetSearchText(array('POST','Q'),'useraccessid');
-		$username = GetSearchText(array('POST','Q'),'username');
-		$realname = GetSearchText(array('POST','Q'),'realname');
-		$password = GetSearchText(array('POST','Q'),'password');
-		$email = GetSearchText(array('POST','Q'),'email');
-		$phoneno = GetSearchText(array('POST','Q'),'phoneno');
-		$languagename = GetSearchText(array('POST','Q'),'languagename');
-		$themename = GetSearchText(array('POST','Q'),'themename');
-		$groupname = GetSearchText(array('POST','Q'),'groupname');
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','useraccessid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$selectcount = 'select count(1) as total';
-		$select = 'select t.*,l.languagename,h.themename, (select count(1) from usergroup a where a.useraccessid = t.useraccessid) as jumlah ';
-		$from = ' from useraccess t 
-			left join language l on l.languageid=t.languageid
-			left join theme h on h.themeid=t.themeid';
-		$where = ' where ';
-		if (isset($_GET['combo'])) {
-			$where .= " ((coalesce(t.useraccessid,'') like '".$useraccessid."') 
-				or (coalesce(t.username,'') like '".$username."') 
-				or (coalesce(t.realname,'') like '".$realname."') 
-				or (coalesce(t.email,'') like '".$email."') 
-				or (coalesce(t.phoneno,'') like '".$phoneno."') 
-				or (coalesce(l.languagename,'') like '".$languagename."') 
-				or (coalesce(h.themename,'') like '".$themename."')) 
-				and t.recordstatus=1";
-		} else {			
-			$where .= " (coalesce(t.useraccessid,'') like '".$useraccessid."') 
-			and (coalesce(t.username,'') like '".$username."') 
-			and (coalesce(t.realname,'') like '".$realname."') 
-			and (coalesce(t.email,'') like '".$email."') 
-			and (coalesce(t.phoneno,'') like '".$phoneno."') 
-			and (coalesce(l.languagename,'') like '".$languagename."') 
-			and (coalesce(h.themename,'') like '".$themename."') 
-			and t.useraccessid in 
-			(
-			select distinct p.useraccessid 
-			from usergroup p 
-			left join groupaccess q on q.groupaccessid = p.groupaccessid
-			where (coalesce(q.groupname,'') like '".$groupname."')
-			) ";
-		}
-		$sql = $selectcount . $from . $where;
-		$cmd = Yii::app()->db->createCommand($sql)->queryScalar();
-		$result['total'] = $cmd;
-		if (isset($_GET['combo'])) {
-			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order;
-		} else {
-			$sql = $select . $from . $where . ' Order By ' . $sort . ' '. $order . ' limit ' . $offset . ',' . $rows;
-		}
-		$cmd = Yii::app()->db->createCommand($sql)->queryAll();
-		foreach($cmd as $data) {	
-			$row[] = array(
-				'useraccessid'=>$data['useraccessid'],
-				'username'=>$data['username'],
-				'realname'=>$data['realname'],
-				'password'=>$data['password'],
-				'email'=>$data['email'],
-				'phoneno'=>$data['phoneno'],
-				'languageid'=>$data['languageid'],
-				'languagename'=>$data['languagename'],
-				'themeid'=>$data['themeid'],
-				'themename'=>$data['themename'],
-				'isonline'=>$data['isonline'],
-				'jumlah'=>$data['jumlah'],
-				'recordstatus'=>$data['recordstatus'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => 'useraccess t 
+				left join language l on l.languageid=t.languageid
+				left join theme h on h.themeid=t.themeid',
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => true,
+			'searchfield' => [
+				'useraccessid' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and' 
+				],
+				'username' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and' 
+				],
+				'realname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and' 
+				],
+				'email' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and' 
+				],
+				'phoneno' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and' 
+				],
+				'languagename' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from' => 'l'
+				],
+				'groupname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from' => 'other',
+					'source' => "and t.useraccessid in (
+						select distinct za.useraccessid 
+						from usergroup za 
+						left join groupaccess zb on zb.groupaccessid = za.groupaccessid 
+						where coalesce(zb.groupname,'') like P{groupname})"
+				],
+			]
+		]);
 	}
 	public function actionsearchusergroup() {
-		header('Content-Type: application/json');
-		$id = 0;	
-		if (isset($_POST['id'])) {
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id'])) {
-			$id = $_GET['id'];
-		}
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','usergroupid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$cmd = Yii::app()->db->createCommand()
-			->select('count(1) as total')	
-			->from('usergroup t')
-			->leftjoin('useraccess p', 'p.useraccessid=t.useraccessid')
-			->leftjoin('groupaccess q', 'q.groupaccessid=t.groupaccessid')
-			->where('t.useraccessid = '.$id)
-			->queryScalar();
-		$result['total'] = $cmd;
-		$cmd = Yii::app()->db->createCommand()
-			->select()	
-			->from('usergroup t')
-			->leftjoin('useraccess p', 'p.useraccessid=t.useraccessid')
-			->leftjoin('groupaccess q', 'q.groupaccessid=t.groupaccessid')
-			->where('t.useraccessid = '.$id)
-			->offset($offset)
-			->limit($rows)
-			->order($sort.' '.$order)
-			->queryAll();
-		foreach($cmd as $data) {	
-			$row[] = array(
-				'usergroupid'=>$data['usergroupid'],
-				'useraccessid'=>$data['useraccessid'],
-				'username'=>$data['username'],
-				'groupaccessid'=>$data['groupaccessid'],
-				'groupname'=>$data['groupname'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => 'usergroup t 
+				left join groupaccess q on q.groupaccessid = t.groupaccessid',
+			'sort' => [
+				'datatype' => 'POST',
+				'default' => 'usergroupid'
+			],
+			'order' => [
+				'datatype' => 'POST',
+				'default' => 'desc'
+			],
+			'viewfield' => [
+				'usergroupid'=>[
+					'type'=>'text'
+				],
+				'useraccessid'=>[
+					'type'=>'text'
+				],
+				'groupaccessid'=>[
+					'type'=>'text',
+					'from'=>'q'
+				],
+				'groupname'=>[
+					'type'=>'text',
+					'from'=>'q'
+				],
+			],
+			'paging' => true,
+			'searchfield' => [
+				'id' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'sourcefield' => 'useraccessid',
+					'strict' => '=',
+				],
+			]
+		]);
 	}	
 	public function actionsearchuserfav() {
-		header('Content-Type: application/json');
-		$id = 0;	
-		if (isset($_POST['id'])) {
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id'])) {
-			$id = $_GET['id'];
-		}
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','userfavid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$cmd = Yii::app()->db->createCommand()
-			->select('count(1) as total')	
-			->from('userfav t')
-			->leftjoin('useraccess p', 'p.useraccessid=t.useraccessid')
-			->leftjoin('menuaccess q', 'q.menuaccessid=t.menuaccessid')
-			->where('t.useraccessid = '.$id)
-			->queryScalar();
-		$result['total'] = $cmd;
-		$cmd = Yii::app()->db->createCommand()
-			->select()	
-			->from('userfav t')
-			->leftjoin('useraccess p', 'p.useraccessid=t.useraccessid')
-			->leftjoin('menuaccess q', 'q.menuaccessid=t.menuaccessid')
-			->where('t.useraccessid = '.$id)
-			->offset($offset)
-			->limit($rows)
-			->order($sort.' '.$order)
-			->queryAll();
-		foreach($cmd as $data) {	
-			$row[] = array(
-				'userfavid'=>$data['userfavid'],
-				'useraccessid'=>$data['useraccessid'],
-				'username'=>$data['username'],
-				'menuaccessid'=>$data['menuaccessid'],
-				'menuname'=>$data['menuname'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => 'userfav t 
+				left join useraccess p on p.useraccessid = t.useraccessid
+				left join menuaccess q on q.menuaccessid = t.menuaccessid',
+			'sort' => [
+				'datatype' => 'POST',
+				'default' => 'userfavid'
+			],
+			'order' => [
+				'datatype' => 'POST',
+				'default' => 'desc'
+			],
+			'viewfield' => [
+				'userfavid'=>[
+					'type'=>'text'
+				],
+				'useraccessid'=>[
+					'type'=>'text'
+				],
+				'menuaccessid'=>[
+					'type'=>'text',
+					'from'=>'q'
+				],
+				'menuname'=>[
+					'type'=>'text',
+					'from'=>'q'
+				],
+			],
+			'paging' => true,
+			'searchfield' => [
+				'id' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'sourcefield' => 'useraccessid',
+					'strict' => '=',
+				],
+			]
+		]);
 	}	
 	public function actionGetData() {
-		$id = rand(-1, -1000000000);
-		echo CJSON::encode(array(
-			'useraccessid' => $id
-		));
-	}
-	private function ModifyData($connection,$arraydata) {
-		$id = (int)$arraydata[0];
-		$sql = 'call Modifuseraccess(:vid,:vusername,:vrealname,:vpassword,:vemail,:vphoneno,:vlanguageid,:vthemeid,:vrecordstatus,:vdatauser)';
-		$this->DeleteLock($this->menuname, $arraydata[0]);
-		$command=$connection->createCommand($sql);
-		$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-		$command->bindvalue(':vusername',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vrealname',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser',getuserpc(),PDO::PARAM_STR);
-		$password = '';
-		if ($id >0) {
-			$sql = "select `password` from useraccess where username = '".$arraydata[1]."'";
-			$password = Yii::app()->db->createCommand($sql)->queryScalar();
-		}
-		$newpass = md5($arraydata[3]);
-		if ($password !== $arraydata[3])
-		{
-			$command->bindvalue(':vpassword',$newpass,PDO::PARAM_STR);
-		}
-		else
-		{
-			$command->bindvalue(':vpassword',$password,PDO::PARAM_STR);
-		}
-		$command->bindvalue(':vemail',$arraydata[4],PDO::PARAM_STR);
-		$command->bindvalue(':vphoneno',$arraydata[5],PDO::PARAM_STR);
-		$command->bindvalue(':vlanguageid',$arraydata[6],PDO::PARAM_STR);
-		$command->bindvalue(':vthemeid',$arraydata[7],PDO::PARAM_STR);
-		$command->bindvalue(':vrecordstatus',$arraydata[8],PDO::PARAM_STR);
-		$command->execute();
+		return GetRandomHeader([
+			'key' => 'useraccessid',
+			'table' => 'useraccess'
+		]);
 	}
 	public function actionUpload() {
 		parent::actionUpload();
-		$target_file = dirname('__FILES__').'/uploads/' . basename($_FILES["file-useraccess"]["name"]);
-		if (move_uploaded_file($_FILES["file-useraccess"]["tmp_name"], $target_file)) {
-			$objReader = PHPExcel_IOFactory::createReader('Excel2007');
-			$objPHPExcel = $objReader->load($target_file);
-			$objWorksheet = $objPHPExcel->getActiveSheet();
-			$highestRow = $objWorksheet->getHighestRow(); 
-			$highestColumn = $objWorksheet->getHighestColumn();
-			$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				for ($row = 2; $row <= $highestRow; ++$row) {
-					$id = $objWorksheet->getCellByColumnAndRow(0, $row)->getValue();
-					$username = $objWorksheet->getCellByColumnAndRow(1, $row)->getValue();
-					$realname = $objWorksheet->getCellByColumnAndRow(2, $row)->getValue();
-					$password = $objWorksheet->getCellByColumnAndRow(3, $row)->getValue();
-					$email = $objWorksheet->getCellByColumnAndRow(4, $row)->getValue();
-					$phoneno = $objWorksheet->getCellByColumnAndRow(5, $row)->getValue();
-					$languagename = $objWorksheet->getCellByColumnAndRow(6, $row)->getValue();
-					$languageid = Yii::app()->db->createCommand("select languageid from language where languagename = '".$languagename."'")->queryScalar();
-					$themename = $objWorksheet->getCellByColumnAndRow(7, $row)->getValue();
-					$themeid = Yii::app()->db->createCommand("select themeid from theme where themename = '".$themename."'")->queryScalar();
-					$recordstatus = $objWorksheet->getCellByColumnAndRow(2, $row)->getValue();
-					$this->ModifyData($connection,array($id,$username,$realname,$password,$email,$phoneno,$languageid,$themeid,$recordstatus));
-				}
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}	
-    }
+		SaveData([
+			'spinsert' => 'Modifuseraccess',
+			'spupdate' => 'Modifuseraccess',
+			'arraydata' => [
+				'vid'=>0,
+				'username'=>1,
+				'realname'=>2,
+				'password'=>3,
+				'email'=>4,
+				'phoneno'=>5,
+				'languageid'=>[
+					'column' => 6,
+					'source' => 'select languageid from language where languagename = '
+				],
+				'languageid'=>[
+					'column' => 7,
+					'source' => 'select themeid from theme where themename = '
+				],
+				'recordstatus'=>8,
+			]
+		]);	
 	}
 	public function actionSave() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyData($connection,array((isset($_POST['useraccess-useraccessid'])?$_POST['useraccess-useraccessid']:''),
-				$_POST['useraccess-username'],$_POST['useraccess-realname'],$_POST['useraccess-password'],
-				$_POST['useraccess-email'],$_POST['useraccess-phoneno'],$_POST['useraccess-languageid'],$_POST['useraccess-themeid'],
-				isset($_POST['useraccess-recordstatus'])?1:0));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}	
-	}
-	private function ModifyDataUsergroup($connection,$arraydata) {
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql = 'call Insertusergroup(:vuseraccessid,:vgroupaccessid,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else {
-			$sql = 'call Updateusergroup(:vid,:vuseraccessid,:vgroupaccessid,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-			$this->DeleteLock($this->menuname, $arraydata[0]);
-		}
-		$command->bindvalue(':vuseraccessid',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vgroupaccessid',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();			
+		SaveData([
+			'spinsert' => 'Modifuseraccess',
+			'spupdate' => 'Modifuseraccess',
+			'arraydata' => [
+				'vid'=>(isset($_POST['useraccess-useraccessid'])?$_POST['useraccess-useraccessid']:''),
+				'username'=>$_POST['useraccess-username'],
+				'realname'=>$_POST['useraccess-realname'],
+				'password'=>$_POST['useraccess-password'],
+				'email'=>$_POST['useraccess-email'],
+				'phoneno'=>$_POST['useraccess-phoneno'],
+				'languageid'=>$_POST['useraccess-languageid'],
+				'themeid'=>$_POST['useraccess-themeid'],
+				'recordstatus'=>(isset($_POST['useraccess-recordstatus'])?1:0),
+			]
+		]);	
 	}
 	public function actionSaveusergroup() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyDataUsergroup($connection,array((isset($_POST['usergroupid'])?$_POST['usergroupid']:''),$_POST['useraccessid'],$_POST['groupaccessid']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}	
-	}
-	private function ModifyDataUserfav($connection,$arraydata) {
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql = 'call Insertuserfav(:vuseraccessid,:vmenuaccessid,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else {
-			$sql = 'call Updateuserfav(:vid,:vuseraccessid,:vmenuaccessid,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-			$this->DeleteLock($this->menuname, $arraydata[0]);
-		}
-		$command->bindvalue(':vuseraccessid',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vmenuaccessid',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();			
+		SaveData([
+			'spinsert' => 'Insertusergroup',
+			'spupdate' => 'Updateusergroup',
+			'arraydata' => [
+				'vid'=>(isset($_POST['usergroupid'])?$_POST['usergroupid']:''),
+				'useraccessid'=>$_POST['useraccessid'],
+				'groupaccessid'=>$_POST['groupaccessid'],
+			]
+		]);
 	}
 	public function actionSaveuserfav() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyDataUserfav($connection,array((isset($_POST['userfavid'])?$_POST['userfavid']:''),
-			$_POST['useraccessid'],$_POST['menuaccessid']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}	
+		SaveData([
+			'spinsert' => 'Insertuserfav',
+			'spupdate' => 'Updateuserfav',
+			'arraydata' => [
+				'vid'=>(isset($_POST['userfavid'])?$_POST['userfavid']:''),
+				'useraccessid'=>$_POST['useraccessid'],
+				'menuaccessid'=>$_POST['menuaccessid'],
+			]
+		]);
+	}
+	public function actionSaveShortcut(){
+		SaveData([
+			'spinsert' => 'UpdateShortcut',
+			'spupdate' => 'UpdateShortcut',
+			'arraydata' => [
+				'useraccessid'=>Yii::app()->user->getuseraccessid(),
+				'menuaccessid'=>$_POST['name'],
+			]
+		]);
+	}
+	public function actionRemoveShortcut(){
+		SaveData([
+			'spinsert' => 'RemoveShortcut',
+			'spupdate' => 'RemoveShortcut',
+			'arraydata' => [
+				'useraccessid'=>Yii::app()->user->getuseraccessid(),
+				'menuaccessid'=>$_POST['name'],
+			]
+		]);
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgeuseraccess(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}	
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgeuseraccess',			
+		]);
 	}
 	public function actionPurgeUserGroup() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgeusergroup(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}	
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgeusergroup',			
+		]);
 	}
 	public function actionPurgeUserfav() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgeuserfav(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}	
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgeuserfav',			
+		]);
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();

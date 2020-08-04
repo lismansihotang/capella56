@@ -13,7 +13,7 @@ class PersonalizationController extends Controller {
       $command->bindvalue(':wallpaper',$_POST['wallpaper'],PDO::PARAM_STR);
       $command->bindvalue(':username',Yii::app()->user->name,PDO::PARAM_STR);
       $command->execute();
-      GetMessage(false,getcatalog('insertsuccess'));
+      GetMessage(false,'insertsuccess');
     }
     catch (CDbException $e) {
       $transaction->rollBack();

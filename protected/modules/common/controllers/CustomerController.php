@@ -1,6 +1,18 @@
 <?php
 class CustomerController extends Controller {
 	public $menuname = 'customer';
+	private $sort = [
+		'datatype' => 'POST',
+		'default' => 'addressbookid'
+	];
+	private $order = [
+		'default' => 'desc'
+	];
+	private $viewfield = [
+		'addressbookid' => 'text',
+		'fullname' => 'text',
+		'recordstatus' => 'text'
+	];
 	public function actionIndex() {
 		parent::actionIndex();
 		if(isset($_GET['grid']))
@@ -138,244 +150,300 @@ class CustomerController extends Controller {
 		return CJSON::encode($result);
 	}
 	public function actionSearchAddress() {
-		header('Content-Type: application/json');
-		$id = 0;	
-		if (isset($_POST['id'])) {
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id'])) {
-			$id = $_GET['id'];
-		}
-		else 
-		if (isset($_GET['addressbookid'])) {
-			$id = $_GET['addressbookid'];
-		}
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','addressid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')
-				->from('address t')
-				->join('addresstype b','b.addresstypeid = t.addresstypeid')
-				->join('city c','c.cityid = t.cityid')
-				->where('addressbookid = :abid',
-						array(':abid'=>$id))
-				->queryScalar();
-		$result['total'] = $cmd;
-		$cmd = Yii::app()->db->createCommand()
-				->select('t.*,b.addresstypename,c.cityname')			
-				->from('address t')
-				->join('addresstype b','b.addresstypeid = t.addresstypeid')
-				->join('city c','c.cityid = t.cityid')
-				->where('addressbookid = :abid',
-						array(':abid'=>$id))
-				->order($sort.' '.$order)
-				->queryAll();
-		foreach($cmd as $data) {	
-			$row[] = array(
-			'addressid'=>$data['addressid'],
-			'addressbookid'=>$data['addressbookid'],
-			'addressname'=>$data['addressname'],
-			'addresstypeid'=>$data['addresstypeid'],
-			'addresstypename'=>$data['addresstypename'],
-			'rt'=>$data['rt'],
-			'rw'=>$data['rw'],
-			'cityid'=>$data['cityid'],
-			'cityname'=>$data['cityname'],
-			'phoneno'=>$data['phoneno'],
-			'faxno'=>$data['faxno'],
-			'lat'=>$data['lat'],
-			'lng'=>$data['lng']
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));;
-		echo CJSON::encode($result);
+		return GetData([
+			'from' => 'address t 
+				left join addresstype b on b.addresstypeid = t.addresstypeid 
+				left join city c on c.cityid = t.cityid',
+			'sort' => [
+				'datatype' => 'POST',
+				'default' => 'addressid'
+			],
+			'order' => [
+				'datatype' => 'POST',
+				'default' => 'desc'
+			],
+			'viewfield' => [
+				'addressid'=>[
+					'type'=>'text'
+				],
+				'addressbookid'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'addressname'=>[
+					'type'=>'text',
+				],
+				'addresstypeid'=>[
+					'type'=>'text',
+					'from'=>'b'
+				],
+				'addresstypename'=>[
+					'type'=>'text',
+					'from'=>'b'
+				],
+				'rt'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'rw'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'cityid'=>[
+					'type'=>'text',
+					'from'=>'c'
+				],
+				'cityname'=>[
+					'type'=>'text',
+					'from'=>'c'
+				],
+				'phoneno'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'faxno'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'lat'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'lng'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+			],
+			'paging' => true,
+			'searchfield' => [
+				'id' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'sourcefield' => 'addressbookid',
+					'strict' => '=',
+				],
+			]
+		]);
 	}
 	public function actionSearchAddressto() {
-		header('Content-Type: application/json');
-		$id = 0;	
-		if (isset($_POST['id'])) {
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id'])) {
-			$id = $_GET['id'];
-		}
-		else 
-		if (isset($_GET['addressbookid'])) {
-			$id = $_GET['addressbookid'];
-		}
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','addressid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')
-				->from('address t')
-				->join('addresstype b','b.addresstypeid = t.addresstypeid')
-				->join('city c','c.cityid = t.cityid')
-				->where('b.addresstypeid = 2 and addressbookid = :abid',
-						array(':abid'=>$id))
-				->queryScalar();
-		$result['total'] = $cmd;
-		$cmd = Yii::app()->db->createCommand()
-				->select('t.*,b.addresstypename,c.cityname')			
-				->from('address t')
-				->join('addresstype b','b.addresstypeid = t.addresstypeid')
-				->join('city c','c.cityid = t.cityid')
-				->where('b.addresstypeid = 2 and addressbookid = :abid',
-						array(':abid'=>$id))
-				->order($sort.' '.$order)
-				->queryAll();
-		foreach($cmd as $data) {	
-			$row[] = array(
-			'addressid'=>$data['addressid'],
-			'addressbookid'=>$data['addressbookid'],
-			'addressname'=>$data['addressname'],
-			'addresstypeid'=>$data['addresstypeid'],
-			'addresstypename'=>$data['addresstypename'],
-			'rt'=>$data['rt'],
-			'rw'=>$data['rw'],
-			'cityid'=>$data['cityid'],
-			'cityname'=>$data['cityname'],
-			'phoneno'=>$data['phoneno'],
-			'faxno'=>$data['faxno'],
-			'lat'=>$data['lat'],
-			'lng'=>$data['lng']
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));;
-		echo CJSON::encode($result);
+		return GetData([
+			'from' => 'address t 
+				left join addresstype b on b.addresstypeid = t.addresstypeid 
+				left join city c on c.cityid = t.cityid',
+			'sort' => [
+				'datatype' => 'POST',
+				'default' => 'addressid'
+			],
+			'order' => [
+				'datatype' => 'POST',
+				'default' => 'desc'
+			],
+			'viewfield' => [
+				'addressid'=>[
+					'type'=>'text'
+				],
+				'addressbookid'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'addressname'=>[
+					'type'=>'text',
+				],
+				'addresstypeid'=>[
+					'type'=>'text',
+					'from'=>'b'
+				],
+				'addresstypename'=>[
+					'type'=>'text',
+					'from'=>'b'
+				],
+				'rt'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'rw'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'cityid'=>[
+					'type'=>'text',
+					'from'=>'c'
+				],
+				'cityname'=>[
+					'type'=>'text',
+					'from'=>'c'
+				],
+				'phoneno'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'faxno'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'lat'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'lng'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+			],
+			'paging' => false,
+			'searchfield' => [
+				'id' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'sourcefield' => 'addressbookid',
+					'strict' => '=',
+				],
+			],
+			'addonsearch' => 'b.addresstypeid = 2'
+		]);
 	}
 	public function actionSearchAddresspay() {
-		header('Content-Type: application/json');
-		$id = 0;	
-		if (isset($_POST['id'])) {
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id'])) {
-			$id = $_GET['id'];
-		}
-		else 
-		if (isset($_GET['addressbookid'])) {
-			$id = $_GET['addressbookid'];
-		}
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','addressid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')
-				->from('address t')
-				->join('addresstype b','b.addresstypeid = t.addresstypeid')
-				->join('city c','c.cityid = t.cityid')
-				->where('b.addresstypeid = 1 and addressbookid = :abid',
-						array(':abid'=>$id))
-				->queryScalar();
-		$result['total'] = $cmd;
-		$cmd = Yii::app()->db->createCommand()
-				->select('t.*,b.addresstypename,c.cityname')			
-				->from('address t')
-				->join('addresstype b','b.addresstypeid = t.addresstypeid')
-				->join('city c','c.cityid = t.cityid')
-				->where('b.addresstypeid = 1 and addressbookid = :abid',
-						array(':abid'=>$id))
-				->order($sort.' '.$order)
-				->queryAll();
-		foreach($cmd as $data) {	
-			$row[] = array(
-			'addressid'=>$data['addressid'],
-			'addressbookid'=>$data['addressbookid'],
-			'addressname'=>$data['addressname'],
-			'addresstypeid'=>$data['addresstypeid'],
-			'addresstypename'=>$data['addresstypename'],
-			'rt'=>$data['rt'],
-			'rw'=>$data['rw'],
-			'cityid'=>$data['cityid'],
-			'cityname'=>$data['cityname'],
-			'phoneno'=>$data['phoneno'],
-			'faxno'=>$data['faxno'],
-			'lat'=>$data['lat'],
-			'lng'=>$data['lng']
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));;
-		echo CJSON::encode($result);
+		return GetData([
+			'from' => 'address t 
+				left join addresstype b on b.addresstypeid = t.addresstypeid 
+				left join city c on c.cityid = t.cityid',
+			'sort' => [
+				'datatype' => 'POST',
+				'default' => 'addressid'
+			],
+			'order' => [
+				'datatype' => 'POST',
+				'default' => 'desc'
+			],
+			'viewfield' => [
+				'addressid'=>[
+					'type'=>'text'
+				],
+				'addressbookid'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'addressname'=>[
+					'type'=>'text',
+				],
+				'addresstypeid'=>[
+					'type'=>'text',
+					'from'=>'b'
+				],
+				'addresstypename'=>[
+					'type'=>'text',
+					'from'=>'b'
+				],
+				'rt'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'rw'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'cityid'=>[
+					'type'=>'text',
+					'from'=>'c'
+				],
+				'cityname'=>[
+					'type'=>'text',
+					'from'=>'c'
+				],
+				'phoneno'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'faxno'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'lat'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'lng'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+			],
+			'paging' => false,
+			'searchfield' => [
+				'id' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'sourcefield' => 'addressbookid',
+					'strict' => '=',
+				],
+			],
+			'addonsearch' => 'b.addresstypeid = 1'
+		]);
 	}
 	public function actionSearchcontact() {
-		header('Content-Type: application/json');
-		$id=0;	
-		if (isset($_POST['id']))
-		{
-			$id = $_POST['id'];
-		}
-		else
-		if (isset($_GET['id']))
-		{
-			$id = $_GET['id'];
-		}
-		$page = isset($_POST['page']) ? intval($_POST['page']) : 1;
-		$rows = isset($_POST['rows']) ? intval($_POST['rows']) : 10;
-		$sort = isset($_POST['sort']) ? strval($_POST['sort']) : 't.addresscontactid';
-		$order = isset($_POST['order']) ? strval($_POST['order']) : 'desc';
-		$offset = ($page-1) * $rows;
-		$page = isset($_GET['page']) ? intval($_GET['page']) : $page;
-		$rows = isset($_GET['rows']) ? intval($_GET['rows']) : $rows;
-		$sort = isset($_GET['sort']) ? strval($_GET['sort']) : $sort;
-		$order = isset($_GET['order']) ? strval($_GET['order']) : $order;
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')
-				->from('addresscontact t')
-				->leftjoin('contacttype b','b.contacttypeid = t.contacttypeid')
-				->where('addressbookid = :abid',
-						array(':abid'=>$id))
-				->queryScalar();
-		$result['total'] = $cmd;		
-		$cmd = Yii::app()->db->createCommand()
-				->select('t.*,b.contacttypename')			
-				->from('addresscontact t')
-				->leftjoin('contacttype b','b.contacttypeid = t.contacttypeid')
-				->where('addressbookid = :abid',
-						array(':abid'=>$id))
-				->offset($offset)
-				->limit($rows)
-				->order($sort.' '.$order)
-				->queryAll();
-		foreach($cmd as $data) {	
-			$row[] = array(
-			'addresscontactid'=>$data['addresscontactid'],
-			'addressbookid'=>$data['addressbookid'],
-			'contacttypeid'=>$data['contacttypeid'],
-			'contacttypename'=>$data['contacttypename'],
-			'addresscontactname'=>$data['addresscontactname'],
-			'phoneno'=>$data['phoneno'],
-			'mobilephone'=>$data['mobilephone'],
-			'emailaddress'=>$data['emailaddress']
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));;
-		echo CJSON::encode($result);
+		return GetData([
+			'from' => 'addresscontact t 
+				left join contacttype b on b.contacttypeid = t.contacttypeid',
+			'sort' => [
+				'datatype' => 'POST',
+				'default' => 'addresscontactid'
+			],
+			'order' => [
+				'datatype' => 'POST',
+				'default' => 'desc'
+			],
+			'viewfield' => [
+				'addresscontactid'=>[
+					'type'=>'text'
+				],
+				'addressbookid'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'contacttypeid'=>[
+					'type'=>'text',
+					'from'=>'b'
+				],
+				'contacttypename'=>[
+					'type'=>'text',
+					'from'=>'b'
+				],
+				'addresscontactname'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'phoneno'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'phoneno'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'mobilephone'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'emailaddress'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+			],
+			'paging' => false,
+			'searchfield' => [
+				'id' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'sourcefield' => 'addressbookid',
+					'strict' => '=',
+				],
+			],
+		]);
 	}
 	public function actiongetdata() {
-		$id = rand(-1, -1000000000);
-		echo CJSON::encode(array(
-			'addressbookid' => $id
-		));
+		return GetRandomHeader([
+			'key' => 'addressbookid',
+			'table' => 'addressbook'
+		]);
 	}
 	private function ModifyData($connection,$arraydata) {
 		$id = (isset($arraydata[0])?$arraydata[0]:'');
@@ -471,7 +539,7 @@ class CustomerController extends Controller {
 					}
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -481,124 +549,71 @@ class CustomerController extends Controller {
 	}
 	public function actionSave() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyData($connection,array((isset($_POST['customer-addressbookid'])?$_POST['customer-addressbookid']:''),
-				$_POST['customer-fullname'],
-				$_POST['customer-taxno'],
-				$_POST['customer-ktpno'],
-				$_POST['customer-creditlimit'],
-				(isset($_POST['customer-isstrictlimit'])?1:0),
-				$_POST['customer-salesareaid'],
-				$_POST['customer-pricecategoryid'],
-				$_POST['customer-groupcustomerid'],
-				$_POST['customer-bankname'],
-				$_POST['customer-bankaccountno'],
-				$_POST['customer-accountowner'],
-				$_POST['customer-paymentmethodid'],
-				isset($_POST['customer-recordstatus'])?1:0));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
-	}
-	private function ModifyDataAddress($connection,$arraydata) {
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql = 'call Insertaddress(:vaddressbookid,:vaddresstypeid,:vaddressname,:vrt,:vrw,:vcityid,:vphoneno,:vfaxno,:vlat,:vlng,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else
-		{
-			$sql = 'call Updateaddress(:vid,:vaddressbookid,:vaddresstypeid,:vaddressname,:vrt,:vrw,:vcityid,:vphoneno,:vfaxno,:vlat,:vlng,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-		}
-		$command->bindvalue(':vaddressbookid',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vaddresstypeid',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vaddressname',$arraydata[3],PDO::PARAM_STR);
-		$command->bindvalue(':vrt',$arraydata[4],PDO::PARAM_STR);
-		$command->bindvalue(':vrw',$arraydata[5],PDO::PARAM_STR);
-		$command->bindvalue(':vcityid',$arraydata[6],PDO::PARAM_STR);
-		$command->bindvalue(':vphoneno',$arraydata[7],PDO::PARAM_STR);
-		$command->bindvalue(':vfaxno',$arraydata[8],PDO::PARAM_STR);
-		$command->bindvalue(':vlat',$arraydata[9],PDO::PARAM_STR);
-		$command->bindvalue(':vlng',$arraydata[10],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();			
+		SaveData([
+			'spinsert' => 'ModifCustomer',
+			'spupdate' => 'ModifCustomer',
+			'arraydata' => [
+				'vid'=>(isset($_POST['customer-addressbookid'])?$_POST['customer-addressbookid']:''),
+				'fullname'=>$_POST['customer-fullname'],
+				'taxno'=>$_POST['customer-taxno'],
+				'ktpno'=>$_POST['customer-ktpno'],
+				'creditlimit'=>$_POST['customer-creditlimit'],
+				'isstrictlimit'=>(isset($_POST['customer-isstrictlimit'])?1:0),
+				'salesareaid'=>$_POST['customer-salesareaid'],
+				'pricecategoryid'=>$_POST['customer-pricecategoryid'],
+				'groupcustomerid'=>$_POST['customer-groupcustomerid'],
+				'bankname'=>$_POST['customer-bankname'],
+				'bankaccountno'=>$_POST['customer-bankaccountno'],
+				'accountowner'=>$_POST['customer-accountowner'],
+				'paymentmethodid'=>$_POST['customer-paymentmethodid'],
+				'recordstatus'=>isset($_POST['customer-recordstatus'])?1:0,
+			]
+		]);
 	}
 	public function actionsaveaddress() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyDataAddress($connection,array((isset($_POST['addressid'])?$_POST['addressid']:''),
-			$_POST['addressbookid'],
-			$_POST['addresstypeid'],
-			$_POST['addressname'],
-			$_POST['rt'],
-			$_POST['rw'],
-			$_POST['cityid'],
-			$_POST['phoneno'],
-			$_POST['faxno'],
-			$_POST['lat'],
-			$_POST['lng']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
-	}
-	private function ModifyDataContact($connection,$arraydata) {
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql = 'call Insertaddresscontact(:vaddressbookid,:vcontacttypeid,:vaddresscontactname,:vphoneno,:vmobilephone,:vemailaddress,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else {
-			$sql = 'call Updateaddresscontact(:vid,:vaddressbookid,:vcontacttypeid,:vaddresscontactname,:vphoneno,:vmobilephone,:vemailaddress,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-		}
-		$command->bindvalue(':vaddressbookid',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vcontacttypeid',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vaddresscontactname',$arraydata[3],PDO::PARAM_STR);
-		$command->bindvalue(':vmobilephone',$arraydata[4],PDO::PARAM_STR);
-		$command->bindvalue(':vphoneno',$arraydata[5],PDO::PARAM_STR);
-		$command->bindvalue(':vemailaddress',$arraydata[6],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();			
+		SaveData([
+			'spinsert' => 'Insertaddress',
+			'spupdate' => 'Updateaddress',
+			'arraydata' => [
+				'vid'=>(isset($_POST['addressid'])?$_POST['addressid']:''),
+				'addressbookid'=>$_POST['addressbookid'],
+				'addresstypeid'=>$_POST['addresstypeid'],
+				'addressname'=>$_POST['addressname'],
+				'rt'=>$_POST['rt'],
+				'rw'=>$_POST['rw'],
+				'cityid'=>$_POST['cityid'],
+				'phoneno'=>$_POST['phoneno'],
+				'faxno'=>$_POST['faxno'],
+				'lat'=>$_POST['lat'],
+				'lng'=>$_POST['lng'],
+			]
+		]);
 	}
 	public function actionsavecontact() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try
-		{
-			$this->ModifyDataContact($connection,array((isset($_POST['addresscontactid'])?$_POST['addresscontactid']:''),$_POST['addressbookid'],$_POST['contacttypeid'],
-				$_POST['addresscontactname'],$_POST['mobilephone'],$_POST['phoneno'],$_POST['emailaddress']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
+		SaveData([
+			'spinsert' => 'Insertaddresscontact',
+			'spupdate' => 'Updateaddresscontact',
+			'arraydata' => [
+				'vid'=>(isset($_POST['addresscontactid'])?$_POST['addresscontactid']:''),
+				'addressbookid'=>$_POST['addressbookid'],
+				'contacttypeid'=>$_POST['contacttypeid'],
+				'addresscontactname'=>$_POST['addresscontactname'],
+				'mobilephone'=>$_POST['mobilephone'],
+				'phoneno'=>$_POST['phoneno'],
+				'emailaddress'=>$_POST['emailaddress'],
+			]
+		]);
 	}
   private function ModifyDataDisc($connection,$arraydata) {
 		$id = (isset($arraydata[0])?$arraydata[0]:'');
 		if ($id == '') {
-			$sql = 'call Insertcustomerdisc(:vaddressbookid,:vdiscvalue,:vdatauser)';
+			$sql = 'call (:vaddressbookid,:vdiscvalue,:vdatauser)';
 			$command=$connection->createCommand($sql);
 		}
 		else {
-			$sql = 'call Updatecustomerdisc(:vid,:vaddressbookid,:vdiscvalue,:vdatauser)';
+			$sql = 'call (:vid,:vaddressbookid,:vdiscvalue,:vdatauser)';
 			$command=$connection->createCommand($sql);
 			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
 		}
@@ -609,113 +624,39 @@ class CustomerController extends Controller {
 	}		
 	public function actionsavedisc() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyDataDisc($connection,array((isset($_POST['custdiscid'])?$_POST['custdiscid']:''),$_POST['addressbookid'],$_POST['discvalue']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
+		SaveData([
+			'spinsert' => 'Insertcustomerdisc',
+			'spupdate' => 'Updatecustomerdisc',
+			'arraydata' => [
+				'vid'=>(isset($_POST['custdiscid'])?$_POST['custdiscid']:''),
+				'addressbookid'=>$_POST['addressbookid'],
+				'discvalue'=>$_POST['discvalue'],
+			]
+		]);
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgecustomer(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true, getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgecustomer',			
+		]);
 	}
 	public function actionPurgeaddress() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgeaddress(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true, getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgeaddress',			
+		]);
 	}
 	public function actionPurgecontact() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgecontact(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',Yii::app()->user->name,PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true, getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgecontact',			
+		]);
 	}
 	public function actionPurgedisc() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgedisc(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();				
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true, getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgedisc',			
+		]);
 	}
 	public function actionGenerateaddress() {
 		$newDate = date("Y-m-d", strtotime($_POST['date']));

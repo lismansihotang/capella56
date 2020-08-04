@@ -105,7 +105,7 @@ class OwnershipController extends Controller {
 					$this->ModifyData($connection,array($id,$ownershipname,$recordstatus));
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -120,7 +120,7 @@ class OwnershipController extends Controller {
 		try {		
 			$this->ModifyData($connection,array((isset($_POST['ownershipid'])?$_POST['ownershipid']:''),$_POST['ownershipname'],$_POST['recordstatus']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -140,7 +140,7 @@ class OwnershipController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();				
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -148,7 +148,7 @@ class OwnershipController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true, getcatalog('chooseone'));
+			GetMessage(true, 'chooseone');
 		}
 	}
 	protected function actionDataPrint() {

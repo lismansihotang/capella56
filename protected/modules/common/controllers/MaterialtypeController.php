@@ -121,7 +121,7 @@ class MaterialtypeController extends Controller {
 					$this->ModifyData($connection,array($id,$materialtypecode,$description,$fg,$recordstatus));
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -137,7 +137,7 @@ class MaterialtypeController extends Controller {
 			$this->ModifyData($connection,array((isset($_POST['materialtypeid'])?$_POST['materialtypeid']:''),$_POST['materialtypecode'],$_POST['description'],$_POST['fg'],
 				$_POST['recordstatus']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -157,7 +157,7 @@ class MaterialtypeController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -165,7 +165,7 @@ class MaterialtypeController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true,getcatalog('chooseone'));
+			GetMessage(true,'chooseone');
 		}
 	}
 	protected function actionDataPrint() {

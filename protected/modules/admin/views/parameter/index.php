@@ -21,7 +21,7 @@
 	{
 		field:'paramname',
 		title:localStorage.getItem('catalogparamname'),
-		editor:'text',
+		editor: {type: 'textbox', options:{required:true}},
 		width:'250px',
 		sortable: true,
 		formatter: function(value,row,index){
@@ -30,7 +30,7 @@
 	{
 		field:'paramvalue',
 		title:localStorage.getItem('catalogparamvalue'),
-		editor:'text',
+		editor:{type: 'textbox', options:{required:true}},
 		width:'150px',
 		sortable: true,
 		formatter: function(value,row,index){
@@ -39,7 +39,7 @@
 	{
 		field:'description',
 		title:localStorage.getItem('catalogdescription'),
-		editor:'text',
+		editor:{type: 'textbox', options:{required:true}},
 		width:'300px',
 		sortable: true,
 		formatter: function(value,row,index){
@@ -47,7 +47,7 @@
 	}},
 	{
 		field:'moduleid',
-		title:localStorage.getItem('catalogmodule'),
+		title:localStorage.getItem('catalogmodules'),
 		editor:{
 			type:'combogrid',
 			options:{

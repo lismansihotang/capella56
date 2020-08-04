@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'addressbookid',
-			title:'". GetCatalog('addressbookid') ."',
+			title: localStorage.getItem('catalogaddressbookid'),
 			sortable: true,
 			width:'50px',
 			formatter: function(value,row,index){
@@ -20,7 +20,7 @@
 		}},
 		{
 			field:'fullname',
-			title:'". GetCatalog('fullname') ."',
+			title: localStorage.getItem('catalogfullname'),
 			sortable: true,
 			width:'350px',
 			formatter: function(value,row,index){
@@ -28,7 +28,7 @@
 		}},
 		{
 			field:'taxno',
-			title:'". GetCatalog('taxno') ."',
+			title: localStorage.getItem('catalogtaxno'),
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -36,7 +36,7 @@
 		}},
 		{
 			field:'ktpno',
-			title:'". GetCatalog('ktpno') ."',
+			title: localStorage.getItem('catalogktpno'),
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -44,7 +44,7 @@
 		}},
 		{
 			field:'creditlimit',
-			title:'". GetCatalog('creditlimit') ."',
+			title: localStorage.getItem('catalogcreditlimit'),
 			sortable: true,
 			align:'right',
 			width:'150px',
@@ -53,7 +53,7 @@
 		}},
 		{
 			field:'currentlimit',
-			title:'". GetCatalog('currentlimit') ."',
+			title: localStorage.getItem('catalogcurrentlimit'),
 			sortable: true,
 			align:'right',
 			width:'150px',
@@ -62,7 +62,7 @@
 		}},
 		{
 			field:'overdue',
-			title:'". GetCatalog('overdue') ."',
+			title: localStorage.getItem('catalogoverdue'),
 			sortable: true,
 			align:'right',
 			width:'80px',
@@ -71,7 +71,7 @@
 		}}, 
 		{
 			field:'isstrictlimit',
-			title:'". GetCatalog('isstrictlimit') ."',
+			title: localStorage.getItem('catalogisstrictlimit'),
 			align:'center',
 			width:'100px',
 			sortable: true,
@@ -84,7 +84,7 @@
 		}},
 		{
 			field:'salesareaid',
-			title:'". GetCatalog('salesarea') ."',
+			title: localStorage.getItem('catalogsalesarea'),
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -92,7 +92,7 @@
 		}},
 		{
 			field:'pricecategoryid',
-			title:'". GetCatalog('pricecategory') ."',
+			title: localStorage.getItem('catalogpricecategory'),
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -100,7 +100,7 @@
 		}},
 		{
 			field:'groupcustomerid',
-			title:'". GetCatalog('groupcustomer') ."',
+			title: localStorage.getItem('cataloggroupcustomer'),
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -108,7 +108,7 @@
 		}},
 		{
 			field:'bankaccountno',
-			title:'". GetCatalog('bankaccountno') ."',
+			title: localStorage.getItem('catalogbankaccountno'),
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -116,7 +116,7 @@
 		}},
 		{
 			field:'bankname',
-			title:'". GetCatalog('bankname') ."',
+			title: localStorage.getItem('catalogbankname'),
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -124,7 +124,7 @@
 		}},
 		{
 			field:'accountowner',
-			title:'". GetCatalog('accountowner') ."',
+			title: localStorage.getItem('catalogaccountowner'),
 			sortable: true,
 			width:'150px',
 			formatter: function(value,row,index){
@@ -132,7 +132,7 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			align:'center',
 			width:'50px',
 			sortable: true,
@@ -147,28 +147,28 @@
 	'headerform'=> "
 		<table cellpadding='5'>
 			<tr>
-				<td>". GetCatalog('fullname')."</td>
+				<td id='customertext-fullname'></td>
 				<td><input class='easyui-textbox' id='customer-fullname' name='customer-fullname' style='width:400px' data-options='required:true'></input></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('taxno')."</td>
+				<td id='customertext-taxno'></td>
 				<td><input class='easyui-textbox' id='customer-taxno' name='customer-taxno' ></input></td>
 			</tr>
-            <tr>
-				<td>". GetCatalog('ktpno')."</td>
+      <tr>
+				<td id='customertext-ktpno'></td>
 				<td><input class='easyui-textbox' id='customer-ktpno' name='customer-ktpno' ></input></td>
 			</tr>
-            <tr>
-				<td>". GetCatalog('creditlimit')."</td>
+      <tr>
+				<td id='customertext-creditlimit'></td>
 				<td><input id='customer-creditlimit' type='numberbox' name='customer-creditlimit' class='easyui-numberbox'				
 				data-options=\"precision:2,decimalSeparator:',',groupSeparator:'.'\" value='999999999' style='width:250px'></select></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('isstrictlimit')."</td>
+				<td id='customertext-isstrictlimit'></td>
 				<td><input id='customer-isstrictlimit' type='checkbox' name='customer-isstrictlimit' style='width:250px'></select></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('salesarea')."</td>
+				<td id='customertext-salesarea'></td>
 				<td><select class='easyui-combogrid' id='customer-salesareaid' name='customer-salesareaid' style='width:400px' data-options=\"
 							panelWidth: '500px',
 							idField: 'salesareaid',
@@ -178,15 +178,15 @@
 							method: 'get',
 							mode: 'remote',
 							columns: [[
-									{field:'salesareaid',title:'". GetCatalog('salesareaid') ."',width:'80px'},
-									{field:'areaname',title:'". GetCatalog('areaname') ."',width:'150px'},
+									{field:'salesareaid',title: localStorage.getItem('catalogsalesareaid'),width:'80px'},
+									{field:'areaname',title: localStorage.getItem('catalogareaname'),width:'150px'},
 							]],
 							fitColumns: true
 					\">
 			</select></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('pricecategory')."</td>
+				<td id='customertext-pricecategory'></td>
 				<td><select class='easyui-combogrid' id='customer-pricecategoryid' name='customer-pricecategoryid' style='width:250px' data-options=\"
 						panelWidth: 500,
 						idField: 'pricecategoryid',
@@ -196,26 +196,26 @@
 						method: 'get',
 						mode: 'remote',
 						columns: [[
-								{field:'pricecategoryid',title:'". GetCatalog('pricecategoryid') ."',width:80},
-								{field:'categoryname',title:'". GetCatalog('categoryname') ."',width:120},
+								{field:'pricecategoryid',title: localStorage.getItem('catalogpricecategoryid'),width:80},
+								{field:'categoryname',title: localStorage.getItem('catalogcategoryname'),width:120},
 						]],
 						fitColumns: true\">
 				</select></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('bankaccountno')."</td>
+				<td id='customertext-bankaccountno'></td>
 				<td><input class='easyui-textbox' id='customer-bankaccountno' name='customer-bankaccountno' ></input></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('bankname')."</td>
+				<td id='customertext-bankname'></td>
 				<td><input class='easyui-textbox' id='customer-bankname' name='customer-bankname' ></input></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('accountowner')."</td>
+				<td id='customertext-accountowner'></td>
 				<td><input class='easyui-textbox' id='customer-accountowner' name='customer-accountowner' ></input></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('groupcustomer')."</td>
+				<td id='customertext-groupcustomer'></td>
 				<td><select class='easyui-combogrid' id='customer-groupcustomerid' name='customer-groupcustomerid' style='width:250px' data-options=\"
 					panelWidth: '500px',
 					idField: 'groupcustomerid',
@@ -225,14 +225,14 @@
 					method: 'get',
 					mode: 'remote',
 					columns: [[
-							{field:'groupcustomerid',title:'". GetCatalog('groupcustomerid') ."',width:'80px'},
-							{field:'groupname',title:'". GetCatalog('groupname') ."',width:'150px'},
+							{field:'groupcustomerid',title: localStorage.getItem('cataloggroupcustomerid'),width:'80px'},
+							{field:'groupname',title: localStorage.getItem('cataloggroupname'),width:'150px'},
 					]],
 					fitColumns: true\">
 				</select></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('paymentmethod')."</td>
+				<td id='customertext-paymentmethod'></td>
 				<td><select class='easyui-combogrid' id='customer-paymentmethodid' name='customer-paymentmethodid' style='width:250px' data-options=\"
 						panelWidth: 500,
 						idField: 'paymentmethodid',
@@ -242,20 +242,50 @@
 						method: 'get',
 						mode: 'remote',
 						columns: [[
-								{field:'paymentmethodid',title:'". GetCatalog('paymentmethodid') ."',width:80},
-								{field:'paycode',title:'". GetCatalog('paycode') ."',width:100},
-								{field:'paydays',title:'". GetCatalog('paydays') ."',width:120},
-								{field:'paymentname',title:'". GetCatalog('paymentname') ."',width:200},
+								{field:'paymentmethodid',title: localStorage.getItem('catalogpaymentmethodid'),width:'80px'},
+								{field:'paycode',title: localStorage.getItem('catalogpaycode'),width:'100px'},
+								{field:'paydays',title: localStorage.getItem('catalogpaydays'),width:'120px'},
+								{field:'paymentname',title: localStorage.getItem('catalogpaymentname'),width:'200px'},
 						]],
 						fitColumns: true\">
 				</select></td>
 			</tr>
 			<tr>
-				<td>". GetCatalog('recordstatus')."</td>
+				<td id='customertext-recordstatus'></td>
 				<td><input id='customer-recordstatus' name='customer-recordstatus' type='checkbox'></input></td>
 			</tr>
 		</table>
-	",
+  ",
+  'addonscripts'=>"
+    $(document).ready(function(){
+      var parel = document.getElementById('customertext-fullname');
+      parel.innerHTML = localStorage.getItem('catalogfullname');
+      parel = document.getElementById('customertext-taxno');
+      parel.innerHTML = localStorage.getItem('catalogtaxno');
+      parel = document.getElementById('customertext-ktpno');
+      parel.innerHTML = localStorage.getItem('catalogktpno');
+      parel = document.getElementById('customertext-creditlimit');
+      parel.innerHTML = localStorage.getItem('catalogcreditlimit');
+      parel = document.getElementById('customertext-isstrictlimit');
+      parel.innerHTML = localStorage.getItem('catalogisstrictlimit');
+      parel = document.getElementById('customertext-salesarea');
+      parel.innerHTML = localStorage.getItem('catalogsalesarea');
+      parel = document.getElementById('customertext-pricecategory');
+      parel.innerHTML = localStorage.getItem('catalogpricecategory');
+      parel = document.getElementById('customertext-bankaccountno');
+      parel.innerHTML = localStorage.getItem('catalogbankaccountno');
+      parel = document.getElementById('customertext-bankname');
+      parel.innerHTML = localStorage.getItem('catalogbankname');
+      parel = document.getElementById('customertext-accountowner');
+      parel.innerHTML = localStorage.getItem('catalogaccountowner');
+      parel = document.getElementById('customertext-groupcustomer');
+      parel.innerHTML = localStorage.getItem('cataloggroupcustomer');
+      parel = document.getElementById('customertext-paymentmethod');
+      parel.innerHTML = localStorage.getItem('catalogpaymentmethod');
+      parel = document.getElementById('customertext-recordstatus');
+      parel.innerHTML = localStorage.getItem('catalogrecordstatus');
+    });
+  ",
 	'loadsuccess' => "
 		$('#customer-fullname').textbox('setValue',data.fullname);
 		$('#customer-taxno').textbox('setValue',data.taxno);
@@ -293,18 +323,18 @@
 			'updateurl'=>Yii::app()->createUrl('common/customer/saveaddress',array('grid'=>true)),
 			'destroyurl'=>Yii::app()->createUrl('common/customer/purgeaddress',array('grid'=>true)),
 			'subs'=>"
-				{field:'addresstypename',title:'". GetCatalog('addresstypename') ."',width:'200px'},
-				{field:'addressname',title:'". GetCatalog('addressname') ."',width:'200px'},
-				{field:'rt',title:'". GetCatalog('rt') ."',width:'200px'},
-				{field:'rw',title:'". GetCatalog('rw') ."',width:'200px'},
-				{field:'cityname',title:'". GetCatalog('cityname') ."',width:'200px'},
-				{field:'phoneno',title:'". GetCatalog('phoneno') ."',width:'200px'},
-				{field:'faxno',title:'". GetCatalog('faxno') ."',width:'200px'}
+				{field:'addresstypename',title: localStorage.getItem('catalogaddresstypename'),width:'200px'},
+				{field:'addressname',title: localStorage.getItem('catalogaddressname'),width:'200px'},
+				{field:'rt',title: localStorage.getItem('catalogrt'),width:'200px'},
+				{field:'rw',title: localStorage.getItem('catalogrw'),width:'200px'},
+				{field:'cityname',title: localStorage.getItem('catalogcityname'),width:'200px'},
+				{field:'phoneno',title: localStorage.getItem('catalogphoneno'),width:'200px'},
+				{field:'faxno',title: localStorage.getItem('catalogfaxno'),width:'200px'}
 			",
 			'columns'=>"
 				{
 					field:'addressbookid',
-					title:'". GetCatalog('addressbookid') ."',
+					title: localStorage.getItem('catalogaddressbookid'),
 					width:'80px',
 					hidden:true,
 					sortable: true,
@@ -314,7 +344,7 @@
 				},
 				{
 					field:'addressid',
-					title:'". GetCatalog('addressid') ."',
+					title: localStorage.getItem('catalogaddressid'),
 					width:'80px',
 					sortable: true,
 					formatter: function(value,row,index){
@@ -323,7 +353,7 @@
 				},
 				{
 					field:'addresstypeid',
-					title:'". GetCatalog('addresstype') ."',
+					title: localStorage.getItem('catalogaddresstype'),
 					width:'200px',
 					editor:{
 						type:'combogrid',
@@ -336,10 +366,10 @@
 							url:'". $this->createUrl('addresstype/index',array('grid'=>true,'combo'=>true)) ."',
 							fitColumns:true,
 							required:true,
-							loadMsg: '". GetCatalog('pleasewait')."',
+							loadMsg:  localStorage.getItem('catalogpleasewait'),
 							columns:[[
-								{field:'addresstypeid',title:'". GetCatalog('addresstypeid')."',width:'80px'},
-								{field:'addresstypename',title:'". GetCatalog('addresstypename')."',width:'200px'}
+								{field:'addresstypeid',title: localStorage.getItem('catalogaddresstypeid'),width:'80px'},
+								{field:'addresstypename',title: localStorage.getItem('catalogaddresstypename'),width:'200px'}
 							]]
 						}	
 					},
@@ -350,7 +380,7 @@
 				},
 				{
 					field:'addressname',
-					title:'". GetCatalog('addressname') ."',
+					title: localStorage.getItem('catalogaddressname'),
 					width:'200px',
 					editor:{
 						type: 'textbox',
@@ -366,7 +396,7 @@
 				},
 				{
 					field:'rt',
-					title:'". GetCatalog('rt') ."',
+					title: localStorage.getItem('catalogrt'),
 					width:'50px',
 					editor:{
 						type: 'textbox',
@@ -378,7 +408,7 @@
 				},
 				{
 					field:'rw',
-					title:'". GetCatalog('rw') ."',
+					title: localStorage.getItem('catalogrw'),
 					width:'50px',
 					editor:{
 						type: 'textbox',
@@ -390,7 +420,7 @@
 				},
 				{
 					field:'cityid',
-					title:'". GetCatalog('city') ."',
+					title: localStorage.getItem('catalogcity'),
 					width:'150px',
 					editor:{
 						type:'combogrid',
@@ -403,10 +433,10 @@
 							url:'". Yii::app()->createUrl('admin/city/index',array('grid'=>true,'combo'=>true)) ."',
 							fitColumns:true,
 							required:true,
-							loadMsg: '". GetCatalog('pleasewait')."',
+							loadMsg:  localStorage.getItem('catalogpleasewait'),
 							columns:[[
-								{field:'cityid',title:'". GetCatalog('cityid')."',width:'50px'},
-								{field:'cityname',title:'". GetCatalog('cityname')."',width:'200px'}
+								{field:'cityid',title: localStorage.getItem('catalogcityid'),width:'50px'},
+								{field:'cityname',title: localStorage.getItem('catalogcityname'),width:'200px'}
 							]]
 						}	
 					},
@@ -417,7 +447,7 @@
 				},
 				{
 					field:'phoneno',
-					title:'". GetCatalog('phoneno') ."',
+					title: localStorage.getItem('catalogphoneno'),
 					width:'150px',
 					editor:{
 						type: 'textbox',
@@ -429,7 +459,7 @@
 				},
 				{
 					field:'faxno',
-					title:'". GetCatalog('faxno') ."',
+					title: localStorage.getItem('catalogfaxno'),
 					width:'150px',
 					editor:{
 						type: 'textbox',
@@ -441,7 +471,7 @@
 				},
 				{
 					field:'lat',
-					title:'". GetCatalog('lat') ."',
+					title: localStorage.getItem('cataloglat'),
 					width:'150px',
 					editor:'text',
 					sortable: true,
@@ -451,7 +481,7 @@
 				},
 				{
 					field:'lng',
-					title:'". GetCatalog('lng') ."',
+					title: localStorage.getItem('cataloglng'),
 					width:'150px',
 					editor:{
 						type: 'textbox',
@@ -472,11 +502,11 @@
 			'updateurl'=>Yii::app()->createUrl('common/customer/savecontact',array('grid'=>true)),
 			'destroyurl'=>Yii::app()->createUrl('common/customer/purgecontact',array('grid'=>true)),
 			'subs'=>"
-				{field:'contacttypename',title:'". GetCatalog('contacttypename') ."',width:'200px'},
-				{field:'addresscontactname',title:'". GetCatalog('addresscontactname') ."',width:'200px'},
-				{field:'phoneno',title:'". GetCatalog('phoneno') ."',width:'200px'},
-				{field:'mobilephone',title:'". GetCatalog('mobilephone') ."',width:'200px'},
-				{field:'emailaddress',title:'". GetCatalog('emailaddress') ."',width:'200px'}
+				{field:'contacttypename',title: localStorage.getItem('catalogcontacttypename'),width:'200px'},
+				{field:'addresscontactname',title: localStorage.getItem('catalogaddresscontactname'),width:'200px'},
+				{field:'phoneno',title: localStorage.getItem('catalogphoneno'),width:'200px'},
+				{field:'mobilephone',title: localStorage.getItem('catalogmobilephone'),width:'200px'},
+				{field:'emailaddress',title: localStorage.getItem('catalogemailaddress'),width:'200px'}
 			",
 			'columns'=>"
 			{
@@ -489,7 +519,7 @@
 			},
 			{
 				field:'addresscontactid',
-				title:'". GetCatalog('addresscontactid') ."',
+				title: localStorage.getItem('catalogaddresscontactid'),
 				width:'50px',
 				sortable: true,
 				formatter: function(value,row,index){
@@ -498,7 +528,7 @@
 			},
 			{
 				field:'contacttypeid',
-				title:'". GetCatalog('contacttype') ."',
+				title: localStorage.getItem('catalogcontacttype'),
 				width:'150px',
 				editor:{
 					type:'combogrid',
@@ -511,10 +541,10 @@
 						url:'". $this->createUrl('contacttype/index',array('grid'=>true,'combo'=>true)) ."',
 						fitColumns:true,
 						required:true,
-						loadMsg: '". GetCatalog('pleasewait')."',
+						loadMsg:  localStorage.getItem('catalogpleasewait'),
 						columns:[[
-							{field:'contacttypeid',title:'". GetCatalog('contacttypeid')."',width:'80px'},
-							{field:'contacttypename',title:'". GetCatalog('contacttypename')."',width:'200px'}
+							{field:'contacttypeid',title: localStorage.getItem('catalogcontacttypeid'),width:'80px'},
+							{field:'contacttypename',title: localStorage.getItem('catalogcontacttypename'),width:'200px'}
 						]]
 					}	
 				},
@@ -525,7 +555,7 @@
 			},
 			{
 				field:'addresscontactname',
-				title:'". GetCatalog('addresscontactname') ."',
+				title: localStorage.getItem('catalogaddresscontactname'),
 				width:'150px',
 				editor:{
 					type: 'textbox',
@@ -540,7 +570,7 @@
 			},
 			{
 				field:'phoneno',
-				title:'". GetCatalog('phoneno') ."',
+				title: localStorage.getItem('catalogphoneno'),
 				width:'150px',
 				editor:{
 					type: 'textbox',
@@ -552,7 +582,7 @@
 			},
 			{
 				field:'mobilephone',
-				title:'". GetCatalog('mobilephone') ."',
+				title: localStorage.getItem('catalogmobilephone'),
 				width:'150px',
 				editor:{
 					type: 'textbox',
@@ -564,7 +594,7 @@
 			},
 			{
 				field:'emailaddress',
-				title:'". GetCatalog('emailaddress') ."',
+				title: localStorage.getItem('catalogemailaddress'),
 				width:'150px',
 				editor:{
 					type: 'textbox',

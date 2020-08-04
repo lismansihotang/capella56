@@ -1,175 +1,172 @@
 <?php
 class WidgetController extends Controller {
 	public $menuname = 'widget';
+	private $sort = [
+		'datatype' => 'POST',
+		'default' => 'widgetid'
+	];
+	private $order = [
+		'default' => 'desc'
+	];
+	private $viewfield = [
+		'widgetid' => 'text',
+		'moduleid' => [
+			'type' => 'text',
+			'from' => 't'
+		],
+		'modulename' => [
+			'type' => 'text',
+			'from' => 'p'
+		],
+		'widgetname' => 'text',
+		'widgettitle' => 'text',
+		'widgetversion' => 'text',
+		'widgetby' => 'text',
+		'description' => 'text',
+		'widgeturl' => 'text',
+		'recordstatus' => [
+			'type' => 'text',
+			'from' => 't'
+		]
+	];
 	public function actionIndex() {
 		parent::actionIndex();
+		if (isset($_GET['combo'])) 
+			echo $this->search();
+		else
 		if (isset($_GET['grid'])) 
 			echo $this->search();
 		else 
 			$this->renderPartial('index', array());
 	}
 	public function search() {
-		header('Content-Type: application/json');
-		$widgetid			 = GetSearchText(array('POST','Q'),'widgetid');
-		$widgetname		 = GetSearchText(array('POST','Q'),'widgetname');
-		$widgettitle		 = GetSearchText(array('POST','Q'),'widgettitle');
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','widgetid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset	 = ($page - 1) * $rows;
-		$result	 = array();
-		$row		 = array();
-		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')
-				->from('widget t')
-				->leftjoin('modules a','a.moduleid = t.moduleid')
-				->where('(widgetid like :widgetid) and (widgetname like :widgetname) and (widgettitle like :widgettitle)',
-					array(':widgetid' => $widgetid, ':widgetname' => $widgetname, ':widgettitle' => $widgettitle))
-				->queryScalar();
-		} else {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')
-				->from('widget t')
-				->leftjoin('modules a','a.moduleid = t.moduleid')
-				->where('(widgetid like :widgetid) or (widgetname like :widgetname) or (widgettitle like :widgettitle)',
-					array(':widgetid' => $widgetid, ':widgetname' => $widgetname, ':widgettitle' => $widgettitle))
-				->queryScalar();
-		}
-		$result['total'] = $cmd;
-		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('t.*,a.modulename')
-				->from('widget t')
-				->leftjoin('modules a','a.moduleid = t.moduleid')
-				->where('(widgetid like :widgetid) and (widgetname like :widgetname) and (widgettitle like :widgettitle)',
-					array(':widgetid' => $widgetid, ':widgetname' => $widgetname, ':widgettitle' => $widgettitle))
-				->offset($offset)
-				->limit($rows)
-				->order($sort.' '.$order)
-				->queryAll();
-		} else {
-			$cmd = Yii::app()->db->createCommand()
-				->select('t.*,a.modulename')
-				->from('widget t')
-				->leftjoin('modules a','a.moduleid = t.moduleid')
-				->where('(widgetid like :widgetid) or (widgetname like :widgetname) or (widgettitle like :widgettitle)',
-					array(':widgetid' => $widgetid, ':widgetname' => $widgetname, ':widgettitle' => $widgettitle))
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		foreach ($cmd as $data) {
-			$row[] = array(
-				'widgetid' => $data['widgetid'],
-				'widgetname' => $data['widgetname'],
-				'widgettitle' => $data['widgettitle'],
-				'widgetversion' => $data['widgetversion'],
-				'widgetby' => $data['widgetby'],
-				'description' => $data['description'],
-				'widgeturl' => $data['widgeturl'],
-				'modulename' => $data['modulename'],
-				'moduleid' => $data['moduleid'],
-				'recordstatus' => $data['recordstatus'],
-			);
-		}
-		$result = array_merge($result, array('rows' => $row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => 'widget t 
+				left join modules p on t.moduleid = p.moduleid ',
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => true,
+			'searchfield' => [
+				'widgetid' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and' 
+				],
+				'widgetname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'widgettitle' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'widgetversion' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'widgetby' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'description' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'widgeturl' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+				'modulename' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and'
+				],
+			]
+		]);
 	}
-	private function ModifyData($connection,$arraydata) {
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql		 = 'call Insertwidget(:vwidgetname,:vwidgettitle,:vwidgetversion,:vwidgetby,:vdescription,:vwidgeturl,:vmoduleid,:vrecordstatus,:vdatauser)';
-			$command = $connection->createCommand($sql);
-		} else {
-			$sql		 = 'call Updatewidget(:vid,:vwidgetname,:vwidgettitle,:vwidgetversion,:vwidgetby,:vdescription,:vwidgeturl,:vmoduleid,:vrecordstatus,:vdatauser)';
-			$command = $connection->createCommand($sql);
-			$command->bindvalue(':vid', $arraydata[0], PDO::PARAM_STR);
-			$this->DeleteLock($this->menuname, $arraydata[0]);
-		}
-		$command->bindvalue(':vwidgetname', $arraydata[1], PDO::PARAM_STR);
-		$command->bindvalue(':vwidgettitle', $arraydata[2], PDO::PARAM_STR);
-		$command->bindvalue(':vwidgetversion', $arraydata[3], PDO::PARAM_STR);
-		$command->bindvalue(':vwidgetby', $arraydata[4], PDO::PARAM_STR);
-		$command->bindvalue(':vdescription', $arraydata[5], PDO::PARAM_STR);
-		$command->bindvalue(':vwidgeturl', $arraydata[6], PDO::PARAM_STR);
-		$command->bindvalue(':vmoduleid', $arraydata[7], PDO::PARAM_STR);
-		$command->bindvalue(':vrecordstatus', $arraydata[8], PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(), PDO::PARAM_STR);
-		$command->execute();
+	public function searchcombo() {
+		return GetData([
+			'from' => 'widget t 
+				left join modules p on t.moduleid = p.moduleid ',
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => false,
+			'searchfield' => [
+				'widgetname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+				'widgettitle' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+				'widgetversion' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+				'widgetby' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+				'description' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+				'widgeturl' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+				'modulename' => [
+					'datatype' => 'POST',
+					'operatortype' => 'or'
+				],
+			]
+		]);
 	}
 	public function actionUpload() {
 		parent::actionUpload();
-		$target_file = dirname('__FILES__').'/uploads/' . basename($_FILES["file-widget"]["name"]);
-		if (move_uploaded_file($_FILES["file-widget"]["tmp_name"], $target_file)) {
-			$objReader = PHPExcel_IOFactory::createReader('Excel2007');
-			$objPHPExcel = $objReader->load($target_file);
-			$objWorksheet = $objPHPExcel->getActiveSheet();
-			$highestRow = $objWorksheet->getHighestRow(); 
-			$highestColumn = $objWorksheet->getHighestColumn();
-			$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
-			$connection	 = Yii::app()->db;
-			$transaction = $connection->beginTransaction();
-			try {
-				for ($row = 2; $row <= $highestRow; ++$row) {
-					$id = $objWorksheet->getCellByColumnAndRow(0, $row)->getValue();
-					$widgetname = $objWorksheet->getCellByColumnAndRow(1, $row)->getValue();
-					$widgettitle = $objWorksheet->getCellByColumnAndRow(2, $row)->getValue();
-					$widgetversion = $objWorksheet->getCellByColumnAndRow(3, $row)->getValue();
-					$widgetby = $objWorksheet->getCellByColumnAndRow(4, $row)->getValue();
-					$description = $objWorksheet->getCellByColumnAndRow(5, $row)->getValue();
-					$widgeturl = $objWorksheet->getCellByColumnAndRow(6, $row)->getValue();
-					$modulename = $objWorksheet->getCellByColumnAndRow(7, $row)->getValue();
-					$moduleid = Yii::app()->db->createCommand("select moduleid from modules where modulename = '".$modulename."'")->queryScalar();
-					$recordstatus = $objWorksheet->getCellByColumnAndRow(8, $row)->getValue();
-					$this->ModifyData($connection,array($id,$widgetname,$widgettitle,$widgetversion,
-						$widgetby,$description,$widgeturl,$moduleid,$recordstatus));
-				}
-				$transaction->commit();
-				GetMessage(false, getcatalog('insertsuccess'));
-			} catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode($e->errorInfo));
-			}
-    }
+		UploadData($this->menuname,[
+			'spinsert' => 'insertwidget',
+			'spupdate' => 'updatewidget',
+			'arraydata' => [
+				'vid'=>0,
+				'widgetname'=>1,
+				'widgettitle'=>2,
+				'widgetversion'=>3,
+				'widgetby'=>4,
+				'description'=>5,
+				'widgeturl'=>6,
+				'moduleid'=>[
+					'column' => 7,
+					'source' => 'select moduleid from modules where modulename = '
+				],
+				'recordstatus'=>8,
+			]
+		]);
 	}
 	public function actionSave() {
 		parent::actionWrite();
-		$connection	 = Yii::app()->db;
-		$transaction = $connection->beginTransaction();
-		try {
-			$this->ModifyData($connection,array((isset($_POST['widgetid'])?$_POST['widgetid']:''),$_POST['widgetname'],$_POST['widgettitle'],$_POST['widgetversion'],
-				$_POST['widgetby'],$_POST['description'],$_POST['widgeturl'],$_POST['moduleid'],$_POST['recordstatus']));
-			$transaction->commit();
-			GetMessage(false, getcatalog('insertsuccess'));
-		} catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode($e->errorInfo));
-		}
+		SaveData([
+			'spinsert' => 'insertcatalogsys',
+			'spupdate' => 'updatecatalogsys',
+			'arraydata' => [
+				'vid'=>(isset($_POST['widgetid'])?$_POST['widgetid']:''),
+				'widgetname'=>$_POST['widgetname'],
+				'widgettitle'=>$_POST['widgettitle'],
+				'widgetversion'=>$_POST['widgetversion'],
+				'widgetby'=>$_POST['widgetby'],
+				'description'=>$_POST['description'],
+				'widgeturl'=>$_POST['widgeturl'],
+				'moduleid'=>$_POST['moduleid'],
+				'recordstatus'=>$_POST['recordstatus'],
+			]
+		]);
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgewidget(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();				
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode($e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'PurgeWidget',			
+		]);
 	}
 	protected function actionDataPrint() {
 		parent::actionDataPrint();

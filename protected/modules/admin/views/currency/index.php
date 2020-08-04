@@ -47,9 +47,13 @@
 		}},
 		{
 			field:'currencyname',
-			title:localStorage.getItem('catalogcurrency'),
+			title:localStorage.getItem('catalogcurrencyname'),
 			sortable: true,
-			editor:'text',
+			editor: {
+        type:'textbox', 
+        options: {
+          required:true
+      }},
 			width:'250px',
 			formatter: function(value,row,index){
 				return value;
@@ -58,7 +62,11 @@
 		{
 			field:'symbol',
 			title:localStorage.getItem('catalogsymbol'),
-			editor:'text',
+			editor: {
+        type: 'textbox', 
+        options: {
+          required:true
+      }},
 			width:'80px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -67,7 +75,7 @@
 		{
 			field:'i18n',
 			title:localStorage.getItem('catalogi18n'),
-			editor:'text',
+			editor: {type: 'textbox', options: {required:true}},
 			width:'80px',
 			sortable: true,
 			formatter: function(value,row,index){

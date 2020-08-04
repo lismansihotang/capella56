@@ -12,7 +12,7 @@
 	'columns'=>"
 		{
 			field:'romawiid',
-			title:'". GetCatalog('romawiid') ."',
+			title: localStorage.getItem('catalogromawiid'),
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -20,7 +20,7 @@
 		}},
 		{
 			field:'monthcal',
-			title:'". GetCatalog('monthcal') ."',
+			title: localStorage.getItem('catalogmonthcal'),
 			width:'150px',
 			editor: {
 				type: 'numberbox',
@@ -34,7 +34,7 @@
 		}},
 		{
 			field:'monthrm',
-			title:'". GetCatalog('monthrm') ."',
+			title: localStorage.getItem('catalogmonthrm'),
 			width:'150px',
 			editor: {
 				type: 'validatebox',
@@ -48,7 +48,7 @@
 		}},
 		{
 			field:'recordstatus',
-			title:'". GetCatalog('recordstatus') ."',
+			title: localStorage.getItem('catalogrecordstatus'),
 			width:'80px',
 			align:'center',
 			editor:{type:'checkbox',options:{on:'1',off:'0'}},

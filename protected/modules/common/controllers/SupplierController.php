@@ -374,7 +374,7 @@ class SupplierController extends Controller {
 					}
 				}
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -396,7 +396,7 @@ class SupplierController extends Controller {
 				$_POST['supplier-paymentmethodid'],
 				isset($_POST['supplier-recordstatus'])?1:0));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -436,7 +436,7 @@ class SupplierController extends Controller {
 			$this->ModifyDataAddress($connection,array((isset($_POST['addressid'])?$_POST['addressid']:''),$_POST['addressbookid'],$_POST['addresstypeid'],$_POST['addressname'],
 				$_POST['rt'],$_POST['rw'],$_POST['cityid'],$_POST['phoneno'],$_POST['faxno'],$_POST['lat'],$_POST['lng']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -472,7 +472,7 @@ class SupplierController extends Controller {
 				$_POST['addressbookid'],$_POST['contacttypeid'],$_POST['addresscontactname'],$_POST['mobilephone'],
 				$_POST['phoneno'],$_POST['emailaddress']));
 			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
+			GetMessage(false,'insertsuccess');
 		}
 		catch (CDbException $e) {
 			$transaction->rollBack();
@@ -492,7 +492,7 @@ class SupplierController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();				
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -500,7 +500,7 @@ class SupplierController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true, getcatalog('chooseone'));
+			GetMessage(true, 'chooseone');
 		}
 	}
 	public function actionPurgeaddress() {
@@ -516,7 +516,7 @@ class SupplierController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -524,7 +524,7 @@ class SupplierController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true, getcatalog('chooseone'));
+			GetMessage(true, 'chooseone');
 		}
 	}	
 	public function actionPurgecontact() {
@@ -540,7 +540,7 @@ class SupplierController extends Controller {
 				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
 				$command->execute();				
 				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
+				GetMessage(false,'insertsuccess');
 			}
 			catch (CDbException $e) {
 				$transaction->rollBack();
@@ -548,7 +548,7 @@ class SupplierController extends Controller {
 			}
 		}
 		else {
-			GetMessage(true, getcatalog('chooseone'));
+			GetMessage(true, 'chooseone');
 		}
 	}
 	public function actionGenerateaddress() {

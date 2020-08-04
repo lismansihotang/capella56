@@ -1,8 +1,27 @@
 <?php
 class GroupaccessController extends Controller {
 	public $menuname = 'groupaccess';
+	private $sort = [
+		'datatype' => 'POST',
+		'default' => 'groupaccessid'
+	];
+	private $order = [
+		'default' => 'desc'
+	];
+	private $viewfield = [
+		'groupaccessid' => 'text',
+		'groupname' => 'text',
+		'jumlah' => [
+			'from'=>'other',
+			'source'=> "(select ifnull(count(1),0) from groupmenu a where a.groupaccessid = t.groupaccessid)"
+		],
+		'recordstatus' => 'text'
+	];
 	public function actionIndex() {
 		parent::actionIndex();
+		if(isset($_GET['combo']))
+			echo $this->searchcombo();
+		else
 		if(isset($_GET['grid']))
 			echo $this->search();
 		else
@@ -23,397 +42,235 @@ class GroupaccessController extends Controller {
 			$this->renderPartial('index',array());
 	}
 	public function search() {
-		header('Content-Type: application/json');
-		$groupaccessid = GetSearchText(array('POST','Q'),'groupaccessid');
-		$groupname = GetSearchText(array('POST','Q'),'groupname');
-		$menuname = GetSearchText(array('POST','Q'),'menuname');
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','groupaccessid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')	
-				->from('groupaccess t') 
-				->where("(coalesce(groupaccessid,'') like :groupaccessid) 
-					and (coalesce(groupname,'') like :groupname)".
-					(($menuname != '%%')?" and t.groupaccessid in (
-					select distinct za.groupaccessid 
-					from groupmenu za 
-					left join menuaccess zb on zb.menuaccessid = za.menuaccessid 
-					where zb.menuname like '%".$menuname."%')":''),
-					array(':groupaccessid'=>$groupaccessid,':groupname'=>$groupname))			
-				->queryScalar();
-		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->select('count(1) as total')	
-				->from('groupaccess t')
-				->where('((groupaccessid like :groupaccessid) or (groupname like :groupname)) 
-					and t.recordstatus = 1',
-					array(':groupaccessid'=>$groupaccessid,':groupname'=>$groupname))			
-				->queryScalar();
-		}
-		$result['total'] = $cmd;
-		if (!isset($_GET['combo'])) {
-			$cmd = Yii::app()->db->createCommand()
-				->select()	
-				->from('groupaccess t')
-				->where("(coalesce(groupaccessid,'') like :groupaccessid) 
-					and (coalesce(groupname,'') like :groupname)".
-					(($menuname != '%%')?" and t.groupaccessid in (
-					select distinct za.groupaccessid 
-					from groupmenu za 
-					left join menuaccess zb on zb.menuaccessid = za.menuaccessid 
-					where zb.menuname like '%".$menuname."%')":''),
-					array(':groupaccessid'=>$groupaccessid,':groupname'=>$groupname))			
-				->offset($offset)
-				->limit($rows)
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		else {
-			$cmd = Yii::app()->db->createCommand()
-				->select()	
-				->from('groupaccess t')
-				->where('((groupaccessid like :groupaccessid) or (groupname like :groupname)) 
-					and t.recordstatus = 1',
-				array(':groupaccessid'=>$groupaccessid,':groupname'=>$groupname))			
-				->order($sort.' '.$order)
-				->queryAll();
-		}
-		foreach($cmd as $data) {	
-			$row[] = array(
-				'groupaccessid'=>$data['groupaccessid'],
-				'groupname'=>$data['groupname'],
-				'recordstatus'=>$data['recordstatus'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => "groupaccess t ",
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => true,
+			'searchfield' => [
+				'groupaccessid' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and' 
+				],
+				'groupname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+				],
+				'menuname' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'from' => 'other',
+					'source' => "and t.groupaccessid in (
+						select distinct za.groupaccessid 
+						from groupmenu za 
+						left join menuaccess zb on zb.menuaccessid = za.menuaccessid 
+						where zb.menuname like P{menuname})"
+				],
+			],
+		]);
+	}
+	public function searchcombo() {
+		return GetData([
+			'from' => "groupaccess t ",
+			'sort' => $this->sort,
+			'order' => $this->order,
+			'viewfield' => $this->viewfield ,
+			'paging' => false,
+			'searchfield' => [
+				'groupname' => [
+					'datatype' => 'Q',
+					'operatortype' => 'or',
+				],
+			],
+		]);
 	}
 	public function actionsearchgroupmenu() {
-		header('Content-Type: application/json');
-		$id=0;
-		if (isset($_POST['id']))
-		{
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id']))
-		{
-			$id = $_GET['id'];
-		} else if (isset($_POST['groupaccessid']))
-		{
-			$id = $_POST['groupaccessid'];
-		}
-		$menuname = GetSearchText(array('POST','GET'),'menuname');
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','groupmenuid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$cmd = Yii::app()->db->createCommand()
-			->select('count(1) as total')	
-			->from('groupmenu t')
-			->leftjoin('menuaccess q','q.menuaccessid=t.menuaccessid')
-			->where("t.groupaccessid = ".$id." and q.menuname like '".$menuname."'")			
-			->queryScalar();
-		$result['total'] = $cmd;
-		$cmd = Yii::app()->db->createCommand()
-			->select('t.*,q.menuname,q.description')	
-			->from('groupmenu t')
-			->leftjoin('menuaccess q','q.menuaccessid=t.menuaccessid')
-			->where('t.groupaccessid = '.$id." and q.menuname like '".$menuname."'")
-			->offset($offset)
-			->limit($rows)
-			->order($sort.' '.$order)
-			->queryAll();		
-		foreach($cmd as $data) {	
-			$row[] = array(
-				'groupmenuid'=>$data['groupmenuid'],
-				'groupaccessid'=>$data['groupaccessid'],
-				'menuaccessid'=>$data['menuaccessid'],
-				'description'=>$data['description'],
-				'isread'=>$data['isread'],
-				'iswrite'=>$data['iswrite'],
-				'ispost'=>$data['ispost'],
-				'isreject'=>$data['isreject'],
-				'isupload'=>$data['isupload'],
-				'isdownload'=>$data['isdownload'],
-				'ispurge'=>$data['ispurge'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => 'groupmenu t 
+				left join menuaccess p on t.menuaccessid = p.menuaccessid ',
+			'sort' => [
+				'datatype' => 'POST',
+				'default' => 'groupmenuid'
+			],
+			'order' => [
+				'datatype' => 'POST',
+				'default' => 'desc'
+			],
+			'viewfield' => [
+				'groupmenuid'=>[
+					'type'=>'text'
+				],
+				'groupaccessid'=>[
+					'type'=>'text'
+				],
+				'menuaccessid'=>[
+					'type'=>'text',
+					'from'=>'t'
+				],
+				'description'=>[
+					'type'=>'text',
+					'from'=>'p'
+				],
+				'isread'=>[
+					'type'=>'text'
+				],
+				'iswrite'=>[
+					'type'=>'text'
+				],
+				'ispost'=>[
+					'type'=>'text'
+				],
+				'isreject'=>[
+					'type'=>'text'
+				],
+				'isupload'=>[
+					'type'=>'text'
+				],
+				'isdownload'=>[
+					'type'=>'text'
+				],
+				'ispurge'=>[
+					'type'=>'text'
+				],
+			],
+			'paging' => true,
+			'searchfield' => [
+				'id' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'sourcefield' => 'groupaccessid',
+					'strict' => '=',
+				],
+			]
+		]);
 	}
 	public function actionsearchuserdash() {
-		header('Content-Type: application/json');
-		$id=0;
-		if (isset($_POST['id']))
-		{
-			$id = $_POST['id'];
-		}
-		else 
-		if (isset($_GET['id']))
-		{
-			$id = $_GET['id'];
-		} else if (isset($_POST['groupaccessid']))
-		{
-			$id = $_POST['groupaccessid'];
-		}
-		$menuname = GetSearchText(array('POST','GET'),'menuname');
-		$page = GetSearchText(array('POST','GET'),'page',1,'int');
-		$rows = GetSearchText(array('POST','GET'),'rows',10,'int');
-		$sort = GetSearchText(array('POST','GET'),'sort','userdashid','int');
-		$order = GetSearchText(array('POST','GET'),'order','desc','int');
-		$offset = ($page-1) * $rows;
-		$result = array();
-		$row = array();
-		$cmd = Yii::app()->db->createCommand()
-			->select('count(1) as total')	
-			->from('userdash t')
-			->leftjoin('menuaccess q','q.menuaccessid=t.menuaccessid')
-			->leftjoin('widget r','r.widgetid=t.widgetid')
-			->where("t.groupaccessid = ".$id)			
-			->queryScalar();
-		$result['total'] = $cmd;
-		$cmd = Yii::app()->db->createCommand()
-			->select('t.*,r.widgetname,q.menuname')	
-			->from('userdash t')
-			->leftjoin('menuaccess q','q.menuaccessid=t.menuaccessid')
-			->leftjoin('widget r','r.widgetid=t.widgetid')
-			->where('t.groupaccessid = '.$id)
-			->offset($offset)
-			->limit($rows)
-			->order($sort.' '.$order)
-			->queryAll();		
-		foreach($cmd as $data) {	
-			$row[] = array(
-				'userdashid'=>$data['userdashid'],
-				'groupaccessid'=>$data['groupaccessid'],
-				'widgetid'=>$data['widgetid'],
-				'widgetname'=>$data['widgetname'],
-				'menuaccessid'=>$data['menuaccessid'],
-				'menuname'=>$data['menuname'],
-			);
-		}
-		$result=array_merge($result,array('rows'=>$row));
-		return CJSON::encode($result);
+		return GetData([
+			'from' => 'userdash t 
+				left join menuaccess q on q.menuaccessid = t.menuaccessid 
+				left join widget r on r.widgetid = t.widgetid',
+			'sort' => [
+				'datatype' => 'POST',
+				'default' => 'userdashid'
+			],
+			'order' => [
+				'datatype' => 'POST',
+				'default' => 'desc'
+			],
+			'viewfield' => [
+				'userdashid'=>[
+					'type'=>'text'
+				],
+				'groupaccessid'=>[
+					'type'=>'text'
+				],
+				'widgetid'=>[
+					'type'=>'text',
+					'from'=>'r'
+				],
+				'widgetname'=>[
+					'type'=>'text',
+					'from'=>'r'
+				],
+				'menuaccessid'=>[
+					'type'=>'text',
+					'from'=>'q'
+				],
+				'menuname'=>[
+					'type'=>'text',
+					'from'=>'q'
+				],
+			],
+			'paging' => true,
+			'searchfield' => [
+				'id' => [
+					'datatype' => 'POST',
+					'operatortype' => 'and',
+					'sourcefield' => 'groupaccessid',
+					'strict' => '=',
+				],
+			]
+		]);
 	}
 	public function actionGetData() {
-		$id = rand(-1, -1000000000);
-		echo CJSON::encode(array(
-			'groupaccessid' => $id
-		));
-	}
-	private function ModifyData($connection,$arraydata) {
-		$id = (int)$arraydata[0];
-		$sql = 'call Modifgroupaccess(:vid,:vgroupname,:vrecordstatus,:vdatauser)';
-		$this->DeleteLock($this->menuname, $arraydata[0]);
-		$command=$connection->createCommand($sql);
-		$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-		$command->bindvalue(':vgroupname',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vrecordstatus',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();			
+		return GetRandomHeader([
+			'key' => 'groupaccessid',
+			'table' => 'groupaccess'
+		]);
 	}
 	public function actionUpload() {
 		parent::actionUpload();
-		$target_file = dirname('__FILES__').'/uploads/' . basename($_FILES["file-groupaccess"]["name"]);
-		if (move_uploaded_file($_FILES["file-groupaccess"]["tmp_name"], $target_file)) {
-			$objReader = PHPExcel_IOFactory::createReader('Excel2007');
-			$objPHPExcel = $objReader->load($target_file);
-			$objWorksheet = $objPHPExcel->getActiveSheet();
-			$highestRow = $objWorksheet->getHighestRow(); 
-			$highestColumn = $objWorksheet->getHighestColumn();
-			$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				for ($row = 2; $row <= $highestRow; ++$row) {
-					$id = $objWorksheet->getCellByColumnAndRow(0, $row)->getValue();
-					$groupname = $objWorksheet->getCellByColumnAndRow(1, $row)->getValue();
-					$recordstatus = $objWorksheet->getCellByColumnAndRow(2, $row)->getValue();
-					$this->ModifyData($connection,array($id,$groupname,$recordstatus));
-				}
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-    }
+		UploadData($this->menuname,[
+			'spinsert' => 'Modifgroupaccess',
+			'spupdate' => 'Modifgroupaccess',
+			'arraydata' => [
+				'vid'=>0,
+				'groupname'=>1
+			]
+		]);
 	}
 	public function actionSave() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyData($connection,array((isset($_POST['groupaccess-groupaccessid'])?$_POST['groupaccess-groupaccessid']:''),
-				$_POST['groupaccess-groupname'],
-				isset($_POST['groupaccess-recordstatus'])?($_POST['groupaccess-recordstatus']=="on")?1:0:0));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
-	}
-	private function ModifyDataGroupmenu($connection,$arraydata) {	
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql = 'call Insertgroupmenu(:vmenuaccessid,:vgroupaccessid,:visread,:viswrite,:vispost,:visreject,:visupload,:visdownload,:vispurge,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else {
-			$sql = 'call Updategroupmenu(:vid,:vmenuaccessid,:vgroupaccessid,:visread,:viswrite,:vispost,:visreject,:visupload,:visdownload,:vispurge,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-		}
-		$command->bindvalue(':vgroupaccessid',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vmenuaccessid',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':visread',$arraydata[3],PDO::PARAM_STR);
-		$command->bindvalue(':viswrite',$arraydata[4],PDO::PARAM_STR);
-		$command->bindvalue(':vispost',$arraydata[5],PDO::PARAM_STR);
-		$command->bindvalue(':visreject',$arraydata[6],PDO::PARAM_STR);
-		$command->bindvalue(':visupload',$arraydata[7],PDO::PARAM_STR);
-		$command->bindvalue(':visdownload',$arraydata[8],PDO::PARAM_STR);
-		$command->bindvalue(':vispurge',$arraydata[9],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser', GetUserPC(),PDO::PARAM_STR);
-		$command->execute();
+		SaveData([
+			'spinsert' => 'Modifgroupaccess',
+			'spupdate' => 'Modifgroupaccess',
+			'arraydata' => [
+				'vid'=>(isset($_POST['groupaccess-groupaccessid'])?$_POST['groupaccess-groupaccessid']:''),
+				'groupname'=>$_POST['groupaccess-groupname'],
+				'recordstatus'=>isset($_POST['groupaccess-recordstatus'])?($_POST['groupaccess-recordstatus']=="on")?1:0:0,
+			]
+		]);
 	}
 	public function actionSaveGroupmenu() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyDataGroupmenu($connection,array((isset($_POST['groupmenuid'])?$_POST['groupmenuid']:''),
-				$_POST['groupaccessid'],$_POST['menuaccessid'],
-				$_POST['isread'],$_POST['iswrite'],$_POST['ispost'],
-				$_POST['isreject'],$_POST['isupload'],$_POST['isdownload'],$_POST['ispurge']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
-	}
-	private function ModifyDataUserDash($connection,$arraydata) {	
-		$id = (isset($arraydata[0])?$arraydata[0]:'');
-		if ($id == '') {
-			$sql = 'call Insertuserdash(:vgroupaccessid,:vwidgetid,:vmenuaccessid,:vdatauser)';
-			$command=$connection->createCommand($sql);
-		}
-		else {
-			$sql = 'call Updateuserdash(:vid,:vgroupaccessid,:vwidgetid,:vmenuaccessid,:vdatauser)';
-			$command=$connection->createCommand($sql);
-			$command->bindvalue(':vid',$arraydata[0],PDO::PARAM_STR);
-		}
-		$command->bindvalue(':vgroupaccessid',$arraydata[1],PDO::PARAM_STR);
-		$command->bindvalue(':vwidgetid',$arraydata[2],PDO::PARAM_STR);
-		$command->bindvalue(':vmenuaccessid',$arraydata[3],PDO::PARAM_STR);
-		$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-		$command->execute();
+		SaveData([
+			'spinsert' => 'Insertgroupmenu',
+			'spupdate' => 'Updategroupmenu',
+			'arraydata' => [
+				'vid'=>(isset($_POST['groupmenuid'])?$_POST['groupmenuid']:''),
+				'menuaccessid'=>$_POST['menuaccessid'],
+				'groupaccessid'=>$_POST['groupaccessid'],
+				'isread'=>$_POST['isread'],
+				'iswrite'=>$_POST['iswrite'],
+				'ispost'=>$_POST['ispost'],
+				'isreject'=>$_POST['isreject'],
+				'isupload'=>$_POST['isupload'],
+				'isdownload'=>$_POST['isdownload'],
+				'ispurge'=>$_POST['ispurge'],
+			]
+		]);
 	}
 	public function actionSaveUserDash() {
 		parent::actionWrite();
-		$connection=Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->ModifyDataUserDash($connection,array((isset($_POST['userdashid'])?$_POST['userdashid']:''),
-				$_POST['groupaccessid'],
-				$_POST['widgetid'],
-				$_POST['menuaccessid']));
-			$transaction->commit();
-			GetMessage(false,getcatalog('insertsuccess'));
-		}
-		catch (CDbException $e) {
-			$transaction->rollBack();
-			GetMessage(true,implode(" ",$e->errorInfo));
-		}
+		SaveData([
+			'spinsert' => 'Insertuserdash',
+			'spupdate' => 'Updateuserdash',
+			'arraydata' => [
+				'vid'=>(isset($_POST['userdashid'])?$_POST['userdashid']:''),
+				'groupaccessid'=>$_POST['groupaccessid'],
+				'widgetid'=>$_POST['widgetid'],
+				'menuaccessid'=>$_POST['menuaccessid'],
+			]
+		]);
 	}
 	public function actionPurge() {
 		parent::actionPurge();
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgegroupaccess(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();			
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgegroupaccess',			
+		]);
 	}
 	public function actionPurgegroupmenu() {
 		parent::actionPurge();
-		header('Content-Type: application/json');
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgegroupmenu(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgegroupmenu',			
+		]);
 	}	
 	public function actionPurgeuserdash() {
 		parent::actionPurge();
-		header('Content-Type: application/json');
-		if (isset($_POST['id'])) {
-			$id=$_POST['id'];
-			$connection=Yii::app()->db;
-			$transaction=$connection->beginTransaction();
-			try {
-				$sql = 'call Purgeuserdash(:vid,:vdatauser)';
-				$command=$connection->createCommand($sql);
-				$command->bindvalue(':vid',$id,PDO::PARAM_STR);
-				$command->bindvalue(':vdatauser',GetUserPC(),PDO::PARAM_STR);
-				$command->execute();
-				$transaction->commit();
-				GetMessage(false,getcatalog('insertsuccess'));
-			}
-			catch (CDbException $e) {
-				$transaction->rollBack();
-				GetMessage(true,implode(" ",$e->errorInfo));
-			}
-		}
-		else {
-			GetMessage(true,getcatalog('chooseone'));
-		}
+		ExecData([
+			'spname' => 'Purgeuserdash',			
+		]);
 	}	
 	protected function actionDataPrint() {
 		parent::actionDataPrint();

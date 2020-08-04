@@ -21,7 +21,7 @@
 		{
 			field:'menuname',
 			title:localStorage.getItem('catalogmenuname'),
-			editor:'text',
+			editor:{type: 'textbox', options:{required:true}},
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -30,7 +30,7 @@
 		{
 			field:'description',
 			title:localStorage.getItem('catalogdescription'),
-			editor:'text',
+			editor:{type: 'textbox', options:{required:true}},
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -39,7 +39,7 @@
 		{
 			field:'menuurl',
 			title:localStorage.getItem('catalogmenuurl'),
-			editor:'text',
+			editor:{type: 'textbox', options:{required:true}},
 			width:'150px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -48,7 +48,7 @@
 		{
 			field:'menuicon',
 			title:localStorage.getItem('catalogmenuicon'),
-			editor:'text',
+			editor:{type: 'textbox', options:{}},
 			width:'100px',
 			sortable: true,
 			formatter: function(value,row,index){
@@ -83,7 +83,7 @@
 		}},
 		{
 			field:'moduleid',
-			title:localStorage.getItem('catalogmodule'),
+			title:localStorage.getItem('catalogmodules'),
 			editor:{
 				type:'combogrid',
 				options:{
@@ -108,9 +108,36 @@
 				return row.modulename;
 		}},
 		{
+			field:'menudep',
+			title:localStorage.getItem('catalogmenudep'),
+			editor:{type: 'textbox', options:{}},
+			width:'150px',
+			sortable: true,
+			formatter: function(value,row,index){
+									return value;
+		}},
+		{
+			field:'viewcode',
+			title:localStorage.getItem('catalogviewcode'),
+			editor:{type: 'textbox', options:{multiline:true,height:'100px'}},
+			width:'250px',
+			sortable: true,
+			formatter: function(value,row,index){
+									return value;
+		}},
+		{
+			field:'controllercode',
+			title:localStorage.getItem('catalogcontrollercode'),
+			editor:{type: 'textbox', options:{multiline:true,height:'100px'}},
+			width:'250px',
+			sortable: true,
+			formatter: function(value,row,index){
+									return value;
+		}},
+		{
 			field:'sortorder',
 			title:localStorage.getItem('catalogsortorder'),
-			editor:'text',
+			editor:{type: 'numberbox', options:{required:true}},
 			width:'50px',
 			sortable: true,
 			formatter: function(value,row,index){

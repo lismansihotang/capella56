@@ -1,20 +1,9 @@
 <?php
 class Formatter extends CFormatter
 {
-  public $numFormat = array('decimals' => 3, 'decimalSeparator' => ',', 'thousandSeparator' => '.');
-  public $numberFormat = array('decimals' => 3, 'decimalSeparator' => ',', 'thousandSeparator' => '.');
+  public $numberFormatQty = array('decimals' => 4, 'decimalSeparator' => ',', 'thousandSeparator' => '.');
+  public $numberFormat = array('decimals' => 2, 'decimalSeparator' => ',', 'thousandSeparator' => '.');
   public $currencyFormat = array('decimals' => 2, 'decimalSeparator' => ',', 'thousandSeparator' => '.');
-  public $USNumberFormat = array('decimals' => 4, 'decimalSeparator' => '.', 'thousandSeparator' => ',');
-  public $USCurrencyFormat = array('decimals' => 2, 'decimalSeparator' => '.', 'thousandSeparator' => ',');
-  public $USNumFormat = array('decimals' => 0, 'decimalSeparator' => '.', 'thousandSeparator' => ',');
-  public function formatNum($value)
-  {
-    if ($value === null)
-      return null; // new
-    if ($value === '')
-      return ''; // new
-    return number_format($value, $this->numFormat['decimals'], $this->numFormat['decimalSeparator'], $this->numFormat['thousandSeparator']);
-  }
   public function formatNumber($value)
   {
     if ($value === null)
@@ -22,6 +11,14 @@ class Formatter extends CFormatter
     if ($value === '')
       return ''; // new
     return number_format($value, $this->numberFormat['decimals'], $this->numberFormat['decimalSeparator'], $this->numberFormat['thousandSeparator']);
+  }
+  public function formatNumberQty($value)
+  {
+    if ($value === null)
+      return null; // new
+    if ($value === '')
+      return ''; // new
+    return number_format($value, $this->numberFormatQty['decimals'], $this->numberFormatQty['decimalSeparator'], $this->numberFormat['thousandSeparator']);
   }
 	public function formatNumberWODecimal($value)
   {
@@ -42,22 +39,6 @@ class Formatter extends CFormatter
     } else {
       return $symbol.' '.number_format($value, $this->currencyFormat['decimals'], $this->currencyFormat['decimalSeparator'], $this->currencyFormat['thousandSeparator']);
     }
-  }
-	public function formatNumberUS($value)
-  {
-    if ($value === null)
-      return null; // new
-    if ($value === '')
-      return ''; // new
-    return number_format($value, $this->USNumberFormat['decimals'], $this->USNumberFormat['decimalSeparator'], $this->USNumberFormat['thousandSeparator']);
-  }
-  public function formatCurrencyUS($value)
-  {
-    if ($value === null)
-      return null; // new
-    if ($value === '')
-      return ''; // new
-    return number_format($value, $this->USCurrencyFormat['decimals'], $this->USCurrencyFormat['decimalSeparator'], $this->USCurrencyFormat['thousandSeparator']);
   }
   public function unformatNumber($formatted_number)
   {
